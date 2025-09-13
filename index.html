@@ -1,57 +1,26 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Savnac — Games</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Savnac — Games (fixed thumbnails)</title>
 <style>
   :root{
-    --bg:#0d0d0d;
-    --panel:#161616;
-    --muted:#bfbfbf;
-    --accent:#00bfff;
-    --card:#1e1e1e;
+    --bg:#0d0d0d; --card:#161616; --muted:#bfbfbf; --accent:#00bfff;
   }
-
   html,body{height:100%;margin:0;background:var(--bg);color:#eee;font-family:Inter,Segoe UI,Arial,sans-serif}
   header{padding:28px 16px 8px;text-align:center}
   header h1{margin:0;font-size:34px;letter-spacing:0.5px}
   .topbar{max-width:1100px;margin:14px auto 24px;display:flex;gap:12px;align-items:center;justify-content:center;padding:0 12px}
-
-  /* Search input */
   #searchInput{
-    width:100%;
-    max-width:720px;
-    background:var(--panel);
-    border:1px solid #252525;
-    color:#ddd;
-    padding:12px 14px;
-    border-radius:10px;
-    font-size:16px;
-    outline:none;
+    width:100%; max-width:720px; background:var(--card); border:1px solid #252525;
+    color:#ddd; padding:12px 14px; border-radius:10px; font-size:16px; outline:none;
     box-shadow:0 2px 6px rgba(0,0,0,0.6), inset 0 -1px 0 rgba(255,255,255,0.01);
   }
   #searchInput::placeholder{color:#8a8a8a}
-
-  /* Wrapper for search list + grid to center */
   .container{max-width:1100px;margin:0 auto;padding:18px}
-
-  /* Scrollable list area */
-  .search-panel{
-    margin:14px auto 26px;
-    width:100%;
-    max-width:760px;
-  }
-  #gamesContainer{
-    background:var(--card);
-    border-radius:10px;
-    padding:10px;
-    border:1px solid #232323;
-    max-height:300px; /* makes it scrollable */
-    overflow:auto;
-  }
-
-  /* each list item shows small thumb + title */
+  .search-panel{margin:14px auto 26px;width:100%;max-width:760px}
+  #gamesContainer{background:var(--card); border-radius:10px; padding:10px; border:1px solid #232323; max-height:300px; overflow:auto}
   #gamesList{list-style:none;padding:6px;margin:0;display:flex;flex-direction:column;gap:6px}
   #gamesList li{display:flex;align-items:center;padding:6px;border-radius:8px;transition:background .12s}
   #gamesList li.hide{display:none}
@@ -59,41 +28,19 @@
   #gamesList img{width:56px;height:44px;object-fit:cover;border-radius:6px;margin-right:12px;flex-shrink:0}
   #gamesList a{color:var(--muted);text-decoration:none;font-size:15px}
   #gamesList a:hover{color:var(--accent)}
-
-  /* Grid of cards */
-  .games-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-    gap:18px;
-    margin-top:18px;
-  }
-  .game-card{
-    background:var(--card);
-    border-radius:12px;
-    padding:10px;
-    box-shadow:0 6px 18px rgba(0,0,0,0.6);
-    transition:transform .14s, box-shadow .14s;
-    text-align:center;
-    border:1px solid rgba(255,255,255,0.02);
-  }
+  .games-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:18px;margin-top:18px}
+  .game-card{background:var(--card);border-radius:12px;padding:10px;box-shadow:0 6px 18px rgba(0,0,0,0.6);transition:transform .14s, box-shadow .14s;text-align:center;border:1px solid rgba(255,255,255,0.02)}
   .game-card:hover{transform:translateY(-6px);box-shadow:0 18px 34px rgba(0,0,0,0.8)}
   .game-card a{display:block;color:var(--muted);text-decoration:none}
   .game-card img{width:100%;height:110px;object-fit:cover;border-radius:8px;background:#111}
   .game-card p{margin:10px 0 0;font-size:14px;color:#e6e6e6}
-
-  /* bottom links & footer */
   .links{display:flex;gap:12px;justify-content:center;margin:26px 0}
   .links a{background:linear-gradient(180deg,#0ea5ff,#0078d7);color:#fff;padding:10px 16px;border-radius:8px;text-decoration:none;font-weight:600}
-  footer{background:#071026;color:#9fb; padding:16px;margin-top:28px;text-align:center;font-size:14px}
-
-  /* nice dark scrollbar */
+  footer{background:#071026;color:#9fb;padding:16px;margin-top:28px;text-align:center;font-size:14px}
   #gamesContainer::-webkit-scrollbar{width:10px}
   #gamesContainer::-webkit-scrollbar-track{background:transparent}
   #gamesContainer::-webkit-scrollbar-thumb{background:#333;border-radius:10px;border:2px solid transparent;background-clip:content-box}
-  @media(max-width:640px){
-    header h1{font-size:26px}
-    .game-card img{height:96px}
-  }
+  @media(max-width:640px){ header h1{font-size:26px} .game-card img{height:96px} }
 </style>
 </head>
 <body>
@@ -106,14 +53,12 @@
 </header>
 
 <main class="container">
-  <!-- Scrollable search/results panel -->
   <section class="search-panel">
     <div id="gamesContainer" aria-live="polite">
       <ul id="gamesList"></ul>
     </div>
   </section>
 
-  <!-- Grid of game cards -->
   <section class="games-grid" id="gamesGrid"></section>
 
   <div class="links">
@@ -122,17 +67,10 @@
   </div>
 </main>
 
-<footer>
-  savnac© live🌱
-</footer>
+<footer> savnac© live🌱 </footer>
 
 <script>
-/*
-  All 49 games listed as objects (name + link).
-  Thumbnails are generated using via.placeholder.com with the game name encoded.
-  That prevents broken images and provides a readable thumbnail instantly.
-  If you want real thumbnails later, replace the "thumb" property with real URLs.
-*/
+// --- GAMES ARRAY (49 total) ---
 const games = [
   {name:"1v1.lol", link:"https://sites.google.com/view/savnac/2048/1v1-lol"},
   {name:"2048", link:"https://sites.google.com/view/savnac/2048"},
@@ -186,37 +124,41 @@ const games = [
   {name:"Yohoho.io", link:"https://sites.google.com/view/savnac/2048/yo-ho-ho-io"}
 ];
 
-/* helper to produce placeholder image URL with nice dark background and text */
-function placeholderFor(name, w=360, h=200){
-  const txt = encodeURIComponent(name);
-  // background dark, light text — via.placeholder.com supports text parameter
-  // also add .png to force image type
-  return `https://via.placeholder.com/${w}x${h}.png/222222/eeeeee?text=${txt}`;
+// function to create simple SVG thumbnail as a data URI (dark-themed)
+function svgDataURI(title, w=360, h=200){
+  const bg = '#222'; // card bg
+  const fg = '#e7e7e7';
+  const small = Math.max(12, Math.floor(w/20));
+  const big = Math.max(16, Math.floor(w/14));
+  const escaped = title.replace(/&/g, '&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const svg =
+`<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}'>
+  <rect width='100%' height='100%' fill='${bg}' rx='10' ry='10'/>
+  <text x='50%' y='40%' font-family='Segoe UI, Roboto, Arial' font-size='${big}' fill='${fg}' text-anchor='middle'>${escaped}</text>
+  <text x='50%' y='75%' font-family='Segoe UI, Roboto, Arial' font-size='${small}' fill='#9aa' text-anchor='middle'>savnac</text>
+</svg>`;
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
 }
 
-/* render the scrollable search list + grid */
+/* Render list + grid using data-URI thumbnails */
 const gamesListEl = document.getElementById('gamesList');
 const gamesGridEl = document.getElementById('gamesGrid');
 
-games.forEach(g=>{
-  // list item (small)
+for(const g of games){
+  // list item
   const li = document.createElement('li');
   li.dataset.name = g.name.toLowerCase();
-
   const a = document.createElement('a');
   a.href = g.link;
-  a.target = "_blank";
-  a.rel = "noopener";
-
+  a.target = '_blank';
+  a.rel = 'noopener';
   const img = document.createElement('img');
-  img.src = placeholderFor(g.name, 120, 88); // small thumb for list
+  img.src = svgDataURI(g.name, 120, 88);
   img.alt = g.name;
-
-  const title = document.createElement('span');
-  title.textContent = g.name;
-
+  const span = document.createElement('span');
+  span.textContent = ' ' + g.name;
   a.appendChild(img);
-  a.appendChild(title);
+  a.appendChild(span);
   li.appendChild(a);
   gamesListEl.appendChild(li);
 
@@ -224,43 +166,34 @@ games.forEach(g=>{
   const card = document.createElement('div');
   card.className = 'game-card';
   card.dataset.name = g.name.toLowerCase();
-
   const a2 = document.createElement('a');
   a2.href = g.link;
-  a2.target = "_blank";
-  a2.rel = "noopener";
-
+  a2.target = '_blank';
+  a2.rel = 'noopener';
   const img2 = document.createElement('img');
-  img2.src = placeholderFor(g.name, 360, 200);
+  img2.src = svgDataURI(g.name, 360, 200);
   img2.alt = g.name;
-
   const p = document.createElement('p');
   p.textContent = g.name;
-
   a2.appendChild(img2);
   a2.appendChild(p);
   card.appendChild(a2);
   gamesGridEl.appendChild(card);
-});
+}
 
-/* search functionality: filter both list & grid */
+/* FILTER (both list & grid) */
 const input = document.getElementById('searchInput');
 input.addEventListener('input', () => {
   const q = input.value.trim().toLowerCase();
-  const listItems = document.querySelectorAll('#gamesList li');
-  const cards = document.querySelectorAll('.game-card');
-
-  listItems.forEach(li => {
-    const name = li.dataset.name;
-    li.classList.toggle('hide', q !== '' && !name.includes(q));
+  document.querySelectorAll('#gamesList li').forEach(li=>{
+    li.classList.toggle('hide', q !== '' && !li.dataset.name.includes(q));
   });
-  cards.forEach(card => {
-    const name = card.dataset.name;
-    card.style.display = (q === '' || name.includes(q)) ? '' : 'none';
+  document.querySelectorAll('.game-card').forEach(card=>{
+    card.style.display = (q === '' || card.dataset.name.includes(q)) ? '' : 'none';
   });
 });
 
-/* Q keybind: go to Canvas in same tab. Ignore when typing in an input/textarea/contenteditable */
+/* Q keybind: go to Canvas in same tab. ignore when typing */
 document.addEventListener('keydown', function(e){
   const active = document.activeElement;
   const typing = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable);
