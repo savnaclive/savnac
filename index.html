@@ -32,46 +32,12 @@
       color: #f5f5f5;
     }
 
-    /* Game List Container */
-    #gamesContainer {
-      max-height: 220px;
-      overflow-y: auto;
-      border: 1px solid #333;
-      border-radius: 8px;
-      background-color: #1e1e1e;
-      width: 90%;
-      max-width: 500px;
-      margin: 0 auto 25px auto;
-      padding: 10px;
-    }
-
-    #gamesList {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    #gamesList li a {
-      display: block;
-      padding: 8px;
-      text-decoration: none;
-      color: #f5f5f5;
-      text-align: left;
-      border-bottom: 1px solid #333;
-      transition: background 0.2s;
-    }
-
-    #gamesList li a:hover {
-      background-color: #2a2a2a;
-      color: #00bfff;
-    }
-
-    /* Thumbnails Grid */
+    /* Grid Layout */
     .games-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 20px;
-      max-width: 900px;
+      max-width: 1000px;
       margin: 0 auto 40px auto;
       padding: 0 20px;
     }
@@ -92,11 +58,12 @@
     .game-card img {
       width: 100%;
       border-radius: 8px;
+      object-fit: cover;
     }
 
     .game-card p {
       margin: 8px 0 0;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: #ddd;
     }
 
@@ -133,40 +100,62 @@
 
   <h1>Savnac</h1>
 
-  <!-- Search Bar + List -->
+  <!-- Search Bar -->
   <input type="text" id="searchInput" placeholder="We have 49 Games, search them here.">
-  <div id="gamesContainer">
-    <ul id="gamesList">
-      <!-- Your full list of games goes here -->
-      <li><a href="https://sites.google.com/view/savnac/2048/1v1-lol">1v1.lol</a></li>
-      <li><a href="https://sites.google.com/view/savnac/2048">2048</a></li>
-      <li><a href="https://sites.google.com/view/savnac/2048/age-of-war">Age Of War</a></li>
-      <!-- ... keep adding the rest of your game list ... -->
-    </ul>
-  </div>
 
-  <!-- Game Thumbnails -->
-  <div class="games-grid">
-    <div class="game-card">
-      <a href="https://sites.google.com/view/savnac/2048/retro-bowl-fullscreen">
-        <img src="https://upload.wikimedia.org/wikipedia/en/8/82/Retro_Bowl_logo.png" alt="Retro Bowl">
-        <p>Retro Bowl</p>
-      </a>
-    </div>
-
-    <div class="game-card">
-      <a href="https://sites.google.com/view/savnac/2048/slope-fullscreen">
-        <img src="https://i.imgur.com/Xe3Vm3x.png" alt="Slope">
-        <p>Slope</p>
-      </a>
-    </div>
-
-    <div class="game-card">
-      <a href="https://sites.google.com/view/savnac/2048/subway-surfers-fullscreen">
-        <img src="https://i.imgur.com/Y4CXWgK.png" alt="Subway Surfers">
-        <p>Subway Surfers</p>
-      </a>
-    </div>
+  <!-- Game Thumbnails Grid -->
+  <div class="games-grid" id="gamesGrid">
+    <!-- Example card for each game -->
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/1v1-lol"><img src="https://i.imgur.com/muM8cLe.png"><p>1v1.lol</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048"><img src="https://i.imgur.com/7xlQ1Pc.png"><p>2048</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/a-small-world-cup"><img src="https://i.imgur.com/7nZW9Wp.png"><p>A Small World Cup</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/age-of-war"><img src="https://i.imgur.com/NoO6RX2.png"><p>Age of War</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/amoug-us"><img src="https://i.imgur.com/2Unk77U.png"><p>Among Us</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/bacon-may-die-fullscreen"><img src="https://i.imgur.com/EBbRQsh.png"><p>Bacon May Die</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/Basket-Random"><img src="https://i.imgur.com/KgkpqvH.png"><p>Basket Random</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/bit-life-fullscreen"><img src="https://i.imgur.com/cnlQtHn.png"><p>BitLife</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/bit-planes"><img src="https://i.imgur.com/k2gHZPo.png"><p>Bit Planes</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/cluster-rush-fullscreen"><img src="https://i.imgur.com/rIthwZp.png"><p>Cluster Rush</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/cookie-clicker-fullscreen"><img src="https://i.imgur.com/8lWvHE5.png"><p>Cookie Clicker</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/chrome-dino-run"><img src="https://i.imgur.com/ZqEYzXu.png"><p>Chrome Dino Run</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/crossyroad"><img src="https://i.imgur.com/vsShX7r.png"><p>Crossy Road</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/cut-the-rope"><img src="https://i.imgur.com/Qf36qDZ.png"><p>Cut the Rope</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/clicker-hero"><img src="https://i.imgur.com/EKnzX63.png"><p>Clicker Hero</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/drive-mad-fullscreen"><img src="https://i.imgur.com/p0U4bK9.png"><p>Drive Mad</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/death-run-3d"><img src="https://i.imgur.com/SewSo7h.png"><p>Death Run 3D</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/duck-life-fullscreen"><img src="https://i.imgur.com/gAyL5qp.png"><p>Duck Life 1</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/duck-life-fullscreen/duck-life-2-fullscreen"><img src="https://i.imgur.com/Td39frn.png"><p>Duck Life 2</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/duck-life-fullscreen/duck-life-3-fullscreen"><img src="https://i.imgur.com/fA2QVu8.png"><p>Duck Life 3</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/duck-life-fullscreen/duck-life-4-fullscreen"><img src="https://i.imgur.com/lRQEpz4.png"><p>Duck Life 4</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/duck-life-fullscreen/duck-life-5-fullscreen"><img src="https://i.imgur.com/JJrBclP.png"><p>Duck Life 5</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/drift-boss"><img src="https://i.imgur.com/zGItGBg.png"><p>Drift Boss</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/gun-spin-fullscreen"><img src="https://i.imgur.com/HW9ElAb.png"><p>Gun Spin</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/geometry-dash"><img src="https://i.imgur.com/EaWkM7Q.png"><p>Geometry Dash</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/getaway-shootout"><img src="https://i.imgur.com/aSmLY27.png"><p>Getaway Shootout</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/hole-io-fullscreen"><img src="https://i.imgur.com/WNNy4As.png"><p>Hole.io</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/hextris"><img src="https://i.imgur.com/0N9ctyH.png"><p>Hextris</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/javascript-roulette"><img src="https://i.imgur.com/KrP7ZCl.png"><p>JS Roulette</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/little-alchemy-2"><img src="https://i.imgur.com/LoJj8hk.png"><p>Little Alchemy</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/moto-x3m"><img src="https://i.imgur.com/Wcq6coo.png"><p>Moto X3M</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/monkey-mart"><img src="https://i.imgur.com/kqEOKHl.png"><p>Monkey Mart</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/monster-tracks"><img src="https://i.imgur.com/gcKxAOm.png"><p>Monster Tracks</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/ovo-fullscreen"><img src="https://i.imgur.com/8nfyA2M.png"><p>OvO</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/ovo-2"><img src="https://i.imgur.com/FiLvY6H.png"><p>OvO 2</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/paper-io-2-fullscreen"><img src="https://i.imgur.com/K6dfOVO.png"><p>Paper.io 2</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/pac-man"><img src="https://i.imgur.com/2PcXFeL.png"><p>Pac-Man</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/ragdoll-archers"><img src="https://i.imgur.com/3bWBqFJ.png"><p>Ragdoll Archers</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/djksd"><img src="https://i.imgur.com/EkGrUah.png"><p>Ragdoll Hit</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/retro-bowl-fullscreen"><img src="https://i.imgur.com/mYJFFNb.png"><p>Retro Bowl</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/rb-college-fullscreen"><img src="https://i.imgur.com/7tOrfrz.png"><p>Retro Bowl College</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/rooftop-snipers"><img src="https://i.imgur.com/vdQvMTl.png"><p>Rooftop Snipers</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/snow-rider-3d-fullscreen"><img src="https://i.imgur.com/sd8UOow.png"><p>Snow Rider 3D</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/slope-fullscreen"><img src="https://i.imgur.com/Xe3Vm3x.png"><p>Slope</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/subway-surfers-fullscreen"><img src="https://i.imgur.com/Y4CXWgK.png"><p>Subway Surfers</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/stickman-hook-fullscreen"><img src="https://i.imgur.com/XsosZyU.png"><p>Stickman Hook</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/superhot"><img src="https://i.imgur.com/y2iJ4nT.png"><p>Superhot</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/wheelie-bike"><img src="https://i.imgur.com/oiKw6oE.png"><p>Wheelie Bike</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/we-become-what-we-behold"><img src="https://i.imgur.com/wbOa8MG.png"><p>We Become What We Behold</p></a></div>
+    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/yo-ho-ho-io"><img src="https://i.imgur.com/vyH1dSe.png"><p>Yohoho.io</p></a></div>
   </div>
 
   <!-- Links -->
@@ -180,18 +169,19 @@
   </footer>
 
   <script>
-    const input = document.getElementById('searchInput');
-    const items = document.querySelectorAll('#gamesList li');
+    const searchInput = document.getElementById('searchInput');
+    const gameCards = document.querySelectorAll('.game-card');
 
-    input.addEventListener('keyup', () => {
-      const filter = input.value.toLowerCase();
-      items.forEach(item => {
-        const text = item.textContent.toLowerCase();
-        item.style.display = text.includes(filter) ? '' : 'none';
+    searchInput.addEventListener('keyup', () => {
+      const filter = searchInput.value.toLowerCase();
+      gameCards.forEach(card => {
+        const text = card.innerText.toLowerCase();
+        card.style.display = text.includes(filter) ? '' : 'none';
       });
     });
   </script>
 
 </body>
 </html>
+
 
