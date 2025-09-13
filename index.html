@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Keybind Script</title>
+</head>
+<body>
+<script>
+// Attach the keydown listener to the top-level page
+window.top.document.addEventListener('keydown', function(event) {
+  const active = window.top.document.activeElement;
+  const isTyping = active &&
+                  (active.tagName === 'INPUT' ||
+                   active.tagName === 'TEXTAREA' ||
+                   active.isContentEditable);
+
+  // If user is not typing, check if they pressed "q"
+  if (!isTyping && (event.key === 'q' || event.key === 'Q')) {
+    window.top.location.href = 'https://canvas.nebo.edu/';
+  }
+});
+</script>
+</body>
+</html>
