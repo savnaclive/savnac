@@ -1,187 +1,273 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Savnac</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #121212;
-      color: #f5f5f5;
-      text-align: center;
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Savnac — Games</title>
+<style>
+  :root{
+    --bg:#0d0d0d;
+    --panel:#161616;
+    --muted:#bfbfbf;
+    --accent:#00bfff;
+    --card:#1e1e1e;
+  }
 
-    h1 {
-      margin-top: 20px;
-      font-size: 2rem;
-    }
+  html,body{height:100%;margin:0;background:var(--bg);color:#eee;font-family:Inter,Segoe UI,Arial,sans-serif}
+  header{padding:28px 16px 8px;text-align:center}
+  header h1{margin:0;font-size:34px;letter-spacing:0.5px}
+  .topbar{max-width:1100px;margin:14px auto 24px;display:flex;gap:12px;align-items:center;justify-content:center;padding:0 12px}
 
-    /* Search Bar */
-    #searchInput {
-      width: 90%;
-      max-width: 500px;
-      padding: 10px;
-      font-size: 16px;
-      margin: 15px auto;
-      display: block;
-      background: #1e1e1e;
-      border: 1px solid #333;
-      border-radius: 8px;
-      color: #f5f5f5;
-    }
+  /* Search input */
+  #searchInput{
+    width:100%;
+    max-width:720px;
+    background:var(--panel);
+    border:1px solid #252525;
+    color:#ddd;
+    padding:12px 14px;
+    border-radius:10px;
+    font-size:16px;
+    outline:none;
+    box-shadow:0 2px 6px rgba(0,0,0,0.6), inset 0 -1px 0 rgba(255,255,255,0.01);
+  }
+  #searchInput::placeholder{color:#8a8a8a}
 
-    /* Grid Layout */
-    .games-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 20px;
-      max-width: 1000px;
-      margin: 0 auto 40px auto;
-      padding: 0 20px;
-    }
+  /* Wrapper for search list + grid to center */
+  .container{max-width:1100px;margin:0 auto;padding:18px}
 
-    .game-card {
-      background: #1e1e1e;
-      border-radius: 12px;
-      padding: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.6);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
+  /* Scrollable list area */
+  .search-panel{
+    margin:14px auto 26px;
+    width:100%;
+    max-width:760px;
+  }
+  #gamesContainer{
+    background:var(--card);
+    border-radius:10px;
+    padding:10px;
+    border:1px solid #232323;
+    max-height:300px; /* makes it scrollable */
+    overflow:auto;
+  }
 
-    .game-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.8);
-    }
+  /* each list item shows small thumb + title */
+  #gamesList{list-style:none;padding:6px;margin:0;display:flex;flex-direction:column;gap:6px}
+  #gamesList li{display:flex;align-items:center;padding:6px;border-radius:8px;transition:background .12s}
+  #gamesList li.hide{display:none}
+  #gamesList li:hover{background:#232323}
+  #gamesList img{width:56px;height:44px;object-fit:cover;border-radius:6px;margin-right:12px;flex-shrink:0}
+  #gamesList a{color:var(--muted);text-decoration:none;font-size:15px}
+  #gamesList a:hover{color:var(--accent)}
 
-    .game-card img {
-      width: 100%;
-      border-radius: 8px;
-      object-fit: cover;
-    }
+  /* Grid of cards */
+  .games-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:18px;
+    margin-top:18px;
+  }
+  .game-card{
+    background:var(--card);
+    border-radius:12px;
+    padding:10px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.6);
+    transition:transform .14s, box-shadow .14s;
+    text-align:center;
+    border:1px solid rgba(255,255,255,0.02);
+  }
+  .game-card:hover{transform:translateY(-6px);box-shadow:0 18px 34px rgba(0,0,0,0.8)}
+  .game-card a{display:block;color:var(--muted);text-decoration:none}
+  .game-card img{width:100%;height:110px;object-fit:cover;border-radius:8px;background:#111}
+  .game-card p{margin:10px 0 0;font-size:14px;color:#e6e6e6}
 
-    .game-card p {
-      margin: 8px 0 0;
-      font-size: 0.85rem;
-      color: #ddd;
-    }
+  /* bottom links & footer */
+  .links{display:flex;gap:12px;justify-content:center;margin:26px 0}
+  .links a{background:linear-gradient(180deg,#0ea5ff,#0078d7);color:#fff;padding:10px 16px;border-radius:8px;text-decoration:none;font-weight:600}
+  footer{background:#071026;color:#9fb; padding:16px;margin-top:28px;text-align:center;font-size:14px}
 
-    /* Links at bottom */
-    .links {
-      margin: 20px 0;
-    }
-
-    .links a {
-      display: inline-block;
-      margin: 10px;
-      padding: 10px 20px;
-      background: #007bff;
-      color: white;
-      text-decoration: none;
-      border-radius: 6px;
-      transition: background 0.2s;
-    }
-
-    .links a:hover {
-      background: #0056b3;
-    }
-
-    /* Footer */
-    footer {
-      background-color: #0d1a33;
-      padding: 10px;
-      color: #ccc;
-      font-size: 0.85rem;
-    }
-  </style>
+  /* nice dark scrollbar */
+  #gamesContainer::-webkit-scrollbar{width:10px}
+  #gamesContainer::-webkit-scrollbar-track{background:transparent}
+  #gamesContainer::-webkit-scrollbar-thumb{background:#333;border-radius:10px;border:2px solid transparent;background-clip:content-box}
+  @media(max-width:640px){
+    header h1{font-size:26px}
+    .game-card img{height:96px}
+  }
+</style>
 </head>
 <body>
 
+<header>
   <h1>Savnac</h1>
-
-  <!-- Search Bar -->
-  <input type="text" id="searchInput" placeholder="We have 49 Games, search them here.">
-
-  <!-- Game Thumbnails Grid -->
-  <div class="games-grid" id="gamesGrid">
-    <!-- Example card for each game -->
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/1v1-lol"><img src="https://i.imgur.com/muM8cLe.png"><p>1v1.lol</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048"><img src="https://i.imgur.com/7xlQ1Pc.png"><p>2048</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/a-small-world-cup"><img src="https://i.imgur.com/7nZW9Wp.png"><p>A Small World Cup</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/age-of-war"><img src="https://i.imgur.com/NoO6RX2.png"><p>Age of War</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/amoug-us"><img src="https://i.imgur.com/2Unk77U.png"><p>Among Us</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/bacon-may-die-fullscreen"><img src="https://i.imgur.com/EBbRQsh.png"><p>Bacon May Die</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/Basket-Random"><img src="https://i.imgur.com/KgkpqvH.png"><p>Basket Random</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/bit-life-fullscreen"><img src="https://i.imgur.com/cnlQtHn.png"><p>BitLife</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/bit-planes"><img src="https://i.imgur.com/k2gHZPo.png"><p>Bit Planes</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/cluster-rush-fullscreen"><img src="https://i.imgur.com/rIthwZp.png"><p>Cluster Rush</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/cookie-clicker-fullscreen"><img src="https://i.imgur.com/8lWvHE5.png"><p>Cookie Clicker</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/chrome-dino-run"><img src="https://i.imgur.com/ZqEYzXu.png"><p>Chrome Dino Run</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/crossyroad"><img src="https://i.imgur.com/vsShX7r.png"><p>Crossy Road</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/cut-the-rope"><img src="https://i.imgur.com/Qf36qDZ.png"><p>Cut the Rope</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/clicker-hero"><img src="https://i.imgur.com/EKnzX63.png"><p>Clicker Hero</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/drive-mad-fullscreen"><img src="https://i.imgur.com/p0U4bK9.png"><p>Drive Mad</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/death-run-3d"><img src="https://i.imgur.com/SewSo7h.png"><p>Death Run 3D</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/duck-life-fullscreen"><img src="https://i.imgur.com/gAyL5qp.png"><p>Duck Life 1</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/duck-life-fullscreen/duck-life-2-fullscreen"><img src="https://i.imgur.com/Td39frn.png"><p>Duck Life 2</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/duck-life-fullscreen/duck-life-3-fullscreen"><img src="https://i.imgur.com/fA2QVu8.png"><p>Duck Life 3</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/duck-life-fullscreen/duck-life-4-fullscreen"><img src="https://i.imgur.com/lRQEpz4.png"><p>Duck Life 4</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/duck-life-fullscreen/duck-life-5-fullscreen"><img src="https://i.imgur.com/JJrBclP.png"><p>Duck Life 5</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/drift-boss"><img src="https://i.imgur.com/zGItGBg.png"><p>Drift Boss</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/gun-spin-fullscreen"><img src="https://i.imgur.com/HW9ElAb.png"><p>Gun Spin</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/geometry-dash"><img src="https://i.imgur.com/EaWkM7Q.png"><p>Geometry Dash</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/getaway-shootout"><img src="https://i.imgur.com/aSmLY27.png"><p>Getaway Shootout</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/hole-io-fullscreen"><img src="https://i.imgur.com/WNNy4As.png"><p>Hole.io</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/hextris"><img src="https://i.imgur.com/0N9ctyH.png"><p>Hextris</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/javascript-roulette"><img src="https://i.imgur.com/KrP7ZCl.png"><p>JS Roulette</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/little-alchemy-2"><img src="https://i.imgur.com/LoJj8hk.png"><p>Little Alchemy</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/moto-x3m"><img src="https://i.imgur.com/Wcq6coo.png"><p>Moto X3M</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/monkey-mart"><img src="https://i.imgur.com/kqEOKHl.png"><p>Monkey Mart</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/monster-tracks"><img src="https://i.imgur.com/gcKxAOm.png"><p>Monster Tracks</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/ovo-fullscreen"><img src="https://i.imgur.com/8nfyA2M.png"><p>OvO</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/ovo-2"><img src="https://i.imgur.com/FiLvY6H.png"><p>OvO 2</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/paper-io-2-fullscreen"><img src="https://i.imgur.com/K6dfOVO.png"><p>Paper.io 2</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/pac-man"><img src="https://i.imgur.com/2PcXFeL.png"><p>Pac-Man</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/ragdoll-archers"><img src="https://i.imgur.com/3bWBqFJ.png"><p>Ragdoll Archers</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/djksd"><img src="https://i.imgur.com/EkGrUah.png"><p>Ragdoll Hit</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/retro-bowl-fullscreen"><img src="https://i.imgur.com/mYJFFNb.png"><p>Retro Bowl</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/rb-college-fullscreen"><img src="https://i.imgur.com/7tOrfrz.png"><p>Retro Bowl College</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/rooftop-snipers"><img src="https://i.imgur.com/vdQvMTl.png"><p>Rooftop Snipers</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/snow-rider-3d-fullscreen"><img src="https://i.imgur.com/sd8UOow.png"><p>Snow Rider 3D</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/slope-fullscreen"><img src="https://i.imgur.com/Xe3Vm3x.png"><p>Slope</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/subway-surfers-fullscreen"><img src="https://i.imgur.com/Y4CXWgK.png"><p>Subway Surfers</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/stickman-hook-fullscreen"><img src="https://i.imgur.com/XsosZyU.png"><p>Stickman Hook</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/superhot"><img src="https://i.imgur.com/y2iJ4nT.png"><p>Superhot</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/wheelie-bike"><img src="https://i.imgur.com/oiKw6oE.png"><p>Wheelie Bike</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/we-become-what-we-behold"><img src="https://i.imgur.com/wbOa8MG.png"><p>We Become What We Behold</p></a></div>
-    <div class="game-card"><a href="https://sites.google.com/view/savnac/2048/yo-ho-ho-io"><img src="https://i.imgur.com/vyH1dSe.png"><p>Yohoho.io</p></a></div>
+  <div class="topbar">
+    <input id="searchInput" placeholder="We have 49 Games, search them here. (type to filter)" aria-label="Search games">
   </div>
+</header>
 
-  <!-- Links -->
+<main class="container">
+  <!-- Scrollable search/results panel -->
+  <section class="search-panel">
+    <div id="gamesContainer" aria-live="polite">
+      <ul id="gamesList"></ul>
+    </div>
+  </section>
+
+  <!-- Grid of game cards -->
+  <section class="games-grid" id="gamesGrid"></section>
+
   <div class="links">
-    <a href="https://forms.gle/YOUR_FORM_LINK" target="_blank">Request A Game</a>
-    <a href="https://scratch.mit.edu/users/YOUR_SCRATCH_PAGE/" target="_blank">Scratch Game Page</a>
+    <a href="https://forms.gle/YOUR_FORM_LINK" target="_blank" rel="noopener">Request A Game</a>
+    <a href="https://scratch.mit.edu/users/YOUR_SCRATCH_PAGE/" target="_blank" rel="noopener">Scratch Game Page</a>
   </div>
+</main>
 
-  <footer>
-    savnac© live🌱
-  </footer>
+<footer>
+  savnac© live🌱
+</footer>
 
-  <script>
-    const searchInput = document.getElementById('searchInput');
-    const gameCards = document.querySelectorAll('.game-card');
+<script>
+/*
+  All 49 games listed as objects (name + link).
+  Thumbnails are generated using via.placeholder.com with the game name encoded.
+  That prevents broken images and provides a readable thumbnail instantly.
+  If you want real thumbnails later, replace the "thumb" property with real URLs.
+*/
+const games = [
+  {name:"1v1.lol", link:"https://sites.google.com/view/savnac/2048/1v1-lol"},
+  {name:"2048", link:"https://sites.google.com/view/savnac/2048"},
+  {name:"A Small World Cup", link:"https://sites.google.com/view/savnac/2048/a-small-world-cup"},
+  {name:"Age Of War", link:"https://sites.google.com/view/savnac/2048/age-of-war"},
+  {name:"Amoug Us", link:"https://sites.google.com/view/savnac/2048/amoug-us"},
+  {name:"Bacon May Die", link:"https://sites.google.com/view/savnac/2048/bacon-may-die-fullscreen"},
+  {name:"Basket Random", link:"https://sites.google.com/view/savnac/2048/Basket-Random"},
+  {name:"BitLife", link:"https://sites.google.com/view/savnac/2048/bit-life-fullscreen"},
+  {name:"Bit Planes", link:"https://sites.google.com/view/savnac/2048/bit-planes"},
+  {name:"Cluster Rush", link:"https://sites.google.com/view/savnac/2048/cluster-rush-fullscreen"},
+  {name:"Cookie Clicker", link:"https://sites.google.com/view/savnac/2048/cookie-clicker-fullscreen"},
+  {name:"Chrome Dino Run", link:"https://sites.google.com/view/savnac/2048/chrome-dino-run"},
+  {name:"Crossy Road", link:"https://sites.google.com/view/savnac/2048/crossyroad"},
+  {name:"Cut the Rope", link:"https://sites.google.com/view/savnac/2048/cut-the-rope"},
+  {name:"Clicker Hero", link:"https://sites.google.com/view/savnac/2048/clicker-hero"},
+  {name:"Drive Mad", link:"https://sites.google.com/view/savnac/2048/drive-mad-fullscreen"},
+  {name:"Death Run 3D", link:"https://sites.google.com/view/savnac/2048/death-run-3d"},
+  {name:"Duck Life 1", link:"https://sites.google.com/view/savnac/2048/duck-life-fullscreen"},
+  {name:"Duck Life 2", link:"https://sites.google.com/view/savnac/2048/duck-life-fullscreen/duck-life-2-fullscreen"},
+  {name:"Duck Life 3", link:"https://sites.google.com/view/savnac/2048/duck-life-fullscreen/duck-life-3-fullscreen"},
+  {name:"Duck Life 4", link:"https://sites.google.com/view/savnac/2048/duck-life-fullscreen/duck-life-4-fullscreen"},
+  {name:"Duck Life 5", link:"https://sites.google.com/view/savnac/2048/duck-life-fullscreen/duck-life-5-fullscreen"},
+  {name:"Drift Boss", link:"https://sites.google.com/view/savnac/2048/drift-boss"},
+  {name:"Gun Spin", link:"https://sites.google.com/view/savnac/2048/gun-spin-fullscreen"},
+  {name:"Geometry Dash", link:"https://sites.google.com/view/savnac/2048/geometry-dash"},
+  {name:"Getaway Shootout", link:"https://sites.google.com/view/savnac/2048/getaway-shootout"},
+  {name:"Hole.io", link:"https://sites.google.com/view/savnac/2048/hole-io-fullscreen"},
+  {name:"Hextris", link:"https://sites.google.com/view/savnac/2048/hextris"},
+  {name:"JS Roulette", link:"https://sites.google.com/view/savnac/2048/javascript-roulette"},
+  {name:"Little Alchemy", link:"https://sites.google.com/view/savnac/2048/little-alchemy-2"},
+  {name:"Moto X3M", link:"https://sites.google.com/view/savnac/2048/moto-x3m"},
+  {name:"Monkey Mart", link:"https://sites.google.com/view/savnac/2048/monkey-mart"},
+  {name:"Monster Tracks", link:"https://sites.google.com/view/savnac/2048/monster-tracks"},
+  {name:"OvO", link:"https://sites.google.com/view/savnac/2048/ovo-fullscreen"},
+  {name:"OvO 2", link:"https://sites.google.com/view/savnac/2048/ovo-2"},
+  {name:"Paper.io 2", link:"https://sites.google.com/view/savnac/2048/paper-io-2-fullscreen"},
+  {name:"Pac-Man", link:"https://sites.google.com/view/savnac/2048/pac-man"},
+  {name:"Ragdoll Archers", link:"https://sites.google.com/view/savnac/2048/ragdoll-archers"},
+  {name:"Ragdoll Hit", link:"https://sites.google.com/view/savnac/2048/djksd"},
+  {name:"Retro Bowl", link:"https://sites.google.com/view/savnac/2048/retro-bowl-fullscreen"},
+  {name:"Retro Bowl College", link:"https://sites.google.com/view/savnac/2048/rb-college-fullscreen"},
+  {name:"Rooftop Snipers", link:"https://sites.google.com/view/savnac/2048/rooftop-snipers"},
+  {name:"Snow Rider 3D", link:"https://sites.google.com/view/savnac/2048/snow-rider-3d-fullscreen"},
+  {name:"Slope", link:"https://sites.google.com/view/savnac/2048/slope-fullscreen"},
+  {name:"Subway Surfers", link:"https://sites.google.com/view/savnac/2048/subway-surfers-fullscreen"},
+  {name:"Stickman Hook", link:"https://sites.google.com/view/savnac/2048/stickman-hook-fullscreen"},
+  {name:"Superhot", link:"https://sites.google.com/view/savnac/2048/superhot"},
+  {name:"Wheelie Bike", link:"https://sites.google.com/view/savnac/2048/wheelie-bike"},
+  {name:"We Become What We Behold", link:"https://sites.google.com/view/savnac/2048/we-become-what-we-behold"},
+  {name:"Yohoho.io", link:"https://sites.google.com/view/savnac/2048/yo-ho-ho-io"}
+];
 
-    searchInput.addEventListener('keyup', () => {
-      const filter = searchInput.value.toLowerCase();
-      gameCards.forEach(card => {
-        const text = card.innerText.toLowerCase();
-        card.style.display = text.includes(filter) ? '' : 'none';
-      });
-    });
-  </script>
+/* helper to produce placeholder image URL with nice dark background and text */
+function placeholderFor(name, w=360, h=200){
+  const txt = encodeURIComponent(name);
+  // background dark, light text — via.placeholder.com supports text parameter
+  // also add .png to force image type
+  return `https://via.placeholder.com/${w}x${h}.png/222222/eeeeee?text=${txt}`;
+}
 
+/* render the scrollable search list + grid */
+const gamesListEl = document.getElementById('gamesList');
+const gamesGridEl = document.getElementById('gamesGrid');
+
+games.forEach(g=>{
+  // list item (small)
+  const li = document.createElement('li');
+  li.dataset.name = g.name.toLowerCase();
+
+  const a = document.createElement('a');
+  a.href = g.link;
+  a.target = "_blank";
+  a.rel = "noopener";
+
+  const img = document.createElement('img');
+  img.src = placeholderFor(g.name, 120, 88); // small thumb for list
+  img.alt = g.name;
+
+  const title = document.createElement('span');
+  title.textContent = g.name;
+
+  a.appendChild(img);
+  a.appendChild(title);
+  li.appendChild(a);
+  gamesListEl.appendChild(li);
+
+  // grid card
+  const card = document.createElement('div');
+  card.className = 'game-card';
+  card.dataset.name = g.name.toLowerCase();
+
+  const a2 = document.createElement('a');
+  a2.href = g.link;
+  a2.target = "_blank";
+  a2.rel = "noopener";
+
+  const img2 = document.createElement('img');
+  img2.src = placeholderFor(g.name, 360, 200);
+  img2.alt = g.name;
+
+  const p = document.createElement('p');
+  p.textContent = g.name;
+
+  a2.appendChild(img2);
+  a2.appendChild(p);
+  card.appendChild(a2);
+  gamesGridEl.appendChild(card);
+});
+
+/* search functionality: filter both list & grid */
+const input = document.getElementById('searchInput');
+input.addEventListener('input', () => {
+  const q = input.value.trim().toLowerCase();
+  const listItems = document.querySelectorAll('#gamesList li');
+  const cards = document.querySelectorAll('.game-card');
+
+  listItems.forEach(li => {
+    const name = li.dataset.name;
+    li.classList.toggle('hide', q !== '' && !name.includes(q));
+  });
+  cards.forEach(card => {
+    const name = card.dataset.name;
+    card.style.display = (q === '' || name.includes(q)) ? '' : 'none';
+  });
+});
+
+/* Q keybind: go to Canvas in same tab. Ignore when typing in an input/textarea/contenteditable */
+document.addEventListener('keydown', function(e){
+  const active = document.activeElement;
+  const typing = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable);
+  if (!typing && (e.key === 'q' || e.key === 'Q')) {
+    window.location.href = 'https://canvas.nebo.edu/';
+  }
+});
+</script>
 </body>
 </html>
-
-
