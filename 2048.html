@@ -1,153 +1,78 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>2048</title>
-
-  <link href="style/main.css" rel="stylesheet" type="text/css">
-  <link href="style/ai.css" rel="stylesheet" type="text/css">
-  <link rel="shortcut icon" href="favicon.ico">
-
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1, user-scalable=no">
-
-  <meta property="og:title" content="2048 game"/>
-  <meta property="og:site_name" content="2048 game"/>
-  <meta property="og:description" content="Join the numbers and get to the 2048 tile! Careful: this game is extremely addictive!"/>
-  <meta property="og:image" content="http://gabrielecirulli.github.io/2048/meta/og_image.png"/>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2048 - TopVAZ</title>
   <style>
-    /* Top bar with Back + Fullscreen */
-    .top-bar {
+    body {
+      margin: 0;
+      background: #121212;
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       align-items: center;
-      padding: 10px;
-      background: rgba(0, 0, 0, 0.85);
+      justify-content: center;
+      height: 100vh;
       color: white;
       font-family: Arial, sans-serif;
-      font-weight: bold;
-      position: sticky;
-      top: 0;
-      z-index: 100;
     }
 
-    .top-bar button {
-      background: #007bff;
+    iframe {
+      border: none;
+      width: 90%;
+      height: 80%;
+      border-radius: 8px;
+      background: white;
+    }
+
+    .button-container {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      background: #1f1f1f;
       color: white;
       border: none;
-      padding: 8px 12px;
-      border-radius: 8px;
+      padding: 10px 15px;
+      border-radius: 5px;
       cursor: pointer;
-      font-weight: bold;
-      transition: 0.2s ease-in-out;
+      font-size: 1rem;
+      transition: background 0.2s ease;
     }
 
-    .top-bar button:hover {
-      background: #0056b3;
+    button:hover {
+      background: #333;
     }
   </style>
 </head>
 <body>
-  <!-- ✅ Top bar with buttons -->
-  <div class="top-bar">
-    <button onclick="window.location.href='https://savnaclive.github.io/savnac/'">⬅ Back</button>
-    <button onclick="toggleFullscreen()">⛶ Fullscreen</button>
+  <iframe id="gameFrame" src="https://ovolve.github.io/2048-AI/" allowfullscreen></iframe>
+
+  <div class="button-container">
+    <button onclick="openFullscreen()">Fullscreen</button>
+    <button onclick="goBack()">Back</button>
   </div>
-
-  <div class="container">
-    <div class="heading">
-      <h1 class="course">This Code Is Being Used For A Class Project</h1>
-      <h2 class="host">Hosted On AWS EC2</h2>
-      <h3 class="thanks">Thank You To The Creators</h3>
-      <h1 class="title">2048</h1>
-      <div class="score-container">0</div>
-    </div>
-    <p class="game-intro">Join the numbers and get to the <strong>2048 tile!</strong></p>
-
-    <div class="controls">
-      <div id="hint-button-container">
-        <button id="hint-button" class="ai-button">Get Hint</button>
-      </div>
-      <div id="feedback-container"> </div>
-      <div id="run-button-container">
-        <button id="run-button" class="ai-button">Auto-run</button>
-      </div>
-    </div>
-
-    <div class="game-container">
-      <div class="game-message">
-        <p></p>
-        <div class="lower">
-          <a class="retry-button">Try Again!</a>
-        </div>
-      </div>
-
-      <div class="grid-container">
-        <div class="grid-row">
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-        </div>
-        <div class="grid-row">
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-        </div>
-        <div class="grid-row">
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-        </div>
-        <div class="grid-row">
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-        </div>
-      </div>
-
-      <div class="tile-container"></div>
-    </div>
-
-    <p class="game-explanation">
-      <strong class="important">How to play:</strong> Use your <strong>arrow keys</strong> to move the tiles. When two tiles with the same number touch, they <strong>merge into one!</strong>
-    </p>
-    <hr>
-    <p>
-      Created by <a href="http://gabrielecirulli.com" target="_blank">Gabriele Cirulli</a>.
-      Based on <a href="https://itunes.apple.com/us/app/1024!/id823499224" target="_blank">1024 by Veewo Studio</a> and conceptually similar to 
-      <a href="http://asherv.com/threes/" target="_blank">Threes by Asher Vollmer.</a>
-    </p>
-    <p>AI solver by <a href="https://github.com/ovolve/2048-AI" target="_blank">Matt Overlan</a></p>
-  </div>
-
-  <script src="js/animframe_polyfill.js"></script>
-  <script src="js/hammer.min.js"></script>
-  <script src="js/keyboard_input_manager.js"></script>
-  <script src="js/html_actuator.js"></script>
-  <script src="js/grid.js"></script>
-  <script src="js/tile.js"></script>
-  <script src="js/ai.js"></script>
-  <script src="js/game_manager.js"></script>
-  <script src="js/application.js"></script>
 
   <script>
-    function toggleFullscreen() {
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen();
-      } else if (document.documentElement.mozRequestFullScreen) {
-        document.documentElement.mozRequestFullScreen();
-      } else if (document.documentElement.webkitRequestFullscreen) {
-        document.documentElement.webkitRequestFullscreen();
-      } else if (document.documentElement.msRequestFullscreen) {
-        document.documentElement.msRequestFullscreen();
+    function openFullscreen() {
+      const iframe = document.getElementById("gameFrame");
+      if (iframe.requestFullscreen) {
+        iframe.requestFullscreen();
+      } else if (iframe.mozRequestFullScreen) {
+        iframe.mozRequestFullScreen();
+      } else if (iframe.webkitRequestFullscreen) {
+        iframe.webkitRequestFullscreen();
+      } else if (iframe.msRequestFullscreen) {
+        iframe.msRequestFullscreen();
       }
+    }
+
+    function goBack() {
+      window.location.href = "https://savnaclive.github.io"; // change to your homepage if needed
     }
   </script>
 </body>
 </html>
+
