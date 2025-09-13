@@ -22,7 +22,6 @@
       width: 90%;
       height: 80%;
       border-radius: 8px;
-      background: white;
     }
 
     .button-container {
@@ -36,10 +35,9 @@
       color: white;
       border: none;
       padding: 10px 15px;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 1rem;
-      transition: background 0.2s ease;
+      transition: background 0.2s;
     }
 
     button:hover {
@@ -48,16 +46,21 @@
   </style>
 </head>
 <body>
-  <iframe id="gameFrame" src="https://ovolve.github.io/2048-AI/" allowfullscreen></iframe>
+  <iframe 
+    id="gameFrame" 
+    src="https://ovolve.github.io/2048-AI/"
+    allow="fullscreen;"
+    allowfullscreen>
+  </iframe>
 
   <div class="button-container">
-    <button onclick="openFullscreen()">Fullscreen</button>
-    <button onclick="goBack()">Back</button>
+    <button onclick="window.location.href='index.html'">⬅ Back</button>
+    <button onclick="toggleFullscreen()">⛶ Fullscreen</button>
   </div>
 
   <script>
-    function openFullscreen() {
-      const iframe = document.getElementById("gameFrame");
+    function toggleFullscreen() {
+      const iframe = document.getElementById('gameFrame');
       if (iframe.requestFullscreen) {
         iframe.requestFullscreen();
       } else if (iframe.mozRequestFullScreen) {
@@ -67,10 +70,6 @@
       } else if (iframe.msRequestFullscreen) {
         iframe.msRequestFullscreen();
       }
-    }
-
-    function goBack() {
-      window.location.href = "https://savnaclive.github.io/index.html"; // change to your homepage if needed
     }
   </script>
 </body>
