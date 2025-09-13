@@ -11,67 +11,53 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
       height: 100vh;
       color: white;
       font-family: Arial, sans-serif;
     }
 
     iframe {
+      flex: 1;
+      width: 100%;
       border: none;
-      width: 90%;
-      height: 80%;
-      border-radius: 8px;
     }
 
     .button-container {
-      margin-top: 10px;
       display: flex;
       gap: 10px;
+      margin: 10px;
     }
 
-    button {
-      background: #1f1f1f;
+    .btn {
+      background: #007bff;
       color: white;
       border: none;
       padding: 10px 15px;
       border-radius: 6px;
       cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    button:hover {
-      background: #333;
+      font-weight: bold;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
-  <iframe 
-    id="gameFrame" 
-    src="https://1v1-lol-online.github.io/file/"
-    allow="fullscreen; pointer-lock"
-    allowfullscreen>
-  </iframe>
-
   <div class="button-container">
-    <button onclick="window.location.href='index.html'">⬅ Back</button>
-    <button onclick="toggleFullscreen()">⛶ Fullscreen</button>
+    <button class="btn" onclick="history.back()">⬅ Back</button>
+    <button class="btn" onclick="openFullscreen()">⛶ Fullscreen</button>
   </div>
 
+  <iframe src="https://1v1-lol-online.github.io/file/" allow="fullscreen; gamepad; pointer-lock"></iframe>
+
   <script>
-    function toggleFullscreen() {
-      const iframe = document.getElementById('gameFrame');
-      if (iframe.requestFullscreen) {
-        iframe.requestFullscreen();
-      } else if (iframe.mozRequestFullScreen) {
-        iframe.mozRequestFullScreen();
-      } else if (iframe.webkitRequestFullscreen) {
-        iframe.webkitRequestFullscreen();
-      } else if (iframe.msRequestFullscreen) {
-        iframe.msRequestFullscreen();
-      }
+    function openFullscreen() {
+      const iframe = document.querySelector("iframe");
+      if (iframe.requestFullscreen) iframe.requestFullscreen();
+      else if (iframe.webkitRequestFullscreen) iframe.webkitRequestFullscreen();
+      else if (iframe.msRequestFullscreen) iframe.msRequestFullscreen();
     }
+  </script>
+
+  <!-- Q keybind -->
   <script src="global.js"></script>
 </body>
 </html>
-
