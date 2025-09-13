@@ -6,94 +6,192 @@
   <title>Savnac</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: white;
       margin: 0;
-      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #f5f5f5;
       text-align: center;
     }
+
     h1 {
-      font-size: 2em;
-      margin-top: 1rem;
+      margin-top: 20px;
+      font-size: 2rem;
     }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 20px;
-      padding: 20px;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-    .game {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .game img {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-    }
-    footer {
-      background: #003366;
-      color: white;
+
+    /* Search Bar */
+    #searchInput {
+      width: 90%;
+      max-width: 500px;
       padding: 10px;
-      margin-top: 40px;
+      font-size: 16px;
+      margin: 15px auto;
+      display: block;
+      background: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #f5f5f5;
     }
-    /* --- COOLER VERSION STYLING --- */
-    .fancy .game img {
-      border-radius: 20px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    /* Game List Container */
+    #gamesContainer {
+      max-height: 220px;
+      overflow-y: auto;
+      border: 1px solid #333;
+      border-radius: 8px;
+      background-color: #1e1e1e;
+      width: 90%;
+      max-width: 500px;
+      margin: 0 auto 25px auto;
+      padding: 10px;
     }
-    .fancy .game img:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+
+    #gamesList {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #gamesList li a {
+      display: block;
+      padding: 8px;
+      text-decoration: none;
+      color: #f5f5f5;
+      text-align: left;
+      border-bottom: 1px solid #333;
+      transition: background 0.2s;
+    }
+
+    #gamesList li a:hover {
+      background-color: #2a2a2a;
+      color: #00bfff;
+    }
+
+    /* Thumbnails Grid */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 20px;
+      max-width: 900px;
+      margin: 0 auto 40px auto;
+      padding: 0 20px;
+    }
+
+    .game-card {
+      background: #1e1e1e;
+      border-radius: 12px;
+      padding: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .game-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.8);
+    }
+
+    .game-card img {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    .game-card p {
+      margin: 8px 0 0;
+      font-size: 0.9rem;
+      color: #ddd;
+    }
+
+    /* Links at bottom */
+    .links {
+      margin: 20px 0;
+    }
+
+    .links a {
+      display: inline-block;
+      margin: 10px;
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    .links a:hover {
+      background: #0056b3;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #0d1a33;
+      padding: 10px;
+      color: #ccc;
+      font-size: 0.85rem;
     }
   </style>
 </head>
 <body>
+
   <h1>Savnac</h1>
 
-  <div id="site" class="grid">
-    <!-- Example games -->
-    <div class="game">
-      <img src="https://upload.wikimedia.org/wikipedia/en/thumb/6/60/Retro_Bowl.png/220px-Retro_Bowl.png" alt="Retro Bowl">
-      <p>Retro Bowl</p>
-    </div>
-    <div class="game">
-      <img src="https://i.imgur.com/ZcZ2wLe.png" alt="Slope">
-      <p>Slope</p>
-    </div>
-    <div class="game">
-      <img src="https://i.imgur.com/3VjP6jC.png" alt="Subway Surfers">
-      <p>Subway Surfers</p>
-    </div>
-    <!-- Add more games here as needed -->
+  <!-- Search Bar + List -->
+  <input type="text" id="searchInput" placeholder="We have 49 Games, search them here.">
+  <div id="gamesContainer">
+    <ul id="gamesList">
+      <!-- Your full list of games goes here -->
+      <li><a href="https://sites.google.com/view/savnac/2048/1v1-lol">1v1.lol</a></li>
+      <li><a href="https://sites.google.com/view/savnac/2048">2048</a></li>
+      <li><a href="https://sites.google.com/view/savnac/2048/age-of-war">Age Of War</a></li>
+      <!-- ... keep adding the rest of your game list ... -->
+    </ul>
   </div>
 
-  <p><a href="https://docs.google.com/forms" target="_blank">Request A Game</a></p>
-  <p><a href="#">Scratch Game Page</a></p>
+  <!-- Game Thumbnails -->
+  <div class="games-grid">
+    <div class="game-card">
+      <a href="https://sites.google.com/view/savnac/2048/retro-bowl-fullscreen">
+        <img src="https://upload.wikimedia.org/wikipedia/en/8/82/Retro_Bowl_logo.png" alt="Retro Bowl">
+        <p>Retro Bowl</p>
+      </a>
+    </div>
+
+    <div class="game-card">
+      <a href="https://sites.google.com/view/savnac/2048/slope-fullscreen">
+        <img src="https://i.imgur.com/Xe3Vm3x.png" alt="Slope">
+        <p>Slope</p>
+      </a>
+    </div>
+
+    <div class="game-card">
+      <a href="https://sites.google.com/view/savnac/2048/subway-surfers-fullscreen">
+        <img src="https://i.imgur.com/Y4CXWgK.png" alt="Subway Surfers">
+        <p>Subway Surfers</p>
+      </a>
+    </div>
+  </div>
+
+  <!-- Links -->
+  <div class="links">
+    <a href="https://forms.gle/YOUR_FORM_LINK" target="_blank">Request A Game</a>
+    <a href="https://scratch.mit.edu/users/YOUR_SCRATCH_PAGE/" target="_blank">Scratch Game Page</a>
+  </div>
 
   <footer>
     savnac© live🌱
   </footer>
 
   <script>
-    // Q keybind
-    document.addEventListener('keydown', function(event) {
-      if (event.key === 'q' || event.key === 'Q') {
-        window.location.href = 'https://canvas.nebo.edu/';
-      }
-    });
+    const input = document.getElementById('searchInput');
+    const items = document.querySelectorAll('#gamesList li');
 
-    // Toggle fancy mode (for cooler look)
-    console.log("Press F to toggle fancy mode");
-    document.addEventListener('keydown', function(event) {
-      if (event.key === 'f' || event.key === 'F') {
-        document.getElementById('site').classList.toggle('fancy');
-      }
+    input.addEventListener('keyup', () => {
+      const filter = input.value.toLowerCase();
+      items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(filter) ? '' : 'none';
+      });
     });
   </script>
+
 </body>
 </html>
+
