@@ -5,8 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Canvas</title>
   <style>
-    body {
+    html, body {
       margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    body {
       background-color: #121212;
       color: white;
       font-family: Arial, sans-serif;
@@ -15,10 +20,23 @@
       align-items: center;
       min-height: 100vh;
       padding: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    #particles-js {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: #121212;
     }
 
     h1 {
       margin-bottom: 10px;
+      z-index: 2;
     }
 
     #searchInput {
@@ -31,6 +49,8 @@
       border-radius: 6px;
       background: #1f1f1f;
       color: white;
+      z-index: 2;
+      position: relative;
     }
 
     #gamesContainer {
@@ -40,7 +60,10 @@
       overflow-y: auto;
       border: 1px solid #333;
       border-radius: 6px;
-      background: #1a1a1a;
+      background: rgba(26, 26, 26, 0.85);
+      backdrop-filter: blur(6px);
+      z-index: 2;
+      position: relative;
     }
 
     #gamesList {
@@ -76,6 +99,9 @@
   </style>
 </head>
 <body>
+  <!-- Particle Background -->
+  <div id="particles-js"></div>
+
   <h1>Savnac</h1>
   <input type="text" id="searchInput" placeholder="Search games...">
   
@@ -87,14 +113,14 @@
       <li><a href="play.html?game=subway-surfers"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/1/1f/Subway_Surfers_logo.png/120px-Subway_Surfers_logo.png">Subway Surfers</a></li>
       <li><a href="play.html?game=retro-bowl"><img src="https://via.placeholder.com/40x40?text=RB">Retro Bowl</a></li>
       <li><a href="play.html?game=monkey-mart"><img src="https://via.placeholder.com/40x40?text=MM">Monkey Mart</a></li>
-      <!-- Add more games here in the same format -->
     </ul>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script>
+    // Search functionality
     const input = document.getElementById('searchInput');
     const items = document.querySelectorAll('#gamesList li');
-
     input.addEventListener('keyup', () => {
       const filter = input.value.toLowerCase();
       items.forEach(item => {
@@ -102,6 +128,44 @@
         item.style.display = text.includes(filter) ? '' : 'none';
       });
     });
+
+    // Particles background
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 80 },
+        color: { value: "#ffffff" },
+        shape: { type: "circle" },
+        opacity: { value: 0.5 },
+        size: { value: 3 },
+        line_linked: {
+          enable: true,
+          distance: 150,
+          color: "#ffffff",
+          opacity: 0.4,
+          width: 1
+        },
+        move: {
+          enable: true,
+          speed: 3,
+          direction: "none",
+          random: false,
+          straight: false,
+          out_mode: "out",
+          bounce: false
+        }
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: {
+          onhover: { enable: true, mode: "repulse" },
+          onclick: { enable: true, mode: "push" },
+          resize: true
+        },
+        modes: {
+          repulse: { distance: 100 },
+          push: { particles_nb: 4 }
+        }
+      },
+      retina_detect: true
+    });
   </script>
-</body>
-</html>
