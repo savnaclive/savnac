@@ -2,23 +2,98 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Keybind Script</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Savnac</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: white;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2em;
+      margin-top: 1rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 20px;
+      padding: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .game {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .game img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+    }
+    footer {
+      background: #003366;
+      color: white;
+      padding: 10px;
+      margin-top: 40px;
+    }
+    /* --- COOLER VERSION STYLING --- */
+    .fancy .game img {
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .fancy .game img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+    }
+  </style>
 </head>
 <body>
-<script>
-// Attach the keydown listener to the top-level page
-window.top.document.addEventListener('keydown', function(event) {
-  const active = window.top.document.activeElement;
-  const isTyping = active &&
-                  (active.tagName === 'INPUT' ||
-                   active.tagName === 'TEXTAREA' ||
-                   active.isContentEditable);
+  <h1>Savnac</h1>
 
-  // If user is not typing, check if they pressed "q"
-  if (!isTyping && (event.key === 'q' || event.key === 'Q')) {
-    window.top.location.href = 'https://canvas.nebo.edu/';
-  }
-});
-</script>
+  <div id="site" class="grid">
+    <!-- Example games -->
+    <div class="game">
+      <img src="https://upload.wikimedia.org/wikipedia/en/thumb/6/60/Retro_Bowl.png/220px-Retro_Bowl.png" alt="Retro Bowl">
+      <p>Retro Bowl</p>
+    </div>
+    <div class="game">
+      <img src="https://i.imgur.com/ZcZ2wLe.png" alt="Slope">
+      <p>Slope</p>
+    </div>
+    <div class="game">
+      <img src="https://i.imgur.com/3VjP6jC.png" alt="Subway Surfers">
+      <p>Subway Surfers</p>
+    </div>
+    <!-- Add more games here as needed -->
+  </div>
+
+  <p><a href="https://docs.google.com/forms" target="_blank">Request A Game</a></p>
+  <p><a href="#">Scratch Game Page</a></p>
+
+  <footer>
+    savnac© live🌱
+  </footer>
+
+  <script>
+    // Q keybind
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'q' || event.key === 'Q') {
+        window.location.href = 'https://canvas.nebo.edu/';
+      }
+    });
+
+    // Toggle fancy mode (for cooler look)
+    console.log("Press F to toggle fancy mode");
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'f' || event.key === 'F') {
+        document.getElementById('site').classList.toggle('fancy');
+      }
+    });
+  </script>
 </body>
 </html>
