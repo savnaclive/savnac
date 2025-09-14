@@ -10,18 +10,28 @@
       padding: 0;
       height: 100%;
     }
-2
+
     body {
       background-color: #121212;
       color: white;
       font-family: Arial, sans-serif;
       display: flex;
-      flex-direction: column;
+      justify-content: center;
       align-items: center;
       min-height: 100vh;
       padding: 20px;
       position: relative;
       z-index: 1;
+    }
+
+    .content-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      width: 100%;
+      max-width: 500px;
+      z-index: 2;
     }
 
     #particles-js {
@@ -36,12 +46,11 @@
 
     h1 {
       margin-bottom: 10px;
-      z-index: 2;
+      color: white;
     }
 
     #searchInput {
       width: 100%;
-      max-width: 500px;
       padding: 10px;
       font-size: 16px;
       margin-bottom: 15px;
@@ -49,21 +58,16 @@
       border-radius: 6px;
       background: #1f1f1f;
       color: white;
-      z-index: 2;
-      position: relative;
     }
 
     #gamesContainer {
       width: 100%;
-      max-width: 500px;
       max-height: 400px;
       overflow-y: auto;
       border: 1px solid #333;
       border-radius: 6px;
       background: rgba(26, 26, 26, 0.85);
       backdrop-filter: blur(6px);
-      z-index: 2;
-      position: relative;
     }
 
     #gamesList {
@@ -96,31 +100,43 @@
       object-fit: cover;
       border-radius: 4px;
     }
+
+    .panic-text {
+      text-align: center;
+      color: white;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
   <!-- Particle Background -->
   <div id="particles-js"></div>
 
-  <h1>Savnac</h1>
-  <input type="text" id="searchInput" placeholder="Search games...">
-  
-  <div id="gamesContainer">
-    <ul id="gamesList">
-      <li><a href="1v1lol.html"><img src="https://img.utdstc.com/icon/983/22a/98322a3b2be892eed31589906ffd949b68bcccc9a21ba562987965b5ec6bc6de:200">1v1.lol</a></li>
-      <li><a href="2048.html"><img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/95/8e/c3/958ec36e-06b1-0897-53b3-c968234bf47f/AppIcon-0-0-1x_U007emarketing-0-6-85-220.png/512x512bb.jpg">2048</a></li>
-      <li><a href="aswc.html"><img src="https://play-lh.googleusercontent.com/R47kNu-wEYMVnoo7rFOXiAHoBvW26KHps65Oi0S6zMF722x0LYqHJUiXRvB_xhsj0CM">A Small World Cup</a></li>
-      <li><a href="amongus.html"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/9/9a/Among_Us_cover_art.jpg/250px-Among_Us_cover_art.jpg">Among Us</a></li>
-      <li><a href="baconmaydie.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlgNyBQroC5JSJh1gOrStxprpzi0u95828vA&s">Bacon May Die</a></li>
-      <li><a href="basketrandom.html"><img src="https://imgs.crazygames.com/basket-random_1x1/20240617090207/basket-random_1x1-cover?format=auto&quality=100&metadata=none&width=1200">Basket Random</a></li>
-      <li><a href="bitlife.html"><img src="https://play-lh.googleusercontent.com/fUM-UyywXxjC8soxAZdIlxJrlRRXmql8wkE426SHzft4lJycSKVd2jCYQQX1BEG9Xw">Bitlife</a></li>
-      <li><a href="amongus.html"><img src="">Slope</a></li>
-      <li><a href="play.html?game=subway-surfers"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/1/1f/Subway_Surfers_logo.png/120px-Subway_Surfers_logo.png">Subway Surfers</a></li>
-      <li><a href="play.html?game=retro-bowl"><img src="https://via.placeholder.com/40x40?text=RB">Retro Bowl</a></li>
-      <li><a href="play.html?game=monkey-mart"><img src="https://via.placeholder.com/40x40?text=MM">Monkey Mart</a></li>
-    </ul>
+  <div class="content-wrapper">
+    <h1>Savnac</h1>
+    <input type="text" id="searchInput" placeholder="Search games...">
+    
+    <div id="gamesContainer">
+      <ul id="gamesList">
+        <li><a href="1v1lol.html"><img src="https://img.utdstc.com/icon/983/22a/98322a3b2be892eed31589906ffd949b68bcccc9a21ba562987965b5ec6bc6de:200">1v1.lol</a></li>
+        <li><a href="2048.html"><img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/95/8e/c3/958ec36e-06b1-0897-53b3-c968234bf47f/AppIcon-0-0-1x_U007emarketing-0-6-85-220.png/512x512bb.jpg">2048</a></li>
+        <li><a href="aswc.html"><img src="https://play-lh.googleusercontent.com/R47kNu-wEYMVnoo7rFOXiAHoBvW26KHps65Oi0S6zMF722x0LYqHJUiXRvB_xhsj0CM">A Small World Cup</a></li>
+        <li><a href="amongus.html"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/9/9a/Among_Us_cover_art.jpg/250px-Among_Us_cover_art.jpg">Among Us</a></li>
+        <li><a href="baconmaydie.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlgNyBQroC5JSJh1gOrStxprpzi0u95828vA&s">Bacon May Die</a></li>
+        <li><a href="basketrandom.html"><img src="https://imgs.crazygames.com/basket-random_1x1/20240617090207/basket-random_1x1-cover?format=auto&quality=100&metadata=none&width=1200">Basket Random</a></li>
+        <li><a href="bitlife.html"><img src="https://play-lh.googleusercontent.com/fUM-UyywXxjC8soxAZdIlxJrlRRXmql8wkE426SHzft4lJycSKVd2jCYQQX1BEG9Xw">Bitlife</a></li>
+        <li><a href="amongus.html"><img src="">Slope</a></li>
+        <li><a href="play.html?game=subway-surfers"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/1/1f/Subway_Surfers_logo.png/120px-Subway_Surfers_logo.png">Subway Surfers</a></li>
+        <li><a href="play.html?game=retro-bowl"><img src="https://via.placeholder.com/40x40?text=RB">Retro Bowl</a></li>
+        <li><a href="play.html?game=monkey-mart"><img src="https://via.placeholder.com/40x40?text=MM">Monkey Mart</a></li>
+      </ul>
+    </div>
+
+    <h2 class="panic-text">
+      teacher panic key is "q" but i still recomend switching tabs
+    </h2>
   </div>
-<h2>teacher panic key is "q" but i still recomend switching tabs</h2>
+
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script>
     // Search functionality
@@ -150,5 +166,3 @@
   <script src="global.js"></script>
 </body>
 </html>
-
-q
