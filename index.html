@@ -1,95 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Canvas</title>
   <style>
+    /* Basic layout + prevent horizontal scrolling */
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
-      overflow-x: hidden; /* Prevent side-to-side scrolling */
+      box-sizing: border-box;
+      overflow-x: hidden;
+      font-family: Arial, sans-serif;
+      -webkit-font-smoothing:antialiased;
     }
 
     body {
-      background-color: #121212;
-      color: white;
-      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #fff;
+      transition: background 0.28s ease, color 0.28s ease;
+      min-height: 100vh;
+      padding-top: 48px; /* room for sticky top bar */
+    }
+
+    /* Sticky top bar (small & subtle) */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 14px;
+      background: rgba(26,26,26,0.78);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      z-index: 9999;
+      gap: 12px;
+    }
+
+    .top-left, .top-center, .top-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: inherit;
+    }
+
+    .top-center {
+      margin: 0 auto;
+      gap: 12px;
+    }
+
+    /* small subtle buttons */
+    .btn {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      color: inherit;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.4); background: rgba(255,255,255,0.06); }
+
+    /* main centered content */
+    .page-wrap {
       display: flex;
       justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-      position: relative;
-      z-index: 1;
-      transition: background 0.3s, color 0.3s;
-    }
-
-    /* Sticky Top Bar */
-    .top-bar {
-      position: sticky;
-      top: 0;
-      width: 100%;
-      background: rgba(26, 26, 26, 0.85);
-      backdrop-filter: blur(6px);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 12px;
-      font-size: 14px;
-      z-index: 10;
-    }
-
-    .top-left {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .random-btn {
-      background: none;
-      border: 1px solid #555;
-      color: inherit;
-      padding: 4px 8px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .random-btn:hover {
-      background: #444;
-      transform: scale(1.05);
-    }
-
-    .top-right {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .dark-light-toggle {
-      cursor: pointer;
-      padding: 2px 8px;
-      border-radius: 6px;
-      border: 1px solid #555;
-      transition: all 0.2s;
-    }
-
-    .dark-light-toggle:hover {
-      background: #333;
+      align-items: flex-start;
+      padding: 18px;
     }
 
     .content-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
       width: 100%;
       max-width: 500px;
+      text-align: center;
       z-index: 2;
     }
 
+    /* Particles container */
     #particles-js {
       position: fixed;
       top: 0;
@@ -98,48 +93,55 @@
       height: 100%;
       z-index: -1;
       background: #121212;
-      transition: background 0.3s;
+      transition: background .3s ease;
     }
 
+    /* Title */
     h1 {
-      margin-bottom: 10px;
-      color: inherit;
       font-size: 34px;
-      font-weight: bold;
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
-      transition: color 0.3s;
+      margin: 6px 0 14px 0;
+      text-shadow: 0 0 10px rgba(255,255,255,0.6);
+      color: inherit;
+    }
+
+    /* Search + random button placement */
+    #randomAbove {
+      margin-bottom: 8px;
     }
 
     #searchInput {
       width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      margin-bottom: 15px;
-      border: 1px solid #333;
-      border-radius: 6px;
-      background: #1f1f1f;
-      color: inherit;
       box-sizing: border-box;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(31,31,31,0.9);
+      color: inherit;
+      font-size: 16px;
+      outline: none;
+      transition: background .2s, color .2s;
     }
 
+    /* games container */
     #gamesContainer {
       width: 100%;
       max-height: 400px;
       overflow-y: auto;
-      border: 1px solid #333;
       border-radius: 6px;
-      background: rgba(26, 26, 26, 0.85);
+      border: 1px solid rgba(255,255,255,0.04);
+      background: rgba(26,26,26,0.85);
       backdrop-filter: blur(6px);
+      margin-top: 10px;
     }
 
     #gamesList {
       list-style: none;
-      padding: 0;
       margin: 0;
+      padding: 0;
     }
 
     #gamesList li {
-      border-bottom: 1px solid #333;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
     }
 
     #gamesList li a {
@@ -147,13 +149,15 @@
       align-items: center;
       gap: 10px;
       padding: 10px;
-      text-decoration: none;
       color: inherit;
-      transition: background 0.2s, color 0.3s;
+      text-decoration: none;
+      transition: transform .12s ease, box-shadow .12s ease;
     }
 
     #gamesList li a:hover {
-      background: #2a2a2a;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+      text-shadow: 0 0 10px currentColor;
     }
 
     #gamesList img {
@@ -164,141 +168,266 @@
     }
 
     .panic-text {
-      text-align: center;
-      margin-top: 20px;
+      margin-top: 18px;
       font-size: 20px;
-      transition: color 0.3s;
+      color: inherit;
+    }
+
+    /* Light mode classes */
+    body.light-mode {
+      background: #ffffff;
+      color: #000000;
+    }
+    body.light-mode #particles-js { background: #ffffff; }
+    body.light-mode #searchInput { background: #f7f7f7; color: #000; border: 1px solid #ddd; }
+    body.light-mode #gamesContainer { background: rgba(250,250,250,0.9); border: 1px solid #e6e6e6; }
+    body.light-mode .top-bar { background: rgba(255,255,255,0.9); color: #000; border-bottom: 1px solid rgba(0,0,0,0.06); }
+
+    /* responsive small tweaks */
+    @media (max-width:600px) {
+      .top-center { display:none; } /* hide center on tiny screens to save space */
+      h1 { font-size: 28px; }
+      .top-bar { padding:6px 8px; height:44px; }
     }
   </style>
 </head>
 <body>
-  <!-- Particle Background -->
+  <!-- Particles -->
   <div id="particles-js"></div>
 
-  <!-- Sticky Top Bar -->
-  <div class="top-bar">
+  <!-- Sticky top bar -->
+  <div class="top-bar" role="banner" aria-label="Site controls">
     <div class="top-left">
-      <span id="welcomeMessage"></span>
-      <button class="random-btn" onclick="goToRandomGame()">Random Game</button>
+      <span id="welcomeMessage" style="font-weight:600;"></span>
+      <button class="btn" id="randomTopBtn">Random Game</button>
     </div>
+
+    <div class="top-center">
+      <span id="visitorDisplay">Visitors: counting...</span>
+      <span id="dateTime" style="margin-left:10px;"></span>
+    </div>
+
     <div class="top-right">
-      <span id="visitorCount">Loading visitors...</span>
-      <span id="dateTime"></span>
-      <span class="dark-light-toggle" onclick="toggleDarkLight()">☀ / 🌙</span>
+      <button class="btn" id="modeToggle">Toggle</button>
     </div>
   </div>
 
-  <!-- Main Content -->
-  <div class="content-wrapper">
-    <h1>Savnac</h1>
-    <input type="text" id="searchInput" placeholder="Search games...">
-    <div id="gamesContainer">
-      <ul id="gamesList">
-        <!-- Your full games list stays here exactly as you pasted it -->
-        <li><a href="1v1lol.html"><img src="https://img.utdstc.com/icon/983/22a/98322a3b2be892eed31589906ffd949b68bcccc9a21ba562987965b5ec6bc6de:200">1v1.lol</a></li>
-        <li><a href="2048.html"><img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/95/8e/c3/958ec36e-06b1-0897-53b3-c968234bf47f/AppIcon-0-0-1x_U007emarketing-0-6-85-220.png/512x512bb.jpg">2048</a></li>
-        <li><a href="aswc.html"><img src="https://play-lh.googleusercontent.com/R47kNu-wEYMVnoo7rFOXiAHoBvW26KHps65Oi0S6zMF722x0LYqHJUiXRvB_xhsj0CM">A Small World Cup</a></li>
-        <li><a href="amongus.html"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/9/9a/Among_Us_cover_art.jpg/250px-Among_Us_cover_art.jpg">Among Us</a></li>
-        <li><a href="baconmaydie.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlgNyBQroC5JSJh1gOrStxprpzi0u95828vA&s">Bacon May Die</a></li>
-        <li><a href="basketrandom.html"><img src="https://imgs.crazygames.com/basket-random_1x1/20240617090207/basket-random_1x1-cover?format=auto&quality=100&metadata=none&width=1200">Basket Random</a></li>
-        <li><a href="bitlife.html"><img src="https://play-lh.googleusercontent.com/fUM-UyywXxjC8soxAZdIlxJrlRRXmql8wkE426SHzft4lJycSKVd2jCYQQX1BEG9Xw">Bitlife</a></li>
-        <li><a href="clickerhero.html"><img src="https://play-lh.googleusercontent.com/XqysWlDWj5nBr0zZMtB08Bt4pe3MsE8XXOAgqZYiD1s65phAUWUcLIBLxdiAkfjfIsM">Clicker Hero</a></li>
-        <li><a href="clusterrush.html"><img src="https://clusterrush.com/images/cluster-rush.jpg">Cluster Rush</a></li>
-        <li><a href="cookieclicker.html"><img src="https://super142.wordpress.com/wp-content/uploads/2022/07/cookie-clicker.jpg?w=640">Cookie Clicker</a></li>
-        <li><a href="crossyroad.html"><img src="https://upload.wikimedia.org/wikipedia/en/7/71/Crossy_Road_icon.jpeg">Crossyroad</a></li>
-        <li><a href="cuttherope.html"><img src="https://imgs.crazygames.com/cut-the-rope-ebx_1x1/20240530085010/cut-the-rope-ebx_1x1-cover?format=auto&quality=100&metadata=none&width=1200">Cut the Rope</a></li>
-        <li><a href="deathrun.html"><img src="https://tofreegames.com/wp-content/uploads/2025/08/Death-Run-3D-for-tofreegames.webp">Death Run</a></li>
-        <li><a href="drivemad.html"><img src="https://play-lh.googleusercontent.com/V_egAxch0phxs10H_Z1QpWRrsH4phd8egT_5ZjYlFbXzXvwpUGpmJMn2h6HgbGkSlZSM">Drive Mad</a></li>
-        <li><a href="ducklife.html"><img src="https://ducklife.online/upload/imgs/duck-life.jpg">Duck Life</a></li>
-        <li><a href="geometrydash.html"><img src="https://imgs.crazygames.com/games/geometry-dash-online/cover_1x1-1732744370684.png?format=auto&quality=70&metadata=none">Geometry Dash</a></li>
-        <li><a href="getawayshootout.html"><img src="https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=314,height=314,fit=cover,f=auto/7e6806e76a4f8ad5b7a8ab8d1d42a74b/getaway-shootout.png">Get Away Shootout</a></li>
-        <li><a href="gunspin.html"><img src="https://static.keygames.com/4/113974/98896/1024x1024/gunspin.webp">Gun Spin</a></li>
-        <li><a href="monkeymart.html"><img src="https://play-lh.googleusercontent.com/rWReIdyvDaYJPeOxn7hbC0b-96ixGpQKM_EndiQa3SUME8TtI_rNUcI4qsw5teK9mqk">Monkey Mart</a></li>
-        <li><a href="retrobowl.html"><img src="https://pbs.twimg.com/profile_images/1217942835527409665/swRMqEkK_400x400.jpg">Retro Bowl</a></li>
-        <li><a href="subwaysurfers.html"><img src="https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=1200,height=1200,fit=cover,f=png/919c9f04db0404cf69fddf9c01e31d91/subway-surfers.png">Subway Surfers</a></li>
-        <li><a href="slope.html"><img src="https://play-lh.googleusercontent.com/uJn2i9h7KxYQarC_c3K4qH6o7gLtflFnhD_dN14MNkzHJ1NeNFzCL69jpB5mT0vCoQs">Slope</a></li>
-      </ul>
-    </div>
+  <!-- Main content centered -->
+  <div class="page-wrap">
+    <div class="content-wrapper" role="main">
+      <h1 id="siteTitle">Savnac</h1>
 
-    <h2 class="panic-text">
-      teacher panic key is "q" but i still recomend switching tabs
-    </h2>
+      <div id="randomAbove" style="display:flex; gap:8px; justify-content:center;">
+        <!-- optional separate random button area above search (kept for layout) -->
+      </div>
+
+      <input id="searchInput" type="text" placeholder="Search games..." aria-label="Search games">
+
+      <div id="gamesContainer" aria-live="polite">
+        <ul id="gamesList">
+          <!-- === FULL ORIGINAL GAME LIST (unchanged) === -->
+          <li><a href="1v1lol.html"><img src="https://img.utdstc.com/icon/983/22a/98322a3b2be892eed31589906ffd949b68bcccc9a21ba562987965b5ec6bc6de:200" alt=""><span>1v1.lol</span></a></li>
+          <li><a href="2048.html"><img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/95/8e/c3/958ec36e-06b1-0897-53b3-c968234bf47f/AppIcon-0-0-1x_U007emarketing-0-6-85-220.png/512x512bb.jpg" alt=""><span>2048</span></a></li>
+          <li><a href="aswc.html"><img src="https://play-lh.googleusercontent.com/R47kNu-wEYMVnoo7rFOXiAHoBvW26KHps65Oi0S6zMF722x0LYqHJUiXRvB_xhsj0CM" alt=""><span>A Small World Cup</span></a></li>
+          <li><a href="amongus.html"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/9/9a/Among_Us_cover_art.jpg/250px-Among_Us_cover_art.jpg" alt=""><span>Among Us</span></a></li>
+          <li><a href="baconmaydie.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlgNyBQroC5JSJh1gOrStxprpzi0u95828vA&s" alt=""><span>Bacon May Die</span></a></li>
+          <li><a href="basketrandom.html"><img src="https://imgs.crazygames.com/basket-random_1x1/20240617090207/basket-random_1x1-cover?format=auto&quality=100&metadata=none&width=1200" alt=""><span>Basket Random</span></a></li>
+          <li><a href="bitlife.html"><img src="https://play-lh.googleusercontent.com/fUM-UyywXxjC8soxAZdIlxJrlRRXmql8wkE426SHzft4lJycSKVd2jCYQQX1BEG9Xw" alt=""><span>Bitlife</span></a></li>
+          <li><a href="clickerhero.html"><img src="https://play-lh.googleusercontent.com/XqysWlDWj5nBr0zZMtB08Bt4pe3MsE8XXOAgqZYiD1s65phAUWUcLIBLxdiAkfjfIsM" alt=""><span>Clicker Hero</span></a></li>
+          <li><a href="clusterrush.html"><img src="https://clusterrush.com/images/cluster-rush.jpg" alt=""><span>Cluster Rush</span></a></li>
+          <li><a href="cookieclicker.html"><img src="https://super142.wordpress.com/wp-content/uploads/2022/07/cookie-clicker.jpg?w=640" alt=""><span>Cookie Clicker</span></a></li>
+          <li><a href="crossyroad.html"><img src="https://upload.wikimedia.org/wikipedia/en/7/71/Crossy_Road_icon.jpeg" alt=""><span>Crossyroad</span></a></li>
+          <li><a href="cuttherope.html"><img src="https://imgs.crazygames.com/cut-the-rope-ebx_1x1/20240530085010/cut-the-rope-ebx_1x1-cover?format=auto&quality=100&metadata=none&width=1200" alt=""><span>Cut the Rope</span></a></li>
+          <li><a href="deathrun.html"><img src="https://tofreegames.com/wp-content/uploads/2025/08/Death-Run-3D-for-tofreegames.webp" alt=""><span>Death Run</span></a></li>
+          <li><a href="drivemad.html"><img src="https://play-lh.googleusercontent.com/V_egAxch0phxs10H_Z1QpWRrsH4phd8egT_5ZjYlFbXzXvwpUGpmJMn2h6HgbGkSlZSM" alt=""><span>Drive Mad</span></a></li>
+          <li><a href="ducklife.html"><img src="https://ducklife.online/upload/imgs/duck-life.jpg" alt=""><span>Duck Life</span></a></li>
+          <li><a href="geometrydash.html"><img src="https://imgs.crazygames.com/games/geometry-dash-online/cover_1x1-1732744370684.png?format=auto&quality=70&metadata=none" alt=""><span>Geometry Dash</span></a></li>
+          <li><a href="getawayshootout.html"><img src="https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=314,height=314,fit=cover,f=auto/7e6806e76a4f8ad5b7a8ab8d1d42a74b/getaway-shootout.png" alt=""><span>Get Away Shootout</span></a></li>
+          <li><a href="gunspin.html"><img src="https://static.keygames.com/4/113974/98896/1024x1024/gunspin.webp" alt=""><span>Gun Spin</span></a></li>
+          <li><a href="monkeymart.html"><img src="https://play-lh.googleusercontent.com/rWReIdyvDaYJPeOxn7hbC0b-96ixGpQKM_EndiQa3SUME8TtI_rNUcI4qsw5teK9mqk" alt=""><span>Monkey Mart</span></a></li>
+          <li><a href="retrobowl.html"><img src="https://pbs.twimg.com/profile_images/1217942835527409665/swRMqEkK_400x400.jpg" alt=""><span>Retro Bowl</span></a></li>
+          <li><a href="subwaysurfers.html"><img src="https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=1200,height=1200,fit=cover,f=png/919c9f04db0404cf69fddf9c01e31d91/subway-surfers.png" alt=""><span>Subway Surfers</span></a></li>
+          <li><a href="slope.html"><img src="https://play-lh.googleusercontent.com/uJn2i9h7KxYQarC_c3K4qH6o7gLtflFnhD_dN14MNkzHJ1NeNFzCL69jpB5mT0vCoQs" alt=""><span>Slope</span></a></li>
+        </ul>
+      </div>
+
+      <h2 class="panic-text">teacher panic key is "q" but i still recomend switching tabs</h2>
+    </div>
   </div>
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <!-- keep your global.js (panic key) - make sure this file exists in the same folder -->
   <script src="global.js"></script>
 
+  <!-- particles.js -->
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
   <script>
-    // Welcome Message (only first visit)
-    if (!localStorage.getItem('visitedBefore')) {
-      document.getElementById("welcomeMessage").textContent = "Welcome to Savnac!";
-      localStorage.setItem('visitedBefore', 'true');
+    /* -------------------------
+       Welcome message (first visit)
+       -------------------------*/
+    if (!localStorage.getItem('savnac_visited')) {
+      document.getElementById('welcomeMessage').textContent = 'Welcome to Savnac!';
+      localStorage.setItem('savnac_visited','1');
+    } else {
+      document.getElementById('welcomeMessage').textContent = '';
     }
 
-    // Live Clock
-    function updateDateTime() {
-      const now = new Date();
-      document.getElementById("dateTime").textContent =
-        now.toLocaleDateString() + " " + now.toLocaleTimeString();
+    /* -------------------------
+       Random game function (same tab)
+       -------------------------*/
+    function goToRandomGame() {
+      const links = document.querySelectorAll('#gamesList li a');
+      if (!links.length) return;
+      const random = links[Math.floor(Math.random()*links.length)];
+      window.location.href = random.href;
     }
-    setInterval(updateDateTime, 1000);
+    document.getElementById('randomTopBtn').addEventListener('click', goToRandomGame);
+
+    /* -------------------------
+       Live date/time (center)
+       -------------------------*/
+    function updateDateTime(){
+      const now = new Date();
+      document.getElementById('dateTime').textContent = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+    }
+    setInterval(updateDateTime,1000);
     updateDateTime();
 
-    // Visitor Counter (Statcounter data is not live in JS — you can replace this later with a real API)
-    document.getElementById("visitorCount").textContent = "Visitors: counting...";
+    /* -------------------------
+       Visitor counter (CountAPI fallback)
+       - tries to hit CountAPI to get a shared number
+       - if CountAPI fails, use a local fallback for testing
+       -------------------------*/
+    const visitorEl = document.getElementById('visitorDisplay');
+    async function loadVisitors(){
+      // Try CountAPI (shared counter). Change namespace/key if you want your own.
+      try {
+        const res = await fetch('https://api.countapi.xyz/hit/savnac-site/visits');
+        if (!res.ok) throw new Error('countapi failed');
+        const data = await res.json();
+        visitorEl.textContent = `Visitors: ${data.value}`;
+      } catch(err) {
+        // fallback local counter (for JSBin/testing)
+        let local = Number(localStorage.getItem('savnac_local_count') || 0);
+        local = local + 1;
+        localStorage.setItem('savnac_local_count', local);
+        visitorEl.textContent = `Visitors: ${local}`;
+      }
+    }
+    // initial load + periodic update
+    loadVisitors();
+    setInterval(loadVisitors, 5000);
 
-    // Search functionality
-    const input = document.getElementById('searchInput');
-    const items = document.querySelectorAll('#gamesList li');
-    input.addEventListener('keyup', () => {
-      const filter = input.value.toLowerCase();
-      items.forEach(item => {
-        const text = item.textContent.toLowerCase();
-        item.style.display = text.includes(filter) ? '' : 'none';
+    /* -------------------------
+       Search filter (no horizontal scroll)
+       -------------------------*/
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', ()=> {
+      const q = searchInput.value.toLowerCase().trim();
+      document.querySelectorAll('#gamesList li').forEach(li=>{
+        const txt = li.textContent.toLowerCase();
+        li.style.display = txt.includes(q) ? '' : 'none';
       });
     });
 
-    // Random Game button
-    function goToRandomGame() {
-      const links = document.querySelectorAll('#gamesList li a');
-      const randomLink = links[Math.floor(Math.random() * links.length)];
-      window.location.href = randomLink.href;
-    }
-
-    // Dark/Light Mode Toggle
-    function toggleDarkLight() {
-      if (document.body.style.backgroundColor === "white") {
-        document.body.style.backgroundColor = "#121212";
-        document.body.style.color = "white";
-        document.getElementById("particles-js").style.background = "#121212";
+    /* -------------------------
+       Dark / Light toggle (persist)
+       -------------------------*/
+    const modeBtn = document.getElementById('modeToggle');
+    function applyMode(isLight){
+      if (isLight) {
+        document.body.classList.add('light-mode');
+        modeBtn.textContent = 'Light';
       } else {
-        document.body.style.backgroundColor = "white";
-        document.body.style.color = "black";
-        document.getElementById("particles-js").style.background = "white";
+        document.body.classList.remove('light-mode');
+        modeBtn.textContent = 'Dark';
       }
+      // update games link colors explicitly (inherit handles most cases, but ensure)
+      document.querySelectorAll('#gamesList li a').forEach(a=>{
+        a.style.color = isLight ? '#000' : '';
+      });
+      // search input color already handled via CSS class
     }
 
-    // Particles Background
-    particlesJS("particles-js", {
-      particles: { number: { value: 80 }, color: { value: "#ffffff" }, shape: { type: "circle" },
-        opacity: { value: 0.5 }, size: { value: 3 },
-        line_linked: { enable: true, distance: 150, color: "#ffffff", opacity: 0.4, width: 1 },
-        move: { enable: true, speed: 3, direction: "none", random: false, straight: false, out_mode: "out", bounce: false }
-      },
-      interactivity: { detect_on: "canvas", events: { onhover: { enable: true, mode: "repulse" }, onclick: { enable: true, mode: "push" }, resize: true },
-        modes: { repulse: { distance: 100 }, push: { particles_nb: 4 } } },
-      retina_detect: true
+    // init from localStorage
+    let isLight = localStorage.getItem('savnac_lightmode') === '1';
+    applyMode(isLight);
+    modeBtn.addEventListener('click', ()=>{
+      isLight = !isLight;
+      localStorage.setItem('savnac_lightmode', isLight ? '1' : '0');
+      applyMode(isLight);
+      loadParticles(isLight); // reload particles with correct color
     });
+
+    /* -------------------------
+       particles.js loader (light/dark color)
+       -------------------------*/
+    function loadParticles(lightMode){
+      // clear existing canvas (if any) by removing the element and recreating it (particles.js may keep a canvas)
+      const old = document.getElementById('particles-js');
+      const parent = old.parentNode;
+      parent.removeChild(old);
+      const newDiv = document.createElement('div');
+      newDiv.id = 'particles-js';
+      parent.insertBefore(newDiv, parent.firstChild);
+
+      particlesJS('particles-js', {
+        particles: {
+          number: { value: 80 },
+          color: { value: lightMode ? '#000000' : '#ffffff' },
+          shape: { type: 'circle' },
+          opacity: { value: 0.45 },
+          size: { value: 3 },
+          line_linked: {
+            enable: true,
+            distance: 160,
+            color: lightMode ? '#000000' : '#ffffff',
+            opacity: 0.35,
+            width: 1
+          },
+          move: { enable: true, speed: 3 }
+        },
+        interactivity: {
+          detect_on: 'canvas',
+          events: {
+            onhover: { enable: true, mode: 'repulse' },
+            onclick: { enable: true, mode: 'push' }
+          },
+          modes: { repulse: { distance: 100 }, push: { particles_nb: 4 } }
+        },
+        retina_detect: true
+      });
+    }
+
+    // initial particle load according to mode
+    loadParticles(isLight);
+
+    /* -------------------------
+       Ensure randomTopBtn also works if user triggers via top-left area
+       -------------------------*/
+    // already added above by event listener
+
+    /* -------------------------
+       Make sure global.js panic key works immediately
+       (global.js should have your Q -> redirect logic as you previously provided)
+       -------------------------*/
+    // No inline panic code here as you requested to keep global.js. If you want inline,
+    // I can add it directly so you don't need global.js.
   </script>
 
-  <!-- Statcounter -->
+  <!-- Statcounter: left in place (unchanged). This just tracks visits server-side. -->
   <script type="text/javascript">
-    var sc_project=13166947; 
-    var sc_invisible=1; 
-    var sc_security="2fa6b83a"; 
+    var sc_project=13166947;
+    var sc_invisible=1;
+    var sc_security="2fa6b83a";
   </script>
   <script type="text/javascript" src="https://www.statcounter.com/counter/counter.js" async></script>
-  <noscript><div class="statcounter"><a title="Web Analytics Made Easy - Statcounter" href="https://statcounter.com/" target="_blank"><img class="statcounter" src="https://c.statcounter.com/13166947/0/2fa6b83a/1/" alt="Web Analytics Made Easy - Statcounter"></a></div></noscript>
+  <noscript>
+    <div class="statcounter">
+      <a title="Web Analytics Made Easy - Statcounter" href="https://statcounter.com/" target="_blank">
+        <img class="statcounter" src="https://c.statcounter.com/13166947/0/2fa6b83a/1/" alt="Statcounter">
+      </a>
+    </div>
+  </noscript>
 </body>
 </html>
