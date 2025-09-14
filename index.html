@@ -192,7 +192,6 @@
   </style>
 </head>
 <body>
-  <!-- Particles -->
   <div id="particles-js"></div>
 
   <!-- Sticky top bar -->
@@ -203,7 +202,7 @@
     </div>
 
     <div class="top-center">
-      <span id="visitorDisplay">Visitors: counting...</span>
+      <span id="visitorDisplay" style="opacity:0;">Visitors: loading...</span>
       <span id="dateTime" style="margin-left:10px;"></span>
     </div>
 
@@ -212,20 +211,18 @@
     </div>
   </div>
 
-  <!-- Main content centered -->
+  <!-- Main content -->
   <div class="page-wrap">
     <div class="content-wrapper" role="main">
       <h1 id="siteTitle">Savnac</h1>
 
-      <div id="randomAbove" style="display:flex; gap:8px; justify-content:center;">
-        <!-- optional separate random button area above search (kept for layout) -->
-      </div>
+      <div id="randomAbove" style="display:flex; gap:8px; justify-content:center;"></div>
 
       <input id="searchInput" type="text" placeholder="Search games..." aria-label="Search games">
 
       <div id="gamesContainer" aria-live="polite">
         <ul id="gamesList">
-          <!-- === FULL ORIGINAL GAME LIST (unchanged) === -->
+          <!-- === Game list stays the same === -->
           <li><a href="1v1lol.html"><img src="https://img.utdstc.com/icon/983/22a/98322a3b2be892eed31589906ffd949b68bcccc9a21ba562987965b5ec6bc6de:200" alt=""><span>1v1.lol</span></a></li>
           <li><a href="2048.html"><img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/95/8e/c3/958ec36e-06b1-0897-53b3-c968234bf47f/AppIcon-0-0-1x_U007emarketing-0-6-85-220.png/512x512bb.jpg" alt=""><span>2048</span></a></li>
           <li><a href="aswc.html"><img src="https://play-lh.googleusercontent.com/R47kNu-wEYMVnoo7rFOXiAHoBvW26KHps65Oi0S6zMF722x0LYqHJUiXRvB_xhsj0CM" alt=""><span>A Small World Cup</span></a></li>
@@ -255,26 +252,13 @@
     </div>
   </div>
 
-  <!-- keep your global.js (panic key) - make sure this file exists in the same folder -->
-  <script src="global.js"></script>
-
-  <!-- particles.js -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-
   <script>
-    /* -------------------------
-       Welcome message (first visit)
-       -------------------------*/
     if (!localStorage.getItem('savnac_visited')) {
       document.getElementById('welcomeMessage').textContent = 'Welcome to Savnac!';
       localStorage.setItem('savnac_visited','1');
-    } else {
-      document.getElementById('welcomeMessage').textContent = '';
     }
 
-    /* -------------------------
-       Random game function (same tab)
-       -------------------------*/
     function goToRandomGame() {
       const links = document.querySelectorAll('#gamesList li a');
       if (!links.length) return;
@@ -283,9 +267,6 @@
     }
     document.getElementById('randomTopBtn').addEventListener('click', goToRandomGame);
 
-    /* -------------------------
-       Live date/time (center)
-       -------------------------*/
     function updateDateTime(){
       const now = new Date();
       document.getElementById('dateTime').textContent = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
@@ -293,34 +274,32 @@
     setInterval(updateDateTime,1000);
     updateDateTime();
 
-    /* -------------------------
-       Visitor counter (CountAPI fallback)
-       - tries to hit CountAPI to get a shared number
-       - if CountAPI fails, use a local fallback for testing
-       -------------------------*/
     const visitorEl = document.getElementById('visitorDisplay');
     async function loadVisitors(){
-      // Try CountAPI (shared counter). Change namespace/key if you want your own.
       try {
         const res = await fetch('https://api.countapi.xyz/hit/savnac-site/visits');
         if (!res.ok) throw new Error('countapi failed');
         const data = await res.json();
+        visitorEl.style.opacity = 0;
         visitorEl.textContent = `Visitors: ${data.value}`;
+        requestAnimationFrame(() => {
+          visitorEl.style.transition = "opacity 0.6s ease";
+          visitorEl.style.opacity = 1;
+        });
       } catch(err) {
-        // fallback local counter (for JSBin/testing)
         let local = Number(localStorage.getItem('savnac_local_count') || 0);
-        local = local + 1;
+        local++;
         localStorage.setItem('savnac_local_count', local);
+        visitorEl.style.opacity = 0;
         visitorEl.textContent = `Visitors: ${local}`;
+        requestAnimationFrame(() => {
+          visitorEl.style.transition = "opacity 0.6s ease";
+          visitorEl.style.opacity = 1;
+        });
       }
     }
-    // initial load + periodic update
     loadVisitors();
-    setInterval(loadVisitors, 5000);
 
-    /* -------------------------
-       Search filter (no horizontal scroll)
-       -------------------------*/
     const searchInput = document.getElementById('searchInput');
     searchInput.addEventListener('input', ()=> {
       const q = searchInput.value.toLowerCase().trim();
@@ -330,9 +309,6 @@
       });
     });
 
-    /* -------------------------
-       Dark / Light toggle (persist)
-       -------------------------*/
     const modeBtn = document.getElementById('modeToggle');
     function applyMode(isLight){
       if (isLight) {
@@ -342,92 +318,37 @@
         document.body.classList.remove('light-mode');
         modeBtn.textContent = 'Dark';
       }
-      // update games link colors explicitly (inherit handles most cases, but ensure)
       document.querySelectorAll('#gamesList li a').forEach(a=>{
         a.style.color = isLight ? '#000' : '';
       });
-      // search input color already handled via CSS class
     }
-
-    // init from localStorage
     let isLight = localStorage.getItem('savnac_lightmode') === '1';
     applyMode(isLight);
     modeBtn.addEventListener('click', ()=>{
       isLight = !isLight;
       localStorage.setItem('savnac_lightmode', isLight ? '1' : '0');
       applyMode(isLight);
-      loadParticles(isLight); // reload particles with correct color
     });
 
-    /* -------------------------
-       particles.js loader (light/dark color)
-       -------------------------*/
-    function loadParticles(lightMode){
-      // clear existing canvas (if any) by removing the element and recreating it (particles.js may keep a canvas)
-      const old = document.getElementById('particles-js');
-      const parent = old.parentNode;
-      parent.removeChild(old);
-      const newDiv = document.createElement('div');
-      newDiv.id = 'particles-js';
-      parent.insertBefore(newDiv, parent.firstChild);
+    particlesJS("particles-js", {
+      "particles": {
+        "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
+        "color": { "value": "#ffffff" },
+        "shape": { "type": "circle" },
+        "opacity": { "value": 0.5, "random": true },
+        "size": { "value": 3, "random": true },
+        "move": { "enable": true, "speed": 1 }
+      },
+      "interactivity": {
+        "events": {
+          "onhover": { "enable": true, "mode": "repulse" }
+        }
+      }
+    });
 
-      particlesJS('particles-js', {
-        particles: {
-          number: { value: 80 },
-          color: { value: lightMode ? '#000000' : '#ffffff' },
-          shape: { type: 'circle' },
-          opacity: { value: 0.45 },
-          size: { value: 3 },
-          line_linked: {
-            enable: true,
-            distance: 160,
-            color: lightMode ? '#000000' : '#ffffff',
-            opacity: 0.35,
-            width: 1
-          },
-          move: { enable: true, speed: 3 }
-        },
-        interactivity: {
-          detect_on: 'canvas',
-          events: {
-            onhover: { enable: true, mode: 'repulse' },
-            onclick: { enable: true, mode: 'push' }
-          },
-          modes: { repulse: { distance: 100 }, push: { particles_nb: 4 } }
-        },
-        retina_detect: true
-      });
-    }
-
-    // initial particle load according to mode
-    loadParticles(isLight);
-
-    /* -------------------------
-       Ensure randomTopBtn also works if user triggers via top-left area
-       -------------------------*/
-    // already added above by event listener
-
-    /* -------------------------
-       Make sure global.js panic key works immediately
-       (global.js should have your Q -> redirect logic as you previously provided)
-       -------------------------*/
-    // No inline panic code here as you requested to keep global.js. If you want inline,
-    // I can add it directly so you don't need global.js.
+    document.addEventListener('keydown', e=>{
+      if (e.key === 'q') window.location.href='https://classroom.google.com';
+    });
   </script>
-
-  <!-- Statcounter: left in place (unchanged). This just tracks visits server-side. -->
-  <script type="text/javascript">
-    var sc_project=13166947;
-    var sc_invisible=1;
-    var sc_security="2fa6b83a";
-  </script>
-  <script type="text/javascript" src="https://www.statcounter.com/counter/counter.js" async></script>
-  <noscript>
-    <div class="statcounter">
-      <a title="Web Analytics Made Easy - Statcounter" href="https://statcounter.com/" target="_blank">
-        <img class="statcounter" src="https://c.statcounter.com/13166947/0/2fa6b83a/1/" alt="Statcounter">
-      </a>
-    </div>
-  </noscript>
 </body>
 </html>
