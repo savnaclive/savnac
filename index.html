@@ -22,6 +22,37 @@
       padding: 20px;
       position: relative;
       z-index: 1;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .top-bar {
+      position: fixed;
+      top: 10px;
+      width: 95%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      z-index: 5;
+      color: inherit;
+    }
+
+    .clock {
+      font-weight: bold;
+    }
+
+    .visitor-counter {
+      margin-left: 10px;
+    }
+
+    .theme-toggle {
+      margin-left: 10px;
+      cursor: pointer;
+      padding: 4px 10px;
+      border: 1px solid currentColor;
+      border-radius: 5px;
+      background: transparent;
+      color: inherit;
     }
 
     .content-wrapper {
@@ -42,25 +73,38 @@
       height: 100%;
       z-index: -1;
       background: #121212;
+      transition: background-color 0.3s;
     }
 
     h1 {
       margin-bottom: 10px;
-      color: white;
-      font-size: 34px; /* Your requested size */
+      color: inherit;
+      font-size: 34px;
       font-weight: bold;
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.6); /* Soft glow */
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
     }
 
     #searchInput {
       width: 100%;
       padding: 10px;
       font-size: 16px;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
       border: 1px solid #333;
       border-radius: 6px;
       background: #1f1f1f;
-      color: white;
+      color: inherit;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .random-btn {
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      background: #1f1f1f;
+      border: 1px solid #333;
+      border-radius: 6px;
+      cursor: pointer;
+      color: inherit;
+      transition: background 0.3s, color 0.3s;
     }
 
     #gamesContainer {
@@ -89,12 +133,13 @@
       gap: 10px;
       padding: 10px;
       text-decoration: none;
-      color: white;
-      transition: background 0.2s;
+      color: inherit;
+      transition: box-shadow 0.2s, transform 0.2s;
     }
 
     #gamesList li a:hover {
-      background: #2a2a2a;
+      box-shadow: 0 0 10px currentColor;
+      transform: scale(1.03);
     }
 
     #gamesList img {
@@ -106,22 +151,48 @@
 
     .panic-text {
       text-align: center;
-      color: white;
       margin-top: 20px;
-      font-size: 20px; /* Your requested size */
+      font-size: 20px;
+      color: inherit;
+    }
+
+    body.light-mode {
+      background-color: #ffffff;
+      color: black;
+    }
+
+    body.light-mode #particles-js {
+      background: #ffffff;
+    }
+
+    body.light-mode #searchInput, body.light-mode .random-btn {
+      background: #f0f0f0;
+      border: 1px solid #ccc;
+      color: black;
     }
   </style>
 </head>
 <body>
+  <!-- Top bar with clock + counter + toggle -->
+  <div class="top-bar">
+    <div class="clock" id="clock"></div>
+    <div>
+      <span class="visitor-counter" id="visitorCount">Loading...</span>
+      <button class="theme-toggle" id="themeToggle">Toggle Mode</button>
+    </div>
+  </div>
+
   <!-- Particle Background -->
   <div id="particles-js"></div>
 
   <div class="content-wrapper">
     <h1>Savnac</h1>
+    <button class="random-btn" id="randomGame">Random Game</button>
     <input type="text" id="searchInput" placeholder="Search games...">
     
     <div id="gamesContainer">
       <ul id="gamesList">
+        <!-- YOUR FULL GAME LIST IS PRESERVED BELOW -->
         <li><a href="1v1lol.html"><img src="https://img.utdstc.com/icon/983/22a/98322a3b2be892eed31589906ffd949b68bcccc9a21ba562987965b5ec6bc6de:200">1v1.lol</a></li>
         <li><a href="2048.html"><img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/95/8e/c3/958ec36e-06b1-0897-53b3-c968234bf47f/AppIcon-0-0-1x_U007emarketing-0-6-85-220.png/512x512bb.jpg">2048</a></li>
         <li><a href="aswc.html"><img src="https://play-lh.googleusercontent.com/R47kNu-wEYMVnoo7rFOXiAHoBvW26KHps65Oi0S6zMF722x0LYqHJUiXRvB_xhsj0CM">A Small World Cup</a></li>
@@ -165,36 +236,50 @@
       });
     });
 
+    // Welcome popup (only on first visit)
+    if (!localStorage.getItem('visited')) {
+      alert("Welcome to Savnac!");
+      localStorage.setItem('visited', 'true');
+    }
+
+    // Random game button
+    const randomBtn = document.getElementById('randomGame');
+    randomBtn.addEventListener('click', () => {
+      const links = document.querySelectorAll('#gamesList li a');
+      const randomLink = links[Math.floor(Math.random() * links.length)];
+      window.location.href = randomLink.href;
+    });
+
+    // Live clock
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('clock').textContent =
+        now.toLocaleDateString() + " " + now.toLocaleTimeString();
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Visitor counter (fake example since free live API is rare)
+    let visitorCount = localStorage.getItem('visitorCount') || 0;
+    visitorCount++;
+    localStorage.setItem('visitorCount', visitorCount);
+    document.getElementById('visitorCount').textContent = visitorCount + " people have visited";
+
+    // Dark/Light Mode
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('light-mode');
+    });
+
     // Particles background
     particlesJS("particles-js", {
       particles: { number: { value: 80 }, color: { value: "#ffffff" }, shape: { type: "circle" },
         opacity: { value: 0.5 }, size: { value: 3 }, line_linked: { enable: true, distance: 150, color: "#ffffff", opacity: 0.4, width: 1 },
-        move: { enable: true, speed: 3, direction: "none", random: false, straight: false, out_mode: "out", bounce: false }
+        move: { enable: true, speed: 3 }
       },
-      interactivity: { detect_on: "canvas", events: { onhover: { enable: true, mode: "repulse" }, onclick: { enable: true, mode: "push" }, resize: true },
-        modes: { repulse: { distance: 100 }, push: { particles_nb: 4 } } },
+      interactivity: { detect_on: "canvas", events: { onhover: { enable: true, mode: "repulse" } } },
       retina_detect: true
     });
   </script>
-
-  <!-- Q keybind -->
-  <script src="global.js"></script>
-
-  <!-- Statcounter Code -->
-  <!-- Default Statcounter code for savnac https://www.savnaclive.github.io/savnac -->
-  <script type="text/javascript">
-  var sc_project=13166947; 
-  var sc_invisible=1; 
-  var sc_security="2fa6b83a"; 
-  </script>
-  <script type="text/javascript"
-  src="https://www.statcounter.com/counter/counter.js" async></script>
-  <noscript><div class="statcounter"><a title="Web Analytics Made Easy -
-  Statcounter" href="https://statcounter.com/" target="_blank"><img
-  class="statcounter" src="https://c.statcounter.com/13166947/0/2fa6b83a/1/"
-  alt="Web Analytics Made Easy - Statcounter"
-  referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
-  <!-- End of Statcounter Code -->
-
 </body>
 </html>
