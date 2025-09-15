@@ -20,7 +20,7 @@
     h1{font-size:34px;margin:6px 0 14px 0;text-shadow:0 0 10px rgba(255,255,255,0.6);color:inherit;}
     #randomAbove{margin-bottom:8px;}
     #searchInput{width:100%;box-sizing:border-box;padding:10px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:rgba(31,31,31,0.9);color:inherit;font-size:16px;outline:none;transition:background .2s,color .2s;}
-    #gamesContainer{width:100%;max-height:400px;overflow-y:auto;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:rgba(26,26,26,0.85);backdrop-filter:blur(6px);margin-top:10px;}
+    #gamesContainer{width:100%;max-height:400px;overflow-y:auto;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:rgba(26,26,26,0.85);backdrop-filter:blur(6px);margin-top:10px;position:relative;}
     #filterActions{padding:6px;display:none;}
     #gamesList{list-style:none;margin:0;padding:0;}
     #gamesList li{border-bottom:1px solid rgba(255,255,255,0.03);display:flex;justify-content:space-between;align-items:center;}
@@ -31,51 +31,53 @@
     .star.favorited{color:gold;}
     body.light-mode .star{color:#888;}
     .panic-text{margin-top:18px;font-size:20px;color:inherit;}
-    /* visitor highlight */
-    .visitor-highlight{transition:opacity .6s, text-shadow .45s; text-shadow:0 0 0 rgba(0,0,0,0);}
+    .visitor-highlight{transition:opacity .6s, text-shadow .45s;}
     .visitor-animate{ text-shadow:0 0 16px rgba(0,255,200,0.25); }
     body.light-mode{background:#fff;color:#000;}
     body.light-mode #particles-js{background:#fff;}
     body.light-mode #searchInput{background:#f7f7f7;color:#000;border:1px solid #ddd;}
     body.light-mode #gamesContainer{background:rgba(250,250,250,0.9);border:1px solid #e6e6e6;}
     body.light-mode .top-bar{background:rgba(255,255,255,0.9);color:#000;border-bottom:1px solid rgba(0,0,0,0.06);}
+    .settings-modal {position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.95);background:rgba(26,26,26,0.95);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:20px;z-index:10000;display:none;flex-direction:column;gap:12px;min-width:260px;backdrop-filter:blur(6px);transition:transform .2s ease,opacity .2s ease;}
+    .settings-modal.show {display:flex;opacity:1;transform:translate(-50%,-50%) scale(1);}
+    .settings-input {padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:inherit;}
+    .checkmark {display:none;color:limegreen;font-weight:bold;}
+    .checkmark.show {display:inline;}
     @media (max-width:600px){.top-center{display:none;}h1{font-size:28px}.top-bar{padding:6px 8px;height:44px}}
   </style>
 </head>
 <body>
   <div id="particles-js"></div>
 
-  <div class="top-bar" role="banner" aria-label="Site controls">
+  <div class="top-bar">
     <div class="top-left">
       <span id="welcomeMessage" style="font-weight:600;"></span>
       <button class="btn" id="randomTopBtn">Random Game</button>
+      <button class="btn" id="settingsBtn">⚙</button>
     </div>
-
     <div class="top-center">
       <span id="visitorDisplay" class="visitor-highlight" style="opacity:0;">Visitors: loading...</span>
       <span id="dateTime" style="margin-left:10px;"></span>
     </div>
-
     <div class="top-right">
       <button class="btn" id="favBtn">Favorites</button>
       <button class="btn" id="recentsBtn">Recents</button>
-      <button class="btn" id="modeToggle">Toggle</button>
+      <button class="btn" id="modeToggle">Light/Dark</button>
     </div>
   </div>
 
   <div class="page-wrap">
-    <div class="content-wrapper" role="main">
+    <div class="content-wrapper">
       <h1 id="siteTitle">Savnac</h1>
 
-      <div id="randomAbove" style="display:flex; gap:8px; justify-content:center;"></div>
+      <div id="randomAbove"></div>
 
-      <input id="searchInput" type="text" placeholder="Search games..." aria-label="Search games">
+      <input id="searchInput" type="text" placeholder="Search games...">
 
-      <div id="gamesContainer" aria-live="polite">
+      <div id="gamesContainer">
         <div id="filterActions"></div>
         <ul id="gamesList">
-          <!-- FULL game list (each li kept exactly as before) -->
-          <li><a href="1v1lol.html"><img src="https://img.utdstc.com/icon/983/22a/98322a3b2be892eed31589906ffd949b68bcccc9a21ba562987965b5ec6bc6de:200" alt=""><span>1v1.lol</span></a><span class="star" aria-label="favorite">★</span></li>
+                   <li><a href="1v1lol.html"><img src="https://img.utdstc.com/icon/983/22a/98322a3b2be892eed31589906ffd949b68bcccc9a21ba562987965b5ec6bc6de:200" alt=""><span>1v1.lol</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="2048.html"><img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/95/8e/c3/958ec36e-06b1-0897-53b3-c968234bf47f/AppIcon-0-0-1x_U007emarketing-0-6-85-220.png/512x512bb.jpg" alt=""><span>2048</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="aswc.html"><img src="https://play-lh.googleusercontent.com/R47kNu-wEYMVnoo7rFOXiAHoBvW26KHps65Oi0S6zMF722x0LYqHJUiXRvB_xhsj0CM" alt=""><span>A Small World Cup</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="amongus.html"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/9/9a/Among_Us_cover_art.jpg/250px-Among_Us_cover_art.jpg" alt=""><span>Among Us</span></a><span class="star" aria-label="favorite">★</span></li>
@@ -101,233 +103,165 @@
           <li><a href="js.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRXd_syOZzkOzOzQafFGjlmWIECngoa1ENB9_abpCoPbgVxVM2bo0NSyWmLVkCjtCwXEE&usqp=CAU" alt=""><span>JavaScript Roulette</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="la.html"><img src="https://play-lh.googleusercontent.com/3Pr4gCB3uzsYyoFZZiDOuvq_7SeQPjUQnHiUrwug154RnTGJ_YAX5zvZfCH-4r2JKBOX" alt=""><span>Little Alchemy 2</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="motox3m.html"><img src="https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=314,height=314,fit=cover,f=auto/2c6d5a46cdbceada277c870ce1c389ee/moto-x3m.jpg" alt=""><span>MotoX3M</span></a><span class="star" aria-label="favorite">★</span></li>
-          <li><a href="monkeymart.html"><img src="https://play-lh.googleusercontent.com/rWReIdyvDaYJPeOxn7hbC0b-96ixGpQKM_EndiQa3SUME8TtI_rNUcI4qsw5teK9mqk" alt=""><span>Monkey Mart</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="ovo.html"><img src="https://play-lh.googleusercontent.com/v7KwGdPjJGjJjRXn46sck4DwDBdKSeRzGN44CjiXUtKV0jjOi51Bt4wcXud0m-SkXg" alt=""><span>OvO</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="pacman.html"><img src="https://rasterweb.net/raster/wp-content/uploads/2024/03/ghosts-02.jpg" alt=""><span>Pacman</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="paper.io2.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4qJVLuHb4EH8h7QU5C4k_Jb44aHgcxgTNKg&s" alt=""><span>Paper.io 2</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="ragdollarchers.html"><img src="https://imgs.crazygames.com/ragdoll-archers_1x1/20250711092020/ragdoll-archers_1x1-cover?format=auto&quality=100&metadata=none&width=1200" alt=""><span>Ragdoll Archers</span></a><span class="star" aria-label="favorite">★</span></li>
-          <li><a href="ragdollhit.html"><img src="https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=314,height=314,fit=cover,f=auto/3c892779be9dabb3589586c83ad3eeed/ragdoll-hit.png" alt=""><span>Ragdoll Hit</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="ragdollhit.html"><img src="https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=314,height=314,fit=cover,f=auto/3c892779be9dabb3589586c83ad3eeed/ragdoll-hit.png" alt=""><span>Ragdoll Hit</span></a><span class="star" aria-label="favorite">★</span></li> 
+          <!-- add more games here -->
         </ul>
       </div>
 
-      <h2 class="panic-text">teacher panic key is "q" but i still recomend switching tabs</h2>
+      <h2 class="panic-text">teacher panic key is "q" but i still recomend switching tabs
+      
+      (do ctrl+d to bookmark)</h2>
     </div>
   </div>
 
-  <!-- particles.js -->
+  <div class="settings-modal" id="settingsModal">
+    <label>Site Title:</label>
+    <input type="text" id="titleInput" class="settings-input">
+    <button class="btn" id="saveTitleBtn">Save</button>
+    <span id="saveCheck" class="checkmark">✔</span>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-
   <script>
-    // Welcome
-    if (!localStorage.getItem('savnac_visited')) {
-      document.getElementById('welcomeMessage').textContent = 'Welcome to Savnac!';
-      localStorage.setItem('savnac_visited','1');
-    } else {
-      document.getElementById('welcomeMessage').textContent = '';
-    }
+    const gamesList = document.querySelectorAll("#gamesList li");
+    const stars = document.querySelectorAll(".star");
+    const favBtn = document.getElementById("favBtn");
+    const recentsBtn = document.getElementById("recentsBtn");
+    const searchInput = document.getElementById("searchInput");
+    const filterActions = document.getElementById("filterActions");
 
-    // Mode (persist)
-    const modeKey = 'savnac_lightmode';
-    let isLight = localStorage.getItem(modeKey) === '1';
-    const modeToggle = document.getElementById('modeToggle');
-    function applyMode(light){
-      if (light) document.body.classList.add('light-mode'); else document.body.classList.remove('light-mode');
-      // ensure link colors
-      document.querySelectorAll('#gamesList li a').forEach(a=>a.style.color = light ? '#000' : '');
-    }
-    applyMode(isLight);
-    modeToggle.textContent = isLight ? 'Light' : 'Dark';
-    modeToggle.addEventListener('click', ()=>{
-      isLight = !isLight;
-      localStorage.setItem(modeKey, isLight ? '1' : '0');
-      applyMode(isLight);
-      modeToggle.textContent = isLight ? 'Light' : 'Dark';
-    });
+    let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+    let recents = JSON.parse(localStorage.getItem("recents") || "[]");
+    let currentFilter = null;
 
-    // Random game
-    function openRandomGame(){
-      const visible = Array.from(document.querySelectorAll('#gamesList li')).filter(li => li.style.display !== 'none');
-      if (!visible.length) return;
-      const choice = visible[Math.floor(Math.random()*visible.length)].querySelector('a');
-      window.location.href = choice.href;
-    }
-    document.getElementById('randomTopBtn').addEventListener('click', openRandomGame);
-
-    // Date/time
-    function updateDateTime(){ document.getElementById('dateTime').textContent = new Date().toLocaleString(); }
-    setInterval(updateDateTime, 1000);
-    updateDateTime();
-
-    // Favorites & Recents setup
-    const favKey = 'savnac_favorites';
-    const recKey = 'savnac_recents';
-    let favorites = JSON.parse(localStorage.getItem(favKey) || '[]');
-    let recents = JSON.parse(localStorage.getItem(recKey) || '[]');
-
-    const stars = document.querySelectorAll('#gamesList .star');
-    function getNameForStar(star){
-      const li = star.closest('li');
-      const nameSpan = li.querySelector('a span');
-      return nameSpan ? nameSpan.textContent.trim() : '';
-    }
-    function updateStars(){
-      stars.forEach(star => {
-        const name = getNameForStar(star);
-        star.classList.toggle('favorited', favorites.includes(name));
+    function updateFavorites() {
+      stars.forEach((star, i) => {
+        star.classList.toggle("favorited", favorites.includes(i));
+        star.onclick = () => {
+          if (favorites.includes(i)) favorites = favorites.filter(f => f !== i);
+          else favorites.push(i);
+          localStorage.setItem("favorites", JSON.stringify(favorites));
+          updateFavorites();
+        };
       });
     }
+    updateFavorites();
 
-    // attach star click & anchor click
-    document.querySelectorAll('#gamesList li').forEach(li=>{
-      const star = li.querySelector('.star');
-      const anchor = li.querySelector('a');
-      const name = anchor.querySelector('span').textContent.trim();
-
-      // star toggles favorite
-      star.addEventListener('click', (e)=>{
-        e.stopPropagation();
-        const idx = favorites.indexOf(name);
-        if (idx === -1) favorites.push(name);
-        else favorites.splice(idx, 1);
-        localStorage.setItem(favKey, JSON.stringify(favorites));
-        updateStars();
-        // if filter is active, re-apply to update visibility
-        applyCurrentFilter();
+    function filterGames(mode) {
+      if (currentFilter === mode) {
+        currentFilter = null;
+        gamesList.forEach(li => li.style.display = "");
+        filterActions.style.display = "none";
+        favBtn.classList.remove("active");
+        recentsBtn.classList.remove("active");
+        return;
+      }
+      currentFilter = mode;
+      gamesList.forEach((li, i) => {
+        li.style.display = (mode === "favorites" && !favorites.includes(i)) ? "none" :
+                           (mode === "recents" && !recents.includes(i)) ? "none" : "";
       });
-
-      // clicking game adds to recents (before navigation)
-      anchor.addEventListener('click', ()=>{
-        const idx = recents.indexOf(name);
-        if (idx !== -1) recents.splice(idx,1);
-        recents.unshift(name);
-        if (recents.length > 5) recents.pop();
-        localStorage.setItem(recKey, JSON.stringify(recents));
-      });
-    });
-    updateStars();
-
-    // filter handling
-    let filterMode = 'all'; // 'all' | 'favorites' | 'recents'
-    const favBtn = document.getElementById('favBtn');
-    const recentsBtn = document.getElementById('recentsBtn');
-    const filterActions = document.getElementById('filterActions');
-    function renderClearButton(text, onClear){
-      filterActions.innerHTML = '';
-      const btn = document.createElement('button');
-      btn.className = 'btn clear-btn';
-      btn.textContent = text;
-      btn.addEventListener('click', onClear);
-      filterActions.appendChild(btn);
-      filterActions.style.display = 'block';
-    }
-    function hideFilterActions(){ filterActions.style.display = 'none'; filterActions.innerHTML = ''; }
-    function applyCurrentFilter(){
-      const q = document.getElementById('searchInput').value.toLowerCase().trim();
-      document.querySelectorAll('#gamesList li').forEach(li=>{
-        const name = li.querySelector('a span').textContent.trim();
-        const matchesSearch = name.toLowerCase().includes(q);
-        let matchesFilter = true;
-        if (filterMode === 'favorites') matchesFilter = favorites.includes(name);
-        if (filterMode === 'recents') matchesFilter = recents.includes(name);
-        li.style.display = (matchesSearch && matchesFilter) ? '' : 'none';
-      });
-      favBtn.classList.toggle('active', filterMode === 'favorites');
-      recentsBtn.classList.toggle('active', filterMode === 'recents');
-      if (filterMode === 'favorites') renderClearButton('Clear Favorites', ()=>{ favorites = []; localStorage.setItem(favKey, JSON.stringify(favorites)); updateStars(); filterMode='all'; applyCurrentFilter(); });
-      else if (filterMode === 'recents') renderClearButton('Clear Recents', ()=>{ recents = []; localStorage.setItem(recKey, JSON.stringify(recents)); filterMode='all'; applyCurrentFilter(); });
-      else hideFilterActions();
+      filterActions.style.display = "block";
+      filterActions.innerHTML = `<button class="btn" onclick="clear${mode.charAt(0).toUpperCase()+mode.slice(1)}()">Clear ${mode}</button>`;
+      favBtn.classList.toggle("active", mode === "favorites");
+      recentsBtn.classList.toggle("active", mode === "recents");
     }
 
-    favBtn.addEventListener('click', ()=>{
-      filterMode = (filterMode === 'favorites') ? 'all' : 'favorites';
-      applyCurrentFilter();
-    });
-    recentsBtn.addEventListener('click', ()=>{
-      filterMode = (filterMode === 'recents') ? 'all' : 'recents';
-      applyCurrentFilter();
+    function clearFavorites() {
+      favorites = [];
+      localStorage.setItem("favorites", "[]");
+      updateFavorites();
+      filterGames("favorites");
+    }
+    function clearRecents() {
+      recents = [];
+      localStorage.setItem("recents", "[]");
+      filterGames("recents");
+    }
+
+    favBtn.onclick = () => filterGames("favorites");
+    recentsBtn.onclick = () => filterGames("recents");
+
+    gamesList.forEach((li, i) => {
+      li.querySelector("a").addEventListener("click", () => {
+        if (!recents.includes(i)) {
+          recents.unshift(i);
+          if (recents.length > 5) recents.pop();
+          localStorage.setItem("recents", JSON.stringify(recents));
+        }
+      });
     });
 
-    // search respects filter
-    document.getElementById('searchInput').addEventListener('input', applyCurrentFilter);
+    searchInput.addEventListener("input", () => {
+      const query = searchInput.value.toLowerCase();
+      gamesList.forEach(li => {
+        li.style.display = li.textContent.toLowerCase().includes(query) ? "" : "none";
+      });
+    });
+
+    // Clicking outside exits filter
+    document.addEventListener("click", e => {
+      if (currentFilter && !document.getElementById("gamesContainer").contains(e.target) &&
+          !favBtn.contains(e.target) && !recentsBtn.contains(e.target)) {
+        filterGames(currentFilter);
+      }
+    });
+
+    // Random game button
+    document.getElementById("randomTopBtn").onclick = () => {
+      const visible = Array.from(gamesList).filter(li => li.style.display !== "none");
+      if (visible.length > 0) window.location.href = visible[Math.floor(Math.random()*visible.length)].querySelector("a").href;
+    };
+
+    // Visitor counter + time
+    const visitorDisplay = document.getElementById("visitorDisplay");
+    visitorDisplay.textContent = `Visitors: ${Math.floor(Math.random()*100)+1}`;
+    visitorDisplay.style.opacity = 1;
+    visitorDisplay.classList.add("visitor-animate");
+    function updateTime() {
+      document.getElementById("dateTime").textContent = new Date().toLocaleString();
+    }
+    setInterval(updateTime, 1000); updateTime();
 
     // Panic key
-    document.addEventListener('keydown', e => { if (e.key.toLowerCase() === 'q') window.location.href = 'https://canvas.nebo.edu'; });
+    document.addEventListener("keydown", e => { if (e.key==="q") window.location.href="https://google.com"; });
 
-    // Particles background (restored)
-    particlesJS("particles-js", {
-      "particles": {
-        "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
-        "color": { "value": "#ffffff" },
-        "shape": { "type": "circle" },
-        "opacity": { "value": 0.5, "random": true },
-        "size": { "value": 3, "random": true },
-        "move": { "enable": true, "speed": 1 }
-      },
-      "interactivity": {
-        "events": {
-          "onhover": { "enable": true, "mode": "repulse" },
-          "onclick": { "enable": true, "mode": "push" }
-        }
-      }
+    // Dark/light toggle
+    document.getElementById("modeToggle").onclick = () => document.body.classList.toggle("light-mode");
+
+    // Particles background
+    particlesJS.load('particles-js', 'https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
+
+    // Settings modal
+    const settingsBtn = document.getElementById('settingsBtn');
+    const settingsModal = document.getElementById('settingsModal');
+    const titleInput = document.getElementById('titleInput');
+    const saveTitleBtn = document.getElementById('saveTitleBtn');
+    const saveCheck = document.getElementById('saveCheck');
+    const siteTitle = document.getElementById('siteTitle');
+
+    settingsBtn.addEventListener('click', () => {
+      titleInput.value = siteTitle.textContent;
+      settingsModal.classList.add('show');
     });
 
-    // -------------------------
-    // Live visitor counter:
-    // - increment once on load (hit)
-    // - poll every 5s with get for live updates
-    // - fallback to localStorage if CountAPI fails
-    // -------------------------
-    const visitorEl = document.getElementById('visitorDisplay');
-    let lastVisitorCount = null;
-    const NAMESPACE_KEY = 'savnac-site/visits'; // CountAPI namespace/key
-
-    function updateVisitorDisplay(val){
-      if (val == null) return;
-      lastVisitorCount = Number(val);
-      visitorEl.style.opacity = 0;
-      visitorEl.textContent = `Visitors: ${lastVisitorCount}`;
-      requestAnimationFrame(()=>{
-        visitorEl.style.transition = "opacity 0.6s ease";
-        visitorEl.style.opacity = 1;
-        // brief highlight when changed
-        visitorEl.classList.add('visitor-animate');
-        setTimeout(()=>visitorEl.classList.remove('visitor-animate'), 600);
-      });
-    }
-
-    async function incrementVisitor(){
-      try {
-        const res = await fetch(`https://api.countapi.xyz/hit/${NAMESPACE_KEY}`);
-        if (!res.ok) throw new Error('CountAPI hit failed');
-        const data = await res.json();
-        updateVisitorDisplay(data.value);
-      } catch (err) {
-        // fallback local
-        let local = Number(localStorage.getItem('savnac_local_count') || 0);
-        local++;
-        localStorage.setItem('savnac_local_count', local);
-        updateVisitorDisplay(local);
-      }
-    }
-
-    async function pollVisitors(){
-      try {
-        const res = await fetch(`https://api.countapi.xyz/get/${NAMESPACE_KEY}`);
-        if (!res.ok) throw new Error('CountAPI get failed');
-        const data = await res.json();
-        if (Number(data.value) !== lastVisitorCount) updateVisitorDisplay(data.value);
-      } catch (err) {
-        // ignore polling errors silently
-        // optionally we could fall back to local value
-        // console.warn('visitor poll failed', err);
-      }
-    }
-
-    // do increment on load, then start polling
-    incrementVisitor().finally(()=> {
-      setInterval(pollVisitors, 5000);
+    saveTitleBtn.addEventListener('click', () => {
+      siteTitle.textContent = titleInput.value.trim() || "Savnac";
+      saveCheck.classList.add('show');
+      setTimeout(() => saveCheck.classList.remove('show'), 1500);
+      settingsModal.classList.remove('show');
     });
 
+    document.addEventListener('keydown', e => {
+      if (e.key === "Escape") {
+        if (settingsModal.classList.contains('show')) settingsModal.classList.remove('show');
+        else if (currentFilter) filterGames(currentFilter);
+      }
+    });
   </script>
 </body>
 </html>
