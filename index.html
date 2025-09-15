@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Canvas</title>
+  <title>Savnac</title>
   <style>
     html, body {margin:0;padding:0;height:100%;box-sizing:border-box;overflow-x:hidden;font-family:Arial, sans-serif;-webkit-font-smoothing:antialiased;}
     body {background:#121212;color:#fff;transition:background .28s ease,color .28s ease;min-height:100vh;padding-top:48px;}
@@ -77,7 +77,7 @@
       <div id="gamesContainer">
         <div id="filterActions"></div>
         <ul id="gamesList">
-                   <li><a href="1v1lol.html"><img src="https://img.utdstc.com/icon/983/22a/98322a3b2be892eed31589906ffd949b68bcccc9a21ba562987965b5ec6bc6de:200" alt=""><span>1v1.lol</span></a><span class="star" aria-label="favorite">★</span></li>
+                    <li><a href="1v1lol.html"><img src="https://img.utdstc.com/icon/983/22a/98322a3b2be892eed31589906ffd949b68bcccc9a21ba562987965b5ec6bc6de:200" alt=""><span>1v1.lol</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="2048.html"><img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/95/8e/c3/958ec36e-06b1-0897-53b3-c968234bf47f/AppIcon-0-0-1x_U007emarketing-0-6-85-220.png/512x512bb.jpg" alt=""><span>2048</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="aswc.html"><img src="https://play-lh.googleusercontent.com/R47kNu-wEYMVnoo7rFOXiAHoBvW26KHps65Oi0S6zMF722x0LYqHJUiXRvB_xhsj0CM" alt=""><span>A Small World Cup</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="amongus.html"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/9/9a/Among_Us_cover_art.jpg/250px-Among_Us_cover_art.jpg" alt=""><span>Among Us</span></a><span class="star" aria-label="favorite">★</span></li>
@@ -108,18 +108,17 @@
           <li><a href="paper.io2.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4qJVLuHb4EH8h7QU5C4k_Jb44aHgcxgTNKg&s" alt=""><span>Paper.io 2</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="ragdollarchers.html"><img src="https://imgs.crazygames.com/ragdoll-archers_1x1/20250711092020/ragdoll-archers_1x1-cover?format=auto&quality=100&metadata=none&width=1200" alt=""><span>Ragdoll Archers</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="ragdollhit.html"><img src="https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=314,height=314,fit=cover,f=auto/3c892779be9dabb3589586c83ad3eeed/ragdoll-hit.png" alt=""><span>Ragdoll Hit</span></a><span class="star" aria-label="favorite">★</span></li> 
-          <!-- add more games here -->
+          <!-- your games list goes here exactly as before -->
         </ul>
       </div>
 
       <h2 class="panic-text">teacher panic key is "q" but i still recomend switching tabs
-      
       (do ctrl+d to bookmark)</h2>
     </div>
   </div>
 
   <div class="settings-modal" id="settingsModal">
-    <label>Site Title:</label>
+    <label>Site Title (changes tab name):</label>
     <input type="text" id="titleInput" class="settings-input">
     <button class="btn" id="saveTitleBtn">Save</button>
     <span id="saveCheck" class="checkmark">✔</span>
@@ -127,6 +126,11 @@
 
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script>
+    // Always keep the visible h1 as "Savnac"
+    document.getElementById('siteTitle').textContent = "Savnac";
+    // But set the tab title from saved value (or default to Savnac)
+    document.title = localStorage.getItem('siteTitle') || "Savnac";
+
     const gamesList = document.querySelectorAll("#gamesList li");
     const stars = document.querySelectorAll(".star");
     const favBtn = document.getElementById("favBtn");
@@ -203,7 +207,6 @@
       });
     });
 
-    // Clicking outside exits filter
     document.addEventListener("click", e => {
       if (currentFilter && !document.getElementById("gamesContainer").contains(e.target) &&
           !favBtn.contains(e.target) && !recentsBtn.contains(e.target)) {
@@ -211,29 +214,30 @@
       }
     });
 
-    // Random game button
     document.getElementById("randomTopBtn").onclick = () => {
       const visible = Array.from(gamesList).filter(li => li.style.display !== "none");
       if (visible.length > 0) window.location.href = visible[Math.floor(Math.random()*visible.length)].querySelector("a").href;
     };
 
-    // Visitor counter + time
-    const visitorDisplay = document.getElementById("visitorDisplay");
-    visitorDisplay.textContent = `Visitors: ${Math.floor(Math.random()*100)+1}`;
-    visitorDisplay.style.opacity = 1;
-    visitorDisplay.classList.add("visitor-animate");
+    // Replace random number with real visitor count
+    fetch("https://api.countapi.xyz/hit/savnaclive.github.io/visits")
+      .then(r => r.json())
+      .then(data => {
+        const visitorDisplay = document.getElementById("visitorDisplay");
+        visitorDisplay.textContent = `Visitors: ${data.value}`;
+        visitorDisplay.style.opacity = 1;
+        visitorDisplay.classList.add("visitor-animate");
+      });
+
     function updateTime() {
       document.getElementById("dateTime").textContent = new Date().toLocaleString();
     }
     setInterval(updateTime, 1000); updateTime();
 
-    // Panic key
     document.addEventListener("keydown", e => { if (e.key==="q") window.location.href="https://google.com"; });
 
-    // Dark/light toggle
     document.getElementById("modeToggle").onclick = () => document.body.classList.toggle("light-mode");
 
-    // Particles background
     particlesJS.load('particles-js', 'https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
 
     // Settings modal
@@ -242,17 +246,17 @@
     const titleInput = document.getElementById('titleInput');
     const saveTitleBtn = document.getElementById('saveTitleBtn');
     const saveCheck = document.getElementById('saveCheck');
-    const siteTitle = document.getElementById('siteTitle');
 
     settingsBtn.addEventListener('click', () => {
-      titleInput.value = siteTitle.textContent;
+      titleInput.value = document.title;
       settingsModal.classList.add('show');
     });
 
     saveTitleBtn.addEventListener('click', () => {
-      siteTitle.textContent = titleInput.value.trim() || "Savnac";
+      localStorage.setItem('siteTitle', titleInput.value);
+      document.title = titleInput.value || "Savnac"; // ✅ Change the tab title
       saveCheck.classList.add('show');
-      setTimeout(() => saveCheck.classList.remove('show'), 1500);
+      setTimeout(()=>saveCheck.classList.remove('show'),1500);
       settingsModal.classList.remove('show');
     });
 
