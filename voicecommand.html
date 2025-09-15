@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Savnac Voice Commands</title>
+  <title>Canvas</title>
   <style>
     body {
       background: #121212;
@@ -18,6 +18,7 @@
       border: 2px solid #fff;
       color: white;
       padding: 10px 20px;
+      margin: 10px;
       border-radius: 12px;
       font-size: 1.2rem;
       cursor: pointer;
@@ -31,19 +32,62 @@
 </head>
 <body>
   <h1>🎙 Voice Commands</h1>
-  <p>Say: <b>"play random game"</b></p>
+  <p>Say: <b>"play random game"</b> OR <b>"play [game name]"</b></p>
+
   <button onclick="startListening()">🎤 Start Listening</button>
+  <button onclick="goHome()">🏠 Home</button>
 
   <script>
-    // Your games list (replace with your actual game URLs)
-    const games = [
-      "https://example.com/snake",
-      "https://example.com/pong",
-      "https://example.com/tetris",
-      "https://example.com/space-invaders"
-    ];
+    const games = {
+      "1v1.lol": "1v1lol.html",
+      "2048": "2048.html",
+      "a small world cup": "aswc.html",
+      "among us": "amongus.html",
+      "bacon may die": "baconmaydie.html",
+      "basket random": "basketrandom.html",
+      "bitlife": "bitlife.html",
+      "clicker hero": "clickerhero.html",
+      "cluster rush": "clusterrush.html",
+      "cookie clicker": "cookieclicker.html",
+      "crossyroad": "crossyroad.html",
+      "cut the rope": "cuttherope.html",
+      "death run": "deathrun.html",
+      "drive mad": "drivemad.html",
+      "duck life": "ducklife.html",
+      "geometry dash": "geometrydash.html",
+      "get away shootout": "getawayshootout.html",
+      "gun spin": "gunspin.html",
+      "hole.io": "hole-io.html",
+      "javascript roulette": "js.html",
+      "little alchemy 2": "la.html",
+      "motox3m": "motox3m.html",
+      "monkey mart": "monkeymart.html",
+      "ovo": "ovo.html",
+      "pacman": "pacman.html",
+      "paper.io 2": "paper.io2.html",
+      "ragdoll archers": "ragdollarchers.html",
+      "ragdoll hit": "ragdollhit.html",
+      "retro bowl": "retrobowl.html",
+      "retro bowl college": "retrobowlcollege.html",
+      "subway surfers": "subwaysurfers.html",
+      "slope": "slope.html",
+      "stick man hook": "stickmanhook.html",
+      "snow rider 3d": "snowrider3d.html",
+      "superhot": "superhot.html",
+      "we become what we behold": "wbwwb.html",
+      "wheelie bike": "wheeliebike.html"
+    };
+
+    function speak(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.pitch = 1;
+      utterance.rate = 1;
+      utterance.volume = 1;
+      window.speechSynthesis.speak(utterance);
+    }
 
     function startListening() {
+      speak("Listening...");
       const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
       recognition.lang = "en-US";
       recognition.start();
@@ -53,20 +97,82 @@
         console.log("Heard:", transcript);
 
         if (transcript.includes("play random game")) {
+          speak("Playing a random game!");
           playRandomGame();
-        } else {
-          alert("I heard: " + transcript + " (no matching command)");
+          return;
         }
+
+        if (transcript.includes("play")) {
+          let gameName = transcript.replace("play", "").trim();
+          playGameByName(gameName);
+          return;
+        }
+
+        speak("Sorry, I didn't understand that.");
       };
 
       recognition.onerror = (event) => {
         console.error("Voice error:", event.error);
+        speak("There was an error listening.");
       };
     }
 
     function playRandomGame() {
-      const randomGame = games[Math.floor(Math.random() * games.length)];
-      window.location.href = randomGame; // opens the random game
+      const gameKeys = Object.keys(games);
+      const randomKey = gameKeys[Math.floor(Math.random() * gameKeys.length)];
+      speak("Launching " + randomKey);
+      setTimeout(() => window.location.href = games[randomKey], 1000);
+    }
+
+    function playGameByName(name) {
+      name = name.toLowerCase();
+
+      if (games[name]) {
+        speak("Launching " + name);
+        setTimeout(() => window.location.href = games[name], 1000);
+        return;
+      }
+
+      let bestMatch = null;
+      let bestScore = Infinity;
+
+      for (const key of Object.keys(games)) {
+        let score = levenshteinDistance(name, key);
+        if (score < bestScore) {
+          bestScore = score;
+          bestMatch = key;
+        }
+      }
+
+      if (bestMatch && bestScore <= 5) {
+        speak("Did you mean " + bestMatch + "? Launching it now.");
+        setTimeout(() => window.location.href = games[bestMatch], 1500);
+      } else {
+        speak("I couldn't find a game called " + name);
+      }
+    }
+
+    function levenshteinDistance(a, b) {
+      const dp = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
+      for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+      for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+
+      for (let i = 1; i <= a.length; i++) {
+        for (let j = 1; j <= b.length; j++) {
+          const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+          dp[i][j] = Math.min(
+            dp[i - 1][j] + 1,
+            dp[i][j - 1] + 1,
+            dp[i - 1][j - 1] + cost
+          );
+        }
+      }
+      return dp[a.length][b.length];
+    }
+
+    function goHome() {
+      speak("Going home.");
+      setTimeout(() => window.location.href = "index.html", 800);
     }
   </script>
 </body>
