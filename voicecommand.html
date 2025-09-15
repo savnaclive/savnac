@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Savnac Voice Commands</title>
+  <style>
+    body {
+      background: #121212;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 2rem;
+    }
+    button {
+      background: #1e1e1e;
+      border: 2px solid #fff;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+    button:hover {
+      background: #333;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <h1>🎙 Voice Commands</h1>
+  <p>Say: <b>"play random game"</b></p>
+  <button onclick="startListening()">🎤 Start Listening</button>
+
+  <script>
+    // Your games list (replace with your actual game URLs)
+    const games = [
+      "https://example.com/snake",
+      "https://example.com/pong",
+      "https://example.com/tetris",
+      "https://example.com/space-invaders"
+    ];
+
+    function startListening() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = "en-US";
+      recognition.start();
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript.toLowerCase();
+        console.log("Heard:", transcript);
+
+        if (transcript.includes("play random game")) {
+          playRandomGame();
+        } else {
+          alert("I heard: " + transcript + " (no matching command)");
+        }
+      };
+
+      recognition.onerror = (event) => {
+        console.error("Voice error:", event.error);
+      };
+    }
+
+    function playRandomGame() {
+      const randomGame = games[Math.floor(Math.random() * games.length)];
+      window.location.href = randomGame; // opens the random game
+    }
+  </script>
+</body>
+</html>
