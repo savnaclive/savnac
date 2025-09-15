@@ -220,7 +220,7 @@
     };
 
     // Replace random number with real visitor count
-    fetch("https://api.countapi.xyz/hit/savnaclive.github.io/visits")
+    fetch("https://api.countapi.xyz/hit/savnaclive.github.io/savnac")
       .then(r => r.json())
       .then(data => {
         const visitorDisplay = document.getElementById("visitorDisplay");
@@ -234,7 +234,7 @@
     }
     setInterval(updateTime, 1000); updateTime();
 
-    document.addEventListener("keydown", e => { if (e.key==="q") window.location.href="https://google.com"; });
+    document.addEventListener("keydown", e => { if (e.key==="q") window.location.href="https://cavnas.nebo.edu"; });
 
     document.getElementById("modeToggle").onclick = () => document.body.classList.toggle("light-mode");
 
