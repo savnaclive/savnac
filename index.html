@@ -125,8 +125,35 @@
         </ul>
       </div>
 
-      <h2 class="panic-text">teacher panic key is "q" but i still recomend switching tabs
-      (do ctrl+d to bookmark)</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Random Text on Refresh</title>
+</head>
+<body>
+  <div id="randomText" style="font-size:2em;"></div>
+
+  <script>
+    // Your six different texts
+    const texts = [
+      "gotta glock in my 'rari",
+      "m&m's, sweet like candy cane",
+      "pst. i see dead people",
+      "not afraid to take a stand",
+      "ay, mustard on the beat, h0",
+      "teacher panic key is q, do 'ctrl+d' to bookmark",
+    ];
+
+    // Pick a random text
+    const randomIndex = Math.floor(Math.random() * texts.length);
+    const chosenText = texts[randomIndex];
+
+    // Set the text inside the div
+    document.getElementById('randomText').textContent = chosenText;
+  </script>
+</body>
+</html>
     </div>
   </div>
 
