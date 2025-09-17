@@ -125,33 +125,22 @@
         </ul>
       </div>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Random Text on Refresh</title>
-</head>
-<body>
-  <div id="randomText" style="font-size:2em;"></div>
 
-  <script>
-    // Your six different texts
-    const texts = [
-      "gotta glock in my 'rari",
-      "m&m's, sweet like candy cane",
-      "pst. i see dead people",
-      "not afraid to take a stand",
-      "ay, mustard on the beat, h0",
-      "teacher panic key is q, do 'ctrl+d' to bookmark",
-    ];
+<div id="randomText" style="font-size:14px; font-family:Arial, sans-serif; color:#ccc; min-height:18px;"></div>
+<script>
+  const texts = [
+    "gotta glock in my 'rari",
+    "m&m's, sweet like candy cane",
+    "pst. i see dead people",
+    "not afraid to take a stand",
+    "ay, mustard on the beat, h0",
+    "teacher panic key is q, do 'ctrl+d' to bookmark",
+  ];
+  const randomIndex = Math.floor(Math.random() * texts.length);
+  const chosenText = texts[randomIndex];
+  document.getElementById('randomText').textContent = chosenText;
+</script>
 
-    // Pick a random text
-    const randomIndex = Math.floor(Math.random() * texts.length);
-    const chosenText = texts[randomIndex];
-
-    // Set the text inside the div
-    document.getElementById('randomText').textContent = chosenText;
-  </script>
 </body>
 </html>
     </div>
