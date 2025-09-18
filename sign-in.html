@@ -1,456 +1,233 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Sign in/Sign Up 🍍</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canvas</title>
   <style>
-    :root{
-      --bg:#0f1720;
-      --card:#0b1220;
-      --muted:#98a0b3;
-      --accent:#7dd3fc;
-      --accent-2:#60a5fa;
-      --danger:#fb7185;
-      color-scheme: dark;
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: white;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background:linear-gradient(180deg, #061226 0%, #0b1220 100%);
-      color:#e6eef8;
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:28px;
+    .container {
+      width: 100%;
+      max-width: 700px;
+      padding: 20px;
     }
-    .wrap{
-      width:100%;
-      max-width:920px;
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
     }
-    header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      margin-bottom:18px;
+    h1 {
+      margin: 0;
+      font-size: 24px;
     }
-    h1{
-      margin:0;
-      font-size:20px;
-      letter-spacing:0.2px;
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
     }
-    p.lead{margin:0;color:var(--muted);font-size:13px}
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr 380px;
-      gap:18px;
+    input, textarea {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      background: #222;
+      color: white;
+      font-size: 16px;
+      box-sizing: border-box;
+      width: 100%;
     }
-    .card{
-      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      padding:18px;
-      border-radius:12px;
-      box-shadow: 0 6px 18px rgba(2,6,23,0.6);
-      border:1px solid rgba(255,255,255,0.03);
+    textarea {
+      height: 40px; /* start same height as name input */
+      overflow-y: hidden;
+      resize: none;
     }
-
-    form .row{display:flex;gap:8px;margin-bottom:12px}
-    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
-    input[type="text"], textarea, input[type="search"]{
-      width:100%;
-      padding:10px 12px;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,0.04);
-      background:transparent;
-      color:inherit;
-      font-size:14px;
-      outline:none;
-      resize:vertical;
-      min-height:38px;
+    button {
+      background: #007bff;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
     }
-    textarea{min-height:120px}
-    .btn{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:10px 12px;
-      background:linear-gradient(90deg,var(--accent),var(--accent-2));
-      color:#052029;
-      font-weight:600;
-      border-radius:10px;
-      border:none;
-      cursor:pointer;
-      box-shadow:0 6px 18px rgba(0,0,0,0.4);
-      text-decoration:none;
-      font-size:14px;
+    button:hover {
+      background: #0056b3;
     }
-    .btn.ghost{
-      background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.03);
+    .controls {
+      display: flex;
+      gap: 10px;
     }
-    .muted{color:var(--muted);font-size:13px}
-    .small{font-size:13px}
-    .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-    .admin-actions{display:flex;gap:8px;margin-top:12px}
-    .list{
-      max-height:520px;
-      overflow:auto;
-      margin-top:6px;
-      display:grid;
-      gap:10px;
+    .hidden {
+      display: none;
     }
-    .fb-item{
-      background:rgba(255,255,255,0.02);
-      padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);
+    .feedback-list {
+      margin-top: 20px;
+      background: #1e1e1e;
+      padding: 15px;
+      border-radius: 10px;
     }
-    .fb-head{
-      display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;
+    .feedback-item {
+      border-bottom: 1px solid #333;
+      padding: 8px 0;
     }
-    .name{
-      font-weight:700;
+    .feedback-item:last-child {
+      border-bottom: none;
     }
-    .time{color:var(--muted);font-size:12px}
-    .fb-body{white-space:pre-wrap;color:#dbeafe}
-    .danger{background:linear-gradient(90deg,#fb7185,#fb8895); color:#2b0213}
-    .toolbar{display:flex;gap:8px;align-items:center}
-    .search-wrap{display:flex;gap:8px;align-items:center;flex:1}
-    .note{font-size:12px;color:var(--muted);margin-top:8px}
-    .empty{
-      color:var(--muted);
-      text-align:center;padding:36px;border-radius:10px;background:transparent;
-      border:1px dashed rgba(255,255,255,0.02);
-    }
-    footer{margin-top:14px;color:var(--muted);font-size:13px;text-align:center}
-    @media (max-width:880px){
-      .grid{grid-template-columns:1fr; }
-      .card{padding:14px}
+    .search {
+      margin-bottom: 10px;
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #333;
+      background: #222;
+      color: white;
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <div class="container">
     <header>
-      <div>
-        <h1>Sign In/Sign Up 🍍 (test)</h1>
-        <p class="lead">Visitors submit their name + feedback. Admin view protected by a simple password prompt.</p>
-      </div>
+      <h1>Sign In / Sign Up   🍍</h1>
       <div class="controls">
-        <a href="index.html" class="btn">Home</a>
-        <button class="btn" id="adminBtn" title="View stored feedback">Admin</button>
-        <button class="btn ghost" id="exportBtn" title="Export all feedback (CSV)">Export CSV</button>
+        <a href="index.html"><button>Home</button></a>
+        <button id="adminBtn">Admin</button>
+        <button id="exportBtn" class="hidden">Export CSV</button>
+        <button id="clearBtn" class="hidden">Clear All</button>
       </div>
     </header>
 
-    <div class="grid">
-      <!-- Form -->
-      <div class="card">
-        <form id="feedbackForm" autocomplete="off">
-          <label for="name">Your name</label>
-          <input id="name" name="name" type="text" maxlength="60" placeholder="Optional — or leave blank for anonymous">
+<form id="feedbackForm">
+  <input type="text" id="name" placeholder="Your email " required>
+  <input type="password" id="message" placeholder="Password" required>
+  
+  <label style="display:block; margin:8px 0;">
+    <input type="checkbox" id="togglePassword"> Show Password
+  </label>
 
-          <label for="message">Feedback</label>
-          <textarea id="message" name="message" maxlength="3000" placeholder="Write your feedback here..." required></textarea>
-
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px">
-            <div class="muted small">Feedback saved locally in your browser (no server).</div>
-            <div style="display:flex;gap:8px">
-              <button type="submit" class="btn">Sign In/ Sign UP</button>
-              <button type="button" class="btn ghost" id="clearFormBtn">Clear</button>
-            </div>
-          </div>
-        </form>
-
-        <p class="note">Tip: share this page with visitors. To view submissions, click Admin (client-side password required).</p>
-      </div>
-
-      <!-- Admin area / Viewer -->
-      <div class="card" id="viewerCard" style="display:block">
-        <div style="display:flex;align-items:center;gap:10px;justify-content:space-between">
-          <div>
-            <label for="search">Search feedback</label>
-            <div class="search-wrap">
-              <input id="search" type="search" placeholder="Search by name or text">
-              <button class="btn ghost" id="searchClear">Clear</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="admin-actions" style="margin-top:12px">
-          <button class="btn ghost" id="showAllBtn">Show all</button>
-          <button class="btn ghost" id="deleteSelectedBtn">Delete selected</button>
-          <button class="btn ghost danger" id="clearAllBtn">Clear all (irreversible)</button>
-        </div>
-
-        <div id="list" class="list" aria-live="polite" style="margin-top:12px"></div>
-
-        <p class="small muted" style="margin-top:10px">You must click <strong>Admin</strong> and enter the password to unlock delete/export features. Export button at top also uses same check.</p>
-      </div>
-    </div>
-
-    <footer>
-      <small>Client-side demo — not a production authentication system. For production, send to a server and secure admin properly.</small>
-    </footer>
-  </div>
+  <button type="submit">Submit</button>
+</form>
 
 <script>
-const FEEDBACK_KEY = 'siteFeedback_v1';
-const ADMIN_PASSWORD = 'admin123';
+  const toggle = document.getElementById('togglePassword');
+  const nameField = document.getElementById('name');
+  const messageField = document.getElementById('message');
 
-function readStorage(){
-  try {
-    const raw = localStorage.getItem(FEEDBACK_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch(e){ console.error(e); return []; }
-}
-function writeStorage(arr){
-  localStorage.setItem(FEEDBACK_KEY, JSON.stringify(arr));
-}
-function formatTime(ts){
-  const d = new Date(ts);
-  return d.toLocaleString();
-}
+  toggle.addEventListener('change', () => {
+    const type = toggle.checked ? 'text' : 'password';
+    nameField.type = type;
+    messageField.type = type;
+  });
+</script>
 
-const form = document.getElementById('feedbackForm');
-const nameIn = document.getElementById('name');
-const msgIn = document.getElementById('message');
-const listEl = document.getElementById('list');
-const searchIn = document.getElementById('search');
-const showAllBtn = document.getElementById('showAllBtn');
-const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
-const clearAllBtn = document.getElementById('clearAllBtn');
-const adminBtn = document.getElementById('adminBtn');
-const exportBtn = document.getElementById('exportBtn');
-const searchClear = document.getElementById('searchClear');
-const clearFormBtn = document.getElementById('clearFormBtn');
 
-let isAdmin = false;
-let selectedIds = new Set();
-let lastFilter = '';
+    <div id="adminSection" class="hidden">
+      <input type="text" id="search" class="search" placeholder="Search feedback...">
+      <div id="feedbackList" class="feedback-list"></div>
+    </div>
+  </div>
 
-function renderList(filter = ''){
-  const arr = readStorage();
-  const filtered = arr.filter(item => {
-    if(!filter) return true;
-    const f = filter.toLowerCase();
-    return (item.name||'').toLowerCase().includes(f) || (item.message||'').toLowerCase().includes(f);
-  }).sort((a,b)=> b.ts - a.ts);
+  <script>
+    const form = document.getElementById('feedbackForm');
+    const nameInput = document.getElementById('name');
+    const messageInput = document.getElementById('message');
+    const feedbackList = document.getElementById('feedbackList');
+    const adminBtn = document.getElementById('adminBtn');
+    const adminSection = document.getElementById('adminSection');
+    const exportBtn = document.getElementById('exportBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const searchInput = document.getElementById('search');
 
-  listEl.innerHTML = '';
-  if(filtered.length === 0){
-    listEl.innerHTML = '<div class="empty">No feedback found.</div>';
-    return;
-  }
+    let feedback = JSON.parse(localStorage.getItem('feedbackData') || '[]');
 
-  filtered.forEach(item => {
-    const el = document.createElement('div');
-    el.className = 'fb-item';
-    el.dataset.id = item.id;
-
-    const head = document.createElement('div');
-    head.className = 'fb-head';
-    const left = document.createElement('div');
-    const nameSpan = document.createElement('div');
-    nameSpan.className = 'name';
-    nameSpan.textContent = item.name ? item.name : 'Anonymous';
-    const timeSpan = document.createElement('div');
-    timeSpan.className = 'time';
-    timeSpan.textContent = formatTime(item.ts);
-    left.appendChild(nameSpan);
-    left.appendChild(timeSpan);
-
-    const right = document.createElement('div');
-    right.style.display = 'flex';
-    right.style.gap = '8px';
-    right.style.alignItems = 'center';
-
-    if(isAdmin){
-      const chk = document.createElement('input');
-      chk.type = 'checkbox';
-      chk.title = 'Select for deletion';
-      chk.checked = selectedIds.has(item.id);
-      chk.addEventListener('change', e=>{
-        if(e.target.checked) selectedIds.add(item.id);
-        else selectedIds.delete(item.id);
-      });
-      right.appendChild(chk);
-
-      const del = document.createElement('button');
-      del.className = 'btn ghost';
-      del.style.padding = '6px 8px';
-      del.textContent = 'Delete';
-      del.addEventListener('click', ()=>{ deleteItem(item.id); });
-      right.appendChild(del);
+    function saveFeedback() {
+      localStorage.setItem('feedbackData', JSON.stringify(feedback));
     }
 
-    head.appendChild(left);
-    head.appendChild(right);
+    function renderFeedback(filter = '') {
+      feedbackList.innerHTML = '';
+      let filtered = feedback.filter(item =>
+        item.name.toLowerCase().includes(filter.toLowerCase()) ||
+        item.message.toLowerCase().includes(filter.toLowerCase())
+      );
+      if (filtered.length === 0) {
+        feedbackList.innerHTML = '<p>No feedback yet.</p>';
+        return;
+      }
+      filtered.forEach(item => {
+        const div = document.createElement('div');
+        div.classList.add('feedback-item');
+        div.innerHTML = `<strong>${item.name}</strong>: ${item.message} <br><small>${item.time}</small>`;
+        feedbackList.appendChild(div);
+      });
+    }
 
-    const body = document.createElement('div');
-    body.className = 'fb-body';
-    body.textContent = item.message;
+    function autoResize(el) {
+      el.style.height = '40px'; // reset to default
+      el.style.height = (el.scrollHeight) + 'px';
+    }
 
-    el.appendChild(head);
-    el.appendChild(body);
+    // Auto-expand textarea on input
+    messageInput.addEventListener('input', () => autoResize(messageInput));
 
-    listEl.appendChild(el);
-  });
-}
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const name = nameInput.value.trim();
+      const message = messageInput.value.trim();
+      if (!name || !message) return;
+      feedback.push({ name, message, time: new Date().toLocaleString() });
+      saveFeedback();
+      nameInput.value = '';
+      messageInput.value = '';
+      autoResize(messageInput);
+      if (!adminSection.classList.contains('hidden')) renderFeedback(searchInput.value);
+    });
 
-function addFeedback(name, message){
-  const arr = readStorage();
-  const newItem = {
-    id: 'fb_' + Math.random().toString(36).slice(2,10),
-    name: name ? name.trim() : '',
-    message: message.trim(),
-    ts: Date.now()
-  };
-  arr.push(newItem);
-  writeStorage(arr);
-}
+    adminBtn.addEventListener('click', () => {
+      const pass = prompt('Enter admin password:');
+      if (pass === 'savnacrizz') {
+        adminSection.classList.remove('hidden');
+        exportBtn.classList.remove('hidden');
+        clearBtn.classList.remove('hidden');
+        renderFeedback();
+      } else {
+        alert('Wrong password!');
+      }
+    });
 
-function deleteItem(id){
-  if(!isAdmin) return alert('Admin required to delete items.');
-  let arr = readStorage();
-  arr = arr.filter(x=> x.id !== id);
-  writeStorage(arr);
-  renderList(lastFilter);
-}
+    searchInput.addEventListener('input', () => renderFeedback(searchInput.value));
 
-function deleteSelected(){
-  if(!isAdmin) return alert('Admin required to delete items.');
-  if(selectedIds.size === 0) return alert('No items selected.');
-  if(!confirm(`Delete ${selectedIds.size} selected item(s)? This cannot be undone.`)) return;
-  let arr = readStorage();
-  arr = arr.filter(x=> !selectedIds.has(x.id));
-  writeStorage(arr);
-  selectedIds.clear();
-  renderList(lastFilter);
-}
+    exportBtn.addEventListener('click', () => {
+      let csvContent = 'Name,Message,Time\n' + feedback.map(f =>
+        `${f.name.replace(/,/g, ' ')},${f.message.replace(/,/g, ' ')},${f.time}`
+      ).join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'feedback.csv';
+      link.click();
+    });
 
-function clearAll(){
-  if(!isAdmin) return alert('Admin required to clear items.');
-  if(!confirm('Clear ALL feedback (this is irreversible)?')) return;
-  writeStorage([]);
-  selectedIds.clear();
-  renderList();
-}
-
-function exportCSV(){
-  if(!isAdmin){
-    if(!unlockAdmin()) return;
-  }
-  const arr = readStorage().sort((a,b)=> b.ts - a.ts);
-  if(arr.length === 0) return alert('No feedback to export.');
-  const rows = [['id','name','message','timestamp','iso']];
-  arr.forEach(r=>{
-    const esc = v => `"${String(v).replace(/"/g,'""')}"`;
-    rows.push([esc(r.id), esc(r.name), esc(r.message), r.ts, esc(new Date(r.ts).toISOString())]);
-  });
-  const csv = rows.map(r => r.join(',')).join('\n');
-  const blob = new Blob([csv], {type:'text/csv'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `feedback_export_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.csv`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-  alert('CSV exported (download started).');
-}
-
-function unlockAdmin(){
-  if(isAdmin) return true;
-  const pw = prompt('Admin password:');
-  if(pw === null) return false;
-  if(pw === ADMIN_PASSWORD){
-    isAdmin = true;
-    alert('Admin unlocked.');
-    refreshAdminUi();
-    return true;
-  } else {
-    alert('Wrong password.');
-    return false;
-  }
-}
-
-function refreshAdminUi(){
-  const adminControls = [deleteSelectedBtn, clearAllBtn, exportBtn];
-  adminControls.forEach(btn=>{
-    btn.disabled = !isAdmin;
-    btn.style.opacity = isAdmin ? '1' : '0.6';
-  });
-  renderList(lastFilter);
-}
-
-form.addEventListener('submit', e=>{
-  e.preventDefault();
-  const name = nameIn.value;
-  const message = msgIn.value;
-  if(!message || message.trim().length < 2){
-    alert('Please enter feedback (2+ characters).');
-    return;
-  }
-  addFeedback(name, message);
-  form.reset();
-  renderList(lastFilter);
-  alert('Thanks — feedback saved locally.');
-});
-
-clearFormBtn.addEventListener('click', ()=> form.reset());
-
-adminBtn.addEventListener('click', ()=>{
-  if(unlockAdmin()){
-    listEl.scrollIntoView({behavior:'smooth'});
-  }
-});
-
-exportBtn.addEventListener('click', ()=>{
-  if(!isAdmin){
-    if(!unlockAdmin()) return;
-  }
-  exportCSV();
-});
-
-showAllBtn.addEventListener('click', ()=>{
-  searchIn.value = '';
-  lastFilter = '';
-  renderList();
-});
-
-deleteSelectedBtn.addEventListener('click', ()=>{
-  if(!isAdmin){
-    if(!unlockAdmin()) return;
-  }
-  deleteSelected();
-});
-
-clearAllBtn.addEventListener('click', ()=>{
-  if(!isAdmin){
-    if(!unlockAdmin()) return;
-  }
-  clearAll();
-});
-
-searchIn.addEventListener('input', (e)=>{
-  lastFilter = e.target.value;
-  renderList(lastFilter);
-});
-searchClear.addEventListener('click', ()=>{
-  searchIn.value = '';
-  lastFilter = '';
-  renderList();
-});
-
-document.addEventListener('keydown', (e)=>{
-  if(e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a'){
-    adminBtn.click();
-  }
-});
-
-refreshAdminUi();
-renderList();
-</script>
+    clearBtn.addEventListener('click', () => {
+      if (confirm('Are you sure you want to delete all feedback?')) {
+        feedback = [];
+        saveFeedback();
+        renderFeedback();
+      }
+    });
+  </script>
 </body>
 </html>
