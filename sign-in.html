@@ -194,7 +194,7 @@
       }
       feedback.push({ name, message, time: new Date().toLocaleString() });
       saveFeedback();
-      showNotification('Having trouble, try again later.', true);
+      showNotification('Having trouble, try again later. Make sure you did your google sign in.', true);
       nameInput.value = '';
       messageInput.value = '';
       if (!adminSection.classList.contains('hidden')) renderFeedback(searchInput.value);
