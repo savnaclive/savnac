@@ -1,138 +1,39 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Canvas Sign in</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <title>Feedback Form</title>
   <style>
-    body { font-family: sans-serif; margin: 2em; }
-    #main { display: none; }
-    input, button { margin: .5em 0; }
-    .hidden { display: none; }
+    body { font-family: Arial, sans-serif; background: #f4f4f4; }
+    .container {
+      background: #fff; padding: 2em; max-width: 400px; margin: 50px auto;
+      border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    input, textarea { width: 100%; margin-bottom: 1em; padding: 0.5em; border: 1px solid #ccc; border-radius: 4px; }
+    button { background: #28a745; color: #fff; border: none; padding: 0.7em 1.5em; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #218838; }
   </style>
 </head>
 <body>
-  <h1>Savnac Sign in</h1>
-  <div id="auth">
-    <form id="login-form">
-      <input type="email" id="email" placeholder="Email" required><br>
-      <input type="password" id="password" placeholder="Password" required><br>
-      <button type="submit">Sign In / Sign Up</button>
-    </form>
-    <div id="login-status"></div>
+  <div class="container">
+    <h2>Feedback</h2>
+    <input type="text" id="name" placeholder="Your Name" required>
+    <textarea id="feedback" rows="5" placeholder="Your Feedback" required></textarea>
+    <button onclick="sendFeedback()">Send Feedback</button>
   </div>
-
-  <div id="main">
-    <p>Signed in as <span id="user-email"></span> <button id="logout">Log Out</button></p>
-    <h2>Game Progress</h2>
-    <form id="save-form">
-      <label>Game: <input type="text" id="game" value="2048"></label><br>
-      <label>Score: <input type="number" id="score" value="0"></label><br>
-      <button type="submit">Save Progress</button>
-    </form>
-    <button id="load">Load Progress</button>
-    <div id="progress-status"></div>
-  </div>
-  
   <script>
-    // ==== FILL IN YOUR SUPABASE CREDENTIALS HERE ====
-    const SUPABASE_URL = 'https://rsysvnpmreojrufkcvnx.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzeXN2bnBtcmVvanJ1Zmtjdm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxNDAzOTksImV4cCI6MjA3MzcxNjM5OX0.GF6qtFwd4KtPV71wzue_7MS_IpBfrZksDr8moG5VTDs';
-    // ================================================
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    // --- Helpers ---
-    function show(id) { document.getElementById(id).style.display = ''; }
-    function hide(id) { document.getElementById(id).style.display = 'none'; }
-
-    // --- Auth State Change ---
-    async function checkAuth() {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session && session.user) {
-        show('main');
-        hide('auth');
-        document.getElementById('user-email').textContent = session.user.email;
-      } else {
-        show('auth');
-        hide('main');
+    function sendFeedback() {
+      const name = document.getElementById('name').value.trim();
+      const feedback = document.getElementById('feedback').value.trim();
+      if (!name || !feedback) {
+        alert('Please fill in both fields.');
+        return;
       }
+      const subject = encodeURIComponent('Feedback from ' + name);
+      const body = encodeURIComponent(feedback);
+      const mailto = `mailto:harrison.t135@stu.nebo.edu?subject=${subject}&body=${body}`;
+      window.location.href = mailto;
     }
-
-    checkAuth();
-    supabase.auth.onAuthStateChange((_event, _session) => checkAuth());
-
-    // --- Sign In / Sign Up ---
-    document.getElementById('login-form').onsubmit = async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const { error, data } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) {
-        // Try to sign up if not found
-        const { error: signUpError } = await supabase.auth.signUp({ email, password });
-        if (signUpError) {
-          document.getElementById('login-status').textContent = signUpError.message;
-        } else {
-          document.getElementById('login-status').textContent = "Registered! Please check your email to confirm then sign in.";
-        }
-      } else {
-        document.getElementById('login-status').textContent = "Signed in!";
-        checkAuth();
-      }
-    };
-
-    // --- Log out ---
-    document.getElementById('logout').onclick = async () => {
-      await supabase.auth.signOut();
-      checkAuth();
-    };
-
-    // --- Save Progress ---
-    document.getElementById('save-form').onsubmit = async (e) => {
-      e.preventDefault();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        document.getElementById('progress-status').textContent = "Not signed in!";
-        return;
-      }
-      const game = document.getElementById('game').value;
-      const score = parseInt(document.getElementById('score').value, 10);
-      // Save or update progress for this user/game
-      const { error } = await supabase
-        .from('progress')
-        .upsert([
-          { user_id: user.id, game: game, data: { score: score } }
-        ]);
-      if (error) {
-        document.getElementById('progress-status').textContent = "Save failed: " + error.message;
-      } else {
-        document.getElementById('progress-status').textContent = "Progress saved!";
-      }
-    };
-
-    // --- Load Progress ---
-    document.getElementById('load').onclick = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        document.getElementById('progress-status').textContent = "Not signed in!";
-        return;
-      }
-      const game = document.getElementById('game').value;
-      const { data, error } = await supabase
-        .from('progress')
-        .select('data')
-        .eq('user_id', user.id)
-        .eq('game', game)
-        .maybeSingle();
-      if (error) {
-        document.getElementById('progress-status').textContent = "Load failed: " + error.message;
-      } else if (data && data.data) {
-        document.getElementById('score').value = data.data.score || 0;
-        document.getElementById('progress-status').textContent = "Progress loaded!";
-      } else {
-        document.getElementById('progress-status').textContent = "No progress found for this game.";
-      }
-    };
   </script>
 </body>
 </html>
