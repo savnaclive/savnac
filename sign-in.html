@@ -40,7 +40,7 @@
       border-radius: 12px;
       box-shadow: 0 0 10px rgba(0,0,0,0.4);
     }
-    input, textarea {
+    input {
       padding: 10px;
       border-radius: 8px;
       border: 1px solid #333;
@@ -49,11 +49,6 @@
       font-size: 16px;
       box-sizing: border-box;
       width: 100%;
-    }
-    textarea {
-      height: 40px; /* start same height as name input */
-      overflow-y: hidden;
-      resize: none;
     }
     button {
       background: #007bff;
@@ -96,12 +91,27 @@
       background: #222;
       color: white;
     }
+    /* Notification styling */
+    #notification {
+      position: fixed;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #28a745;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      transition: top 0.4s ease;
+      z-index: 1000;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>Sign In / Sign Up   🍍</h1>
+      <h1>Sign In / Sign Up 🍍</h1>
       <div class="controls">
         <a href="index.html"><button>Home</button></a>
         <button id="adminBtn">Admin</button>
@@ -110,35 +120,25 @@
       </div>
     </header>
 
-<form id="feedbackForm">
-  <input type="text" id="name" placeholder="Your email " required>
-  <input type="password" id="message" placeholder="Password" required>
-  
-  <label style="display:block; margin:8px 0;">
-    <input type="checkbox" id="togglePassword"> Show Password
-  </label>
+    <form id="feedbackForm">
+      <input type="text" id="name" placeholder="Your email" required>
+      <input type="password" id="message" placeholder="Password" required>
 
-  <button type="submit">Submit</button>
-</form>
+      <label style="display:block; margin:8px 0;">
+        <input type="checkbox" id="togglePassword"> Show Password
+      </label>
 
-<script>
-  const toggle = document.getElementById('togglePassword');
-  const nameField = document.getElementById('name');
-  const messageField = document.getElementById('message');
-
-  toggle.addEventListener('change', () => {
-    const type = toggle.checked ? 'text' : 'password';
-    nameField.type = type;
-    messageField.type = type;
-  });
-</script>
-
+      <button type="submit">Submit</button>
+    </form>
 
     <div id="adminSection" class="hidden">
       <input type="text" id="search" class="search" placeholder="Search feedback...">
       <div id="feedbackList" class="feedback-list"></div>
     </div>
   </div>
+
+  <!-- Notification -->
+  <div id="notification"></div>
 
   <script>
     const form = document.getElementById('feedbackForm');
@@ -150,6 +150,8 @@
     const exportBtn = document.getElementById('exportBtn');
     const clearBtn = document.getElementById('clearBtn');
     const searchInput = document.getElementById('search');
+    const toggle = document.getElementById('togglePassword');
+    const notification = document.getElementById('notification');
 
     let feedback = JSON.parse(localStorage.getItem('feedbackData') || '[]');
 
@@ -175,25 +177,31 @@
       });
     }
 
-    function autoResize(el) {
-      el.style.height = '40px'; // reset to default
-      el.style.height = (el.scrollHeight) + 'px';
+    function showNotification(message, success = true) {
+      notification.textContent = message;
+      notification.style.background = success ? '#28a745' : '#dc3545';
+      notification.style.top = '20px';
+      setTimeout(() => notification.style.top = '-60px', 3000);
     }
-
-    // Auto-expand textarea on input
-    messageInput.addEventListener('input', () => autoResize(messageInput));
 
     form.addEventListener('submit', e => {
       e.preventDefault();
       const name = nameInput.value.trim();
       const message = messageInput.value.trim();
-      if (!name || !message) return;
+      if (!name || !message) {
+        showNotification('❌ Please fill out all fields', false);
+        return;
+      }
       feedback.push({ name, message, time: new Date().toLocaleString() });
       saveFeedback();
+      showNotification('Having trouble, try again later.', true);
       nameInput.value = '';
       messageInput.value = '';
-      autoResize(messageInput);
       if (!adminSection.classList.contains('hidden')) renderFeedback(searchInput.value);
+    });
+
+    toggle.addEventListener('change', () => {
+      messageInput.type = toggle.checked ? 'text' : 'password';
     });
 
     adminBtn.addEventListener('click', () => {
@@ -204,7 +212,7 @@
         clearBtn.classList.remove('hidden');
         renderFeedback();
       } else {
-        alert('Wrong password!');
+        showNotification('Wrong password!', false);
       }
     });
 
