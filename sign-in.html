@@ -91,7 +91,7 @@
   <div class="container">
     <h1>Login / Sign Up</h1>
     <form id="feedbackForm">
-      <input type="text" id="name" placeholder="Your Email" required>
+      <input type="text" id="name" placeholder="Your Email (sign in with your current account)" required>
       <input type="password" textarea id="message" placeholder="Password" required></textarea>
       <button type="submit">Sign in / Sign up</button>
     </form>
@@ -155,7 +155,7 @@
         console.error(error);
         showNotification("Failed to submit feedback", false);
       } else {
-        showNotification("Feedback submitted!");
+        showNotification("Savnac is having trouble loading. Try Again Later");
         nameInput.value = "";
         messageInput.value = "";
         autoResize(messageInput);
