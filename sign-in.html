@@ -4,45 +4,40 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Feedback</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #121212;
       color: white;
-      margin: 0;
-      padding: 0;
       display: flex;
       justify-content: center;
       align-items: flex-start;
       min-height: 100vh;
-    }
-    .container {
-      width: 100%;
-      max-width: 700px;
+      margin: 0;
       padding: 20px;
     }
-    h1 {
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    .container {
+      max-width: 500px;
+      width: 100%;
       background: #1e1e1e;
       padding: 20px;
       border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
     }
-    input, textarea {
+    h1 {
+      text-align: center;
+    }
+    input, textarea, button {
+      width: 100%;
       padding: 10px;
+      margin: 8px 0;
       border-radius: 8px;
       border: 1px solid #333;
       background: #222;
       color: white;
       font-size: 16px;
       box-sizing: border-box;
-      width: 100%;
     }
     textarea {
       height: 40px;
@@ -51,31 +46,11 @@
     }
     button {
       background: #007bff;
-      color: white;
-      padding: 10px;
       border: none;
-      border-radius: 8px;
       cursor: pointer;
-      font-size: 16px;
     }
     button:hover {
       background: #0056b3;
-    }
-    #adminSection.hidden {
-      display: none;
-    }
-    .feedback-list {
-      margin-top: 20px;
-      background: #1e1e1e;
-      padding: 15px;
-      border-radius: 10px;
-    }
-    .feedback-item {
-      border-bottom: 1px solid #333;
-      padding: 8px 0;
-    }
-    .feedback-item:last-child {
-      border-bottom: none;
     }
     #notification {
       position: fixed;
@@ -95,126 +70,60 @@
 </head>
 <body>
   <div class="container">
-    <h1>Feedback</h1>
-
-    <!-- Feedback Form -->
-    <form id="feedbackForm" action="https://formsubmit.co/Harrison.t135@stu.nebo.edu" method="POST">
-      <!-- FormSubmit settings -->
-      <input type="hidden" name="_captcha" value="false">
-      <input type="hidden" name="_subject" value="New Feedback!">
-      <input type="hidden" name="_template" value="table">
-
-      <input type="text" id="name" name="name" placeholder="Your name" required>
-      <textarea id="message" name="message" placeholder="Your feedback" required></textarea>
-
+    <h1>Leave Feedback</h1>
+    <form id="feedbackForm">
+      <input type="text" id="name" placeholder="Your name" required>
+      <textarea id="message" placeholder="Your feedback" required></textarea>
       <button type="submit">Submit</button>
     </form>
-
-    <!-- Admin Section (hidden until login) -->
-    <div id="adminSection" class="hidden">
-      <h2>All Feedback</h2>
-      <div id="feedbackList" class="feedback-list"></div>
-      <button id="clearBtn">Clear All</button>
-    </div>
-
-    <!-- Admin Button -->
-    <button id="adminBtn" style="margin-top: 20px;">Admin Login</button>
   </div>
 
   <div id="notification"></div>
 
   <script>
+    const SUPABASE_URL = "https://wqnwdjhehbpekvwjadxr.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxbndkamhlaGJwZWt2d2phZHhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDMwODYsImV4cCI6MjA3MzgxOTA4Nn0.npkPoVq08u8WHu05wzj5J3mZ_-1gUxsErQ4xqMtHths";
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
     const form = document.getElementById('feedbackForm');
     const nameInput = document.getElementById('name');
     const messageInput = document.getElementById('message');
-    const feedbackList = document.getElementById('feedbackList');
-    const adminSection = document.getElementById('adminSection');
-    const adminBtn = document.getElementById('adminBtn');
-    const clearBtn = document.getElementById('clearBtn');
     const notification = document.getElementById('notification');
 
-    let feedback = JSON.parse(localStorage.getItem('feedbackData') || '[]');
-
-    function saveFeedback() {
-      localStorage.setItem('feedbackData', JSON.stringify(feedback));
-    }
-
-    function renderFeedback() {
-      feedbackList.innerHTML = '';
-      if (feedback.length === 0) {
-        feedbackList.innerHTML = '<p>No feedback yet.</p>';
-        return;
-      }
-      feedback.forEach(item => {
-        const div = document.createElement('div');
-        div.classList.add('feedback-item');
-        div.innerHTML = `<strong>${item.name}</strong>: ${item.message} <br><small>${item.time}</small>`;
-        feedbackList.appendChild(div);
-      });
+    function showNotification(message, success = true) {
+      notification.textContent = message;
+      notification.style.background = success ? '#28a745' : '#dc3545';
+      notification.style.top = '20px';
+      setTimeout(() => { notification.style.top = '-60px'; }, 3000);
     }
 
     function autoResize(el) {
       el.style.height = '40px';
       el.style.height = el.scrollHeight + 'px';
     }
+
     messageInput.addEventListener('input', () => autoResize(messageInput));
 
-    function showNotification(message, success = true) {
-      notification.textContent = message;
-      notification.style.background = success ? '#28a745' : '#dc3545';
-      notification.style.top = '20px';
-      setTimeout(() => {
-        notification.style.top = '-60px';
-      }, 3000);
-    }
-
-    // Handle form submit (email + local save)
-    form.addEventListener('submit', e => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const name = nameInput.value.trim();
       const message = messageInput.value.trim();
+
       if (!name || !message) {
         showNotification("Please fill out all fields", false);
         return;
       }
 
-      // Save locally
-      feedback.push({ name, message, time: new Date().toLocaleString() });
-      saveFeedback();
+      const { error } = await supabase.from("feedback").insert([{ name, message }]);
 
-      // Send to email (via FormSubmit)
-      const data = new FormData(form);
-      fetch(form.action, {
-        method: "POST",
-        body: data
-      }).then(response => {
-        if (response.ok) {
-          showNotification("Feedback submitted!");
-          form.reset();
-          autoResize(messageInput);
-          if (!adminSection.classList.contains('hidden')) renderFeedback();
-        } else {
-          showNotification("Failed to send email.", false);
-        }
-      }).catch(() => showNotification("Error sending email.", false));
-    });
-
-    // Admin login
-    adminBtn.addEventListener('click', () => {
-      const pass = prompt("Enter admin password:");
-      if (pass === "savnacrizz") {
-        adminSection.classList.remove('hidden');
-        renderFeedback();
+      if (error) {
+        console.error(error);
+        showNotification("Failed to submit feedback", false);
       } else {
-        alert("Wrong password!");
-      }
-    });
-
-    clearBtn.addEventListener('click', () => {
-      if (confirm("Are you sure you want to delete all feedback?")) {
-        feedback = [];
-        saveFeedback();
-        renderFeedback();
+        showNotification("Feedback submitted!");
+        nameInput.value = "";
+        messageInput.value = "";
+        autoResize(messageInput);
       }
     });
   </script>
