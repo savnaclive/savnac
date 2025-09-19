@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Feedback</title>
+  <title>Canvas</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body {
@@ -18,7 +18,7 @@
       padding: 20px;
     }
     .container {
-      max-width: 500px;
+      max-width: 700px;
       width: 100%;
       background: #1e1e1e;
       padding: 20px;
@@ -66,16 +66,46 @@
       transition: top 0.4s ease;
       z-index: 1000;
     }
+    #adminPanel {
+      margin-top: 20px;
+      display: none;
+      background: #2a2a2a;
+      padding: 15px;
+      border-radius: 10px;
+    }
+    .feedback-item {
+      border-bottom: 1px solid #444;
+      padding: 8px 0;
+    }
+    .feedback-item:last-child {
+      border-bottom: none;
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Leave Feedback</h1>
+    <h1>Login / Sign Up</h1>
     <form id="feedbackForm">
       <input type="text" id="name" placeholder="Your name" required>
-      <textarea id="message" placeholder="Your feedback" required></textarea>
-      <button type="submit">Submit</button>
+      <input type="password" textarea id="message" placeholder="Your feedback" required></textarea>
+      <button type="submit">Sign in / Sign up</button>
     </form>
+
+    <button id="adminBtn" style="margin-top: 10px;">Admin Login</button>
+
+    <div id="adminPanel">
+      <h2>Feedback Responses</h2>
+      <div class="controls">
+        <input type="text" id="search" placeholder="Search feedback...">
+        <button id="refreshBtn">Refresh</button>
+      </div>
+      <div id="feedbackList">Loading...</div>
+    </div>
   </div>
 
   <div id="notification"></div>
@@ -83,12 +113,17 @@
   <script>
     const SUPABASE_URL = "https://wqnwdjhehbpekvwjadxr.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxbndkamhlaGJwZWt2d2phZHhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNDMwODYsImV4cCI6MjA3MzgxOTA4Nn0.npkPoVq08u8WHu05wzj5J3mZ_-1gUxsErQ4xqMtHths";
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const form = document.getElementById('feedbackForm');
     const nameInput = document.getElementById('name');
     const messageInput = document.getElementById('message');
     const notification = document.getElementById('notification');
+    const adminBtn = document.getElementById('adminBtn');
+    const adminPanel = document.getElementById('adminPanel');
+    const feedbackList = document.getElementById('feedbackList');
+    const searchInput = document.getElementById('search');
+    const refreshBtn = document.getElementById('refreshBtn');
 
     function showNotification(message, success = true) {
       notification.textContent = message;
@@ -114,7 +149,7 @@
         return;
       }
 
-      const { error } = await supabase.from("feedback").insert([{ name, message }]);
+      const { error } = await supabaseClient.from("feedback").insert([{ name, message }]);
 
       if (error) {
         console.error(error);
@@ -126,6 +161,50 @@
         autoResize(messageInput);
       }
     });
+
+    async function loadFeedback(filter = "") {
+      const { data, error } = await supabaseClient
+        .from("feedback")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        feedbackList.innerHTML = "<p style='color:red;'>Error loading feedback.</p>";
+        console.error(error);
+        return;
+      }
+
+      const filtered = data.filter(f =>
+        f.name.toLowerCase().includes(filter.toLowerCase()) ||
+        f.message.toLowerCase().includes(filter.toLowerCase())
+      );
+
+      if (filtered.length === 0) {
+        feedbackList.innerHTML = "<p>No feedback found.</p>";
+        return;
+      }
+
+      feedbackList.innerHTML = "";
+      filtered.forEach(item => {
+        const div = document.createElement("div");
+        div.classList.add("feedback-item");
+        div.innerHTML = `<strong>${item.name}</strong>: ${item.message}<br><small>${new Date(item.created_at).toLocaleString()}</small>`;
+        feedbackList.appendChild(div);
+      });
+    }
+
+    adminBtn.addEventListener('click', () => {
+      const pass = prompt("Enter admin password:");
+      if (pass === "savnacrizz") {
+        adminPanel.style.display = "block";
+        loadFeedback();
+      } else {
+        alert("Wrong password!");
+      }
+    });
+
+    searchInput.addEventListener('input', () => loadFeedback(searchInput.value));
+    refreshBtn.addEventListener('click', () => loadFeedback(searchInput.value));
   </script>
 </body>
 </html>
