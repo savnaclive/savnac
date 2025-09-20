@@ -298,5 +298,32 @@
       }
     });
   </script>
+  <style>
+  body {
+    cursor: none; /* hide default cursor */
+  }
+  .cursor {
+    position: fixed;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(0, 255, 255, 0.8);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease;
+    z-index: 9999;
+  }
+</style>
+
+<div class="cursor" id="cursor"></div>
+
+<script>
+  const cursor = document.getElementById("cursor");
+  document.addEventListener("mousemove", e => {
+    cursor.style.left = e.pageX + "px";
+    cursor.style.top = e.pageY + "px";
+  });
+</script>
+
 </body>
 </html>
