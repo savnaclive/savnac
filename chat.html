@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chatroom</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      margin: 0;
+    }
+    #chat-container {
+      width: 100%;
+      max-width: 600px;
+      background: #1e1e1e;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    #messages {
+      height: 300px;
+      overflow-y: auto;
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 10px;
+      margin: 15px 0;
+      background: #222;
+    }
+    input, button {
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      margin: 5px 0;
+    }
+    input {
+      width: calc(100% - 22px);
+      box-sizing: border-box;
+    }
+    #sendBtn {
+      background-color: #4CAF50;
+      color: white;
+      width: 100%;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    #homeBtn {
+      background-color: #2196F3;
+      color: white;
+      font-weight: bold;
+      margin-bottom: 15px;
+      cursor: pointer;
+      width: 100%;
+      border-radius: 8px;
+      padding: 12px;
+      border: none;
+    }
+    h2 {
+      text-align: center;
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="chat-container">
+    <button id="homeBtn" onclick="goHome()">Home</button>
+    <h2>Supabase Chatroom</h2>
+    <input id="username" placeholder="Choose your username">
+    <div id="messages"></div>
+    <input id="message" placeholder="Type a message">
+    <button id="sendBtn" onclick="sendMessage()">Send</button>
+  </div>
+
+  <!-- Supabase SDK -->
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
+  <!-- Bad-words filter -->
+  <script src="https://unpkg.com/bad-words"></script>
+  <script>
+    const supabaseUrl = "https://lbsnsckhikjtzgjmspau.supabase.co";
+    const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxic25zY2toaWtqdHpnam1zcGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkxODEwODYsImV4cCI6MjA3NDc1NzA4Nn0.c5upCzkqfGgzMcCg34OABo0CRJotYfB9I5IHdzXDJic";
+
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+    const messagesDiv = document.getElementById("messages");
+    const filter = new Filter(); // bad-words library
+
+    // Optional: Add extra offensive words
+    filter.addWords("slur1", "slur2", "slur3");
+
+    function goHome() {
+      window.location.href = "index.html";
+    }
+
+    function addMessage(msg) {
+      const div = document.createElement("div");
+      const time = new Date(msg.created_at).toLocaleTimeString();
+      div.textContent = `[${time}] ${msg.user}: ${msg.content}`;
+      messagesDiv.appendChild(div);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    async function loadMessages() {
+      const { data, error } = await supabase
+        .from("messages")
+        .select("*")
+        .order("created_at", { ascending: true });
+      if (error) {
+        console.error("Error loading messages:", error);
+        return;
+      }
+      data.forEach(addMessage);
+    }
+
+    async function sendMessage() {
+      const userInput = document.getElementById("username").value.trim();
+      const messageInput = document.getElementById("message").value.trim();
+
+      if (!userInput || !messageInput) return;
+
+      // 🔹 Block offensive usernames
+      if (filter.isProfane(userInput)) {
+        alert("⚠️ Your username contains offensive language. Choose another.");
+        return;
+      }
+
+      // 🔹 Block offensive messages
+      if (filter.isProfane(messageInput)) {
+        alert("⚠️ Your message contains offensive language and cannot be sent.");
+        return;
+      }
+
+      const { error } = await supabase.from("messages").insert([{
+        user: userInput,
+        content: messageInput
+      }]);
+      if (error) {
+        console.error("Error sending message:", error);
+      }
+
+      document.getElementById("message").value = "";
+    }
+
+    supabase
+      .channel("chat-room")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, (payload) => {
+        addMessage(payload.new);
+      })
+      .subscribe();
+
+    loadMessages();
+  </script>
+</body>
+</html>
