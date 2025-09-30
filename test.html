@@ -57,13 +57,26 @@
       background-color: #333;
     }
 
+    /* NEW FLEX for chat box */
     .list-container {
+      display: flex;
+      flex-direction: column;
       max-height: 500px;
-      overflow-y: auto;
+      min-height: 200px;
+      overflow: hidden;
       border: 1px solid #333;
     }
 
-    .list-container ul {
+    .list-container h2 {
+      flex: 0 0 auto;
+      margin-bottom: 10px;
+    }
+
+    #feedbackList {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      min-height: 0;
+      max-height: 100%;
       list-style: none;
       padding: 0;
       margin: 0;
@@ -72,6 +85,25 @@
     .list-container li {
       border-bottom: 1px solid #333;
       padding: 5px 0;
+    }
+
+    /* Delete all section */
+    .delete-section {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .delete-section input[type="password"] {
+      width: calc(100% - 0px);
+      font-size: 16px;
+    }
+    .delete-section button {
+      background-color: #e53935;
+    }
+    .delete-section button:hover {
+      background-color: #b71c1c;
     }
   </style>
 </head>
@@ -82,10 +114,14 @@
   <div class="container">
     <!-- Feedback Form -->
     <div class="form-container">
-      <input type="text" id="name" placeholder="Your Name" />
-      <textarea id="feedback" placeholder="Your Message"></textarea>
+      <input type="text" id="name" placeholder="Your Name" maxlength="30" />
+      <textarea id="feedback" placeholder="Your Message" maxlength="200"></textarea>
       <button id="sendBtn">Send Message</button>
       <button class="home-btn" onclick="goHome()">Home</button>
+      <div class="delete-section">
+        <input type="password" id="deletePin" placeholder="PIN to delete all messages" maxlength="20" />
+        <button id="deleteAllBtn">Delete all messages</button>
+      </div>
     </div>
 
     <!-- Feedback List -->
@@ -105,11 +141,17 @@
     const sendBtn = document.getElementById('sendBtn')
     const feedbackList = document.getElementById('feedbackList')
     const listContainer = feedbackList.parentElement
+    const deleteAllBtn = document.getElementById('deleteAllBtn')
+    const deletePinInput = document.getElementById('deletePin')
 
-    // Enhanced profanity filter
-    const badWords = ['badword1','badword2','badword3']
-    function cleanText(text) { return text.toLowerCase().replace(/[^a-z0-9]/g,'') }
-    function containsBadWord(text) { return badWords.some(word => cleanText(text).includes(word)) }
+    // Bad word filter list (expand as needed, lowercase, no spaces)
+    const badWords = [
+      'badword1','badword2','badword3', // your custom list
+      'fuck','shit','bitch','asshole','bastard','dick','pussy','cunt','nigger','nigga','fag','faggot','slut','whore','retard','cum','cock','douche','twat','tit','wank','gayass','fuk','suckmy','suckdick'
+    ];
+    // Returns text with all chars except a-z and 0-9 removed and lowercased
+    function cleanText(text) { return text.toLowerCase().replace(/[^a-z0-9]/g,''); }
+    function containsBadWord(text) { return badWords.some(word => cleanText(text).includes(word)); }
 
     // Load all feedback
     async function loadFeedback() {
@@ -127,7 +169,7 @@
         })
       }
       // Always scroll to top so newest is seen first
-      listContainer.scrollTop = 0
+      listContainer.querySelector('#feedbackList').scrollTop = 0
     }
 
     // Send feedback
@@ -139,7 +181,10 @@
         alert('Please fill out both fields!')
         return
       }
-
+      if (name.length > 30 || feedback.length > 200) {
+        alert('Name or message too long!')
+        return
+      }
       if (containsBadWord(name) || containsBadWord(feedback)) {
         alert('Please avoid using offensive words!')
         return
@@ -164,8 +209,32 @@
           li.textContent = `${data[0].name}: ${data[0].feedback}`
           feedbackList.prepend(li) // newest on top
           // Always scroll to top after adding new message
-          listContainer.scrollTop = 0
+          feedbackList.scrollTop = 0
         }
+      }
+    })
+
+    // Delete all messages
+    deleteAllBtn.addEventListener('click', async () => {
+      const pin = deletePinInput.value.trim()
+      if (pin !== "savnacsigma") {
+        alert('Incorrect PIN!')
+        return
+      }
+      if (!confirm('Are you sure you want to delete ALL messages? This cannot be undone.')) {
+        return
+      }
+      // Delete everything
+      const { error } = await supabase
+        .from('feedback')
+        .delete()
+        .neq('id', 0) // hack to match all rows (id always exists and is never 0)
+      if (error) {
+        alert('Failed to delete messages: ' + error.message)
+      } else {
+        alert('All messages deleted!')
+        loadFeedback()
+        deletePinInput.value = ''
       }
     })
 
@@ -175,7 +244,6 @@
 
     // Initial load
     loadFeedback()
-
     // Optional: auto-refresh every 10 seconds to catch others' submissions
     setInterval(loadFeedback, 10000)
   </script>
