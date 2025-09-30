@@ -283,6 +283,11 @@
     function cleanText(text) { return text.toLowerCase().replace(/[^a-z0-9]/g,''); }
     function containsBadWord(text) { return badWords.some(word => cleanText(text).includes(word)); }
 
+    // Autocorrect "nixon" (any case) to "the short idiot"
+    function autocorrectNixon(str) {
+      return str.replace(/nixon/gi, "the short idiot");
+    }
+
     // Load all feedback
     async function loadFeedback() {
       const { data, error } = await supabase
@@ -319,8 +324,12 @@
 
     // Send feedback
     sendBtn.addEventListener('click', async () => {
-      const name = document.getElementById('name').value.trim()
-      const feedback = document.getElementById('feedback').value.trim()
+      let name = document.getElementById('name').value.trim()
+      let feedback = document.getElementById('feedback').value.trim()
+
+      // Apply autocorrect before anything else
+      name = autocorrectNixon(name);
+      feedback = autocorrectNixon(feedback);
 
       if (!name || !feedback) {
         alert('Please fill out both fields!')
