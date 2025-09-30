@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Canvas</title>
+  <title>Feedback</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -60,11 +60,13 @@
     .list-container {
       max-height: 500px;
       overflow-y: auto;
+      border: 1px solid #333;
     }
 
     .list-container ul {
       list-style: none;
       padding: 0;
+      margin: 0;
     }
 
     .list-container li {
@@ -75,20 +77,20 @@
 </head>
 <body>
 
-  <h1>Canvas Chat</h1>
+  <h1>Feedback Form</h1>
 
   <div class="container">
     <!-- Feedback Form -->
     <div class="form-container">
       <input type="text" id="name" placeholder="Your Name" />
-      <textarea id="feedback" placeholder="Your Message"></textarea>
-      <button id="sendBtn">Send Message</button>
+      <textarea id="feedback" placeholder="Your Feedback"></textarea>
+      <button id="sendBtn">Send Feedback</button>
       <button class="home-btn" onclick="goHome()">Home</button>
     </div>
 
     <!-- Feedback List -->
     <div class="list-container">
-      <h2>CHATROOM</h2>
+      <h2>Feedback Received</h2>
       <ul id="feedbackList"></ul>
     </div>
   </div>
@@ -102,6 +104,7 @@
 
     const sendBtn = document.getElementById('sendBtn')
     const feedbackList = document.getElementById('feedbackList')
+    const listContainer = feedbackList.parentElement
 
     // Enhanced profanity filter
     const badWords = ['badword1','badword2','badword3']
@@ -115,9 +118,6 @@
         .select('*')
         .order('created_at', { ascending: false })
 
-      console.log('Fetched data:', data)
-      console.log('Fetch error:', error)
-
       feedbackList.innerHTML = ''
       if (data) {
         data.forEach(f => {
@@ -126,6 +126,8 @@
           feedbackList.appendChild(li)
         })
       }
+      // Always scroll to top so newest is seen first
+      listContainer.scrollTop = 0
     }
 
     // Send feedback
@@ -161,6 +163,8 @@
           const li = document.createElement('li')
           li.textContent = `${data[0].name}: ${data[0].feedback}`
           feedbackList.prepend(li) // newest on top
+          // Always scroll to top after adding new message
+          listContainer.scrollTop = 0
         }
       }
     })
