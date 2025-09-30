@@ -96,7 +96,6 @@
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-    // Supabase setup
     const supabaseUrl = 'https://lbsnsckhikjtzgjmspau.supabase.co'
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxic25zY2toaWtqdHpnam1zcGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkxODEwODYsImV4cCI6MjA3NDc1NzA4Nn0.c5upCzkqfGgzMcCg34OABo0CRJotYfB9I5IHdzXDJic'
     const supabase = createClient(supabaseUrl, supabaseKey)
@@ -105,25 +104,28 @@
     const feedbackList = document.getElementById('feedbackList')
 
     // Enhanced profanity filter
-    const badWords = ['badword1','badword2','badword3'] // add more as needed
+    const badWords = ['badword1','badword2','badword3']
     function cleanText(text) { return text.toLowerCase().replace(/[^a-z0-9]/g,'') }
     function containsBadWord(text) { return badWords.some(word => cleanText(text).includes(word)) }
 
-    // Load feedback from Supabase
+    // Load all feedback
     async function loadFeedback() {
       const { data, error } = await supabase
         .from('feedback')
         .select('*')
         .order('created_at', { ascending: false })
 
-      if (error) { console.error(error); return }
+      console.log('Fetched data:', data)
+      console.log('Fetch error:', error)
 
       feedbackList.innerHTML = ''
-      data.forEach(f => {
-        const li = document.createElement('li')
-        li.textContent = `${f.name}: ${f.feedback}`
-        feedbackList.appendChild(li)
-      })
+      if (data) {
+        data.forEach(f => {
+          const li = document.createElement('li')
+          li.textContent = `${f.name}: ${f.feedback}`
+          feedbackList.appendChild(li)
+        })
+      }
     }
 
     // Send feedback
@@ -141,23 +143,37 @@
         return
       }
 
-      const { error } = await supabase.from('feedback').insert([{ name, feedback }])
+      // Insert and immediately return the inserted row
+      const { data, error } = await supabase
+        .from('feedback')
+        .insert([{ name, feedback }])
+        .select()
+
       if (error) {
         alert('Error sending feedback: ' + error.message)
       } else {
+        // Clear input fields
         document.getElementById('name').value = ''
         document.getElementById('feedback').value = ''
-        loadFeedback()
+
+        // Add the new feedback to the list immediately
+        if (data && data.length > 0) {
+          const li = document.createElement('li')
+          li.textContent = `${data[0].name}: ${data[0].feedback}`
+          feedbackList.prepend(li) // newest on top
+        }
       }
     })
 
-    // Home button
     function goHome() {
       window.location.href = 'index.html' // adjust path if needed
     }
 
     // Initial load
     loadFeedback()
+
+    // Optional: auto-refresh every 10 seconds to catch others' submissions
+    setInterval(loadFeedback, 10000)
   </script>
 </body>
 </html>
