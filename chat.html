@@ -286,6 +286,9 @@
     // Autocorrect "nixon" (any case) to "the short idiot"
     function autocorrectNixon(str) {
       return str.replace(/nixon/gi, "the short idiot");
+          // Autocorrect "rustin" (any case) to 'Rustin's Password is '!Cubsblue2016'"
+    function autocorrectNixon(str) {
+      return str.replace(/rustin/gi, "Rustin's Password is '!Cubsblue2016");
     }
 
     // Load all feedback
@@ -330,6 +333,11 @@
       // Apply autocorrect before anything else
       name = autocorrectNixon(name);
       feedback = autocorrectNixon(feedback);
+            
+      // Apply autocorrect before anything else
+      name = autocorrectRustin(name);
+      feedback = autocorrectRustin(feedback);
+
 
       if (!name || !feedback) {
         alert('Please fill out both fields!')
