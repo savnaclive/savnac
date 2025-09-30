@@ -259,7 +259,7 @@
     const deleteAllBtn = document.getElementById('deleteAllBtn')
     const deletePinInput = document.getElementById('deletePin')
 
-    // Expanded bad word filter with obfuscations and common variants
+    // Bad word list
     const badWords = [
       'badword1','badword2','badword3',
       'fuck','fuk','fux','f*ck','f*uk',
@@ -278,14 +278,10 @@
       'douche','twat','tit','t1t','t!t',
       'wank','gayass','g@yass','g@y',
       'suckmy','suckdick','suckd1ck','suckc*ck',
-      'anal','anus','arse','arsehole','@ss','@$$','a$$','a55','ass','assh0le','assh0l3',
-      // Add more pattern entries as needed for your audience/language
+      'anal','anus','arse','arsehole','@ss','@$$','a$$','a55','ass','assh0le','assh0l3'
     ];
 
-    /**
-     * Build regex pattern for each word, to match with or without
-     * special characters, numbers, and common symbol replacements.
-     */
+    // Build regex patterns for bad words
     function wordToPattern(word) {
       // Replace typical leetspeak/obfuscations
       let pattern = word
@@ -307,11 +303,10 @@
         .replace(/@/g, '[@]')
         .replace(/1/g, '[1!]')
         .replace(/0/g, '[0o]')
-        .replace(/5/g, '[5s$]')
+        .replace(/5/g, '[5s$]');
       return pattern;
     }
 
-    // Build a list of regex patterns for bad words (whole word or inside word)
     const badWordPatterns = badWords.map(w => {
       const pattern = wordToPattern(w);
       // Allow for optional non-word characters between each letter for extra obfuscation
@@ -431,9 +426,6 @@
 
     // Home button function
     function goHome() {
-      // If your home is a file called index.html, use:
-      // window.location.href = 'index.html';
-      // If your home is root, use:
       window.location.href = '/';
     }
 
