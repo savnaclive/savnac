@@ -4,106 +4,220 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Canvas</title>
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #121212;
-      color: white;
+    :root {
+      --primary: #1976d2;
+      --primary-dark: #115293;
+      --bg: #181b20;
+      --bg-card: #23272e;
+      --bg-input: #22262c;
+      --border: #32363d;
+      --text: #f8f8ff;
+      --muted: #b0b8c1;
+      --danger: #e53935;
+      --danger-dark: #b71c1c;
+      --radius: 13px;
+      --shadow: 0 8px 24px 0 rgba(20,24,31,0.20);
+    }
+    html, body {
+      height: 100%;
       margin: 0;
-      padding: 20px;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', Arial, sans-serif;
     }
-
-    h1 { text-align: center; }
-
-    .container {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .form-container, .list-container {
-      background: #1e1e1e;
-      padding: 20px;
-      border-radius: 10px;
-      flex: 1;
-      min-width: 300px;
-    }
-
-    input, textarea, button {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 5px;
-      border: none;
-      font-size: 16px;
-    }
-
-    button {
-      background-color: #1e88e5;
-      color: white;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #1565c0;
-    }
-
-    .home-btn {
-      background-color: #555;
-    }
-
-    .home-btn:hover {
-      background-color: #333;
-    }
-
-    /* NEW FLEX for chat box */
-    .list-container {
+    body {
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      max-height: 500px;
-      min-height: 200px;
-      overflow: hidden;
-      border: 1px solid #333;
+      align-items: center;
+      padding: 0;
     }
-
-    .list-container h2 {
-      flex: 0 0 auto;
+    h1 {
+      text-align: center;
+      margin: 35px 0 15px 0;
+      font-weight: 600;
+      letter-spacing: 2px;
+      font-size: 2.3rem;
+      color: var(--primary);
+      text-shadow: 0 2px 12px #1e88e540;
+    }
+    .container {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto 30px auto;
+    }
+    .form-container, .list-container {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 32px 26px 24px 26px;
+      box-shadow: var(--shadow);
+      min-width: 325px;
+      flex: 1 1 325px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .form-container {
+      max-width: 400px;
+      border: 1px solid var(--border);
+    }
+    .form-container input,
+    .form-container textarea {
+      background: var(--bg-input);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      font-size: 1rem;
+      margin-bottom: 13px;
+      padding: 11px 14px;
+      outline: none;
+      transition: border 0.18s;
+    }
+    .form-container input:focus,
+    .form-container textarea:focus {
+      border-color: var(--primary);
+    }
+    .form-container textarea {
+      min-height: 75px;
+      resize: vertical;
+      font-family: 'Inter', Arial, sans-serif;
+    }
+    .form-container button {
+      padding: 11px 0;
+      font-size: 1.06rem;
+      border-radius: 7px;
+      border: none;
       margin-bottom: 10px;
+      font-weight: 600;
+      transition: background 0.15s, box-shadow 0.15s;
+      box-shadow: 0 2px 10px 0 #1976d218;
+      letter-spacing: 0.5px;
     }
-
+    #sendBtn {
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+      color: #fff;
+    }
+    #sendBtn:hover, #sendBtn:focus {
+      background: linear-gradient(90deg, var(--primary-dark), var(--primary));
+    }
+    .home-btn {
+      background: var(--bg-input);
+      color: var(--muted);
+      margin-bottom: 14px;
+      border: 1px solid var(--border);
+      font-weight: 400;
+    }
+    .home-btn:hover, .home-btn:focus {
+      background: var(--border);
+      color: var(--text);
+    }
+    .delete-section {
+      display: flex;
+      gap: 7px;
+      margin-top: 6px;
+      align-items: stretch;
+    }
+    .delete-section input[type="password"] {
+      flex: 2;
+      background: var(--bg-input);
+      color: var(--text);
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      font-size: 1rem;
+      outline: none;
+    }
+    .delete-section button {
+      flex: 1;
+      background: linear-gradient(90deg, var(--danger), var(--danger-dark));
+      color: #fff;
+      font-weight: 600;
+      border-radius: 7px;
+      border: none;
+      box-shadow: 0 2px 8px 0 #e5393530;
+    }
+    .delete-section button:focus,
+    .delete-section button:hover {
+      background: linear-gradient(90deg, var(--danger-dark), var(--danger));
+    }
+    .list-container {
+      max-width: 420px;
+      min-width: 300px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow);
+      padding: 0;
+      overflow: hidden;
+      height: 480px;
+    }
+    .list-container h2 {
+      margin: 0;
+      font-size: 1.2rem;
+      background: var(--primary);
+      color: #fff;
+      padding: 17px 0;
+      text-align: center;
+      font-weight: 600;
+      letter-spacing: 1px;
+      border-radius: var(--radius) var(--radius) 0 0;
+      box-shadow: 0 1px 8px #1e88e520;
+    }
     #feedbackList {
       flex: 1 1 auto;
       overflow-y: auto;
-      min-height: 0;
-      max-height: 100%;
+      background: var(--bg-card);
       list-style: none;
-      padding: 0;
+      padding: 0 0 0 0;
       margin: 0;
+      border-radius: 0 0 var(--radius) var(--radius);
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary) var(--bg-card);
     }
-
+    #feedbackList::-webkit-scrollbar {
+      width: 8px;
+    }
+    #feedbackList::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 6px;
+    }
+    #feedbackList::-webkit-scrollbar-track {
+      background: var(--bg-card);
+    }
     .list-container li {
-      border-bottom: 1px solid #333;
-      padding: 5px 0;
+      border-bottom: 1px solid var(--border);
+      padding: 13px 18px 10px 18px;
+      word-break: break-word;
+      font-size: 1.06rem;
+      color: var(--text);
+      transition: background 0.2s;
+      background: none;
     }
-
-    /* Delete all section */
-    .delete-section {
-      margin-top: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
+    .list-container li:last-child {
+      border-bottom: none;
     }
-
-    .delete-section input[type="password"] {
-      width: calc(100% - 0px);
-      font-size: 16px;
+    .list-container li .name {
+      color: var(--primary);
+      font-weight: 600;
+      margin-right: 7px;
     }
-    .delete-section button {
-      background-color: #e53935;
+    .list-container li .msg {
+      color: var(--text);
     }
-    .delete-section button:hover {
-      background-color: #b71c1c;
+    @media (max-width: 900px) {
+      .container { flex-direction: column; align-items: center; gap: 15px; }
+      .form-container, .list-container { width: 95%; min-width: 0; max-width: none; }
+    }
+    @media (max-width: 600px) {
+      .form-container, .list-container { padding: 18px 7px 13px 7px; }
+      h1 { font-size: 1.5rem; }
     }
   </style>
 </head>
@@ -114,13 +228,13 @@
   <div class="container">
     <!-- Feedback Form -->
     <div class="form-container">
-      <input type="text" id="name" placeholder="Your Name" maxlength="30" />
+      <input type="text" id="name" placeholder="Your Name" maxlength="30" autocomplete="off" />
       <textarea id="feedback" placeholder="Your Message" maxlength="200"></textarea>
       <button id="sendBtn">Send Message</button>
       <button class="home-btn" onclick="goHome()">Home</button>
       <div class="delete-section">
-        <input type="password" id="deletePin" placeholder="PIN to delete all messages" maxlength="20" />
-        <button id="deleteAllBtn">Delete all messages</button>
+        <input type="password" id="deletePin" placeholder="PIN" maxlength="20" autocomplete="off" />
+        <button id="deleteAllBtn" title="Delete all messages with correct PIN">Delete all</button>
       </div>
     </div>
 
@@ -146,10 +260,9 @@
 
     // Bad word filter list (expand as needed, lowercase, no spaces)
     const badWords = [
-      'badword1','badword2','badword3', // your custom list
+      'badword1','badword2','badword3',
       'fuck','shit','bitch','asshole','bastard','dick','pussy','cunt','nigger','nigga','fag','faggot','slut','whore','retard','cum','cock','douche','twat','tit','wank','gayass','fuk','suckmy','suckdick'
     ];
-    // Returns text with all chars except a-z and 0-9 removed and lowercased
     function cleanText(text) { return text.toLowerCase().replace(/[^a-z0-9]/g,''); }
     function containsBadWord(text) { return badWords.some(word => cleanText(text).includes(word)); }
 
@@ -164,12 +277,27 @@
       if (data) {
         data.forEach(f => {
           const li = document.createElement('li')
-          li.textContent = `${f.name}: ${f.feedback}`
+          li.innerHTML = `<span class="name">${escapeHTML(f.name)}:</span> <span class="msg">${escapeHTML(f.feedback)}</span>`;
           feedbackList.appendChild(li)
         })
       }
-      // Always scroll to top so newest is seen first
-      listContainer.querySelector('#feedbackList').scrollTop = 0
+      feedbackList.scrollTop = 0
+    }
+
+    // Escape HTML to avoid XSS
+    function escapeHTML(str) {
+      return String(str).replace(/[&<>"'`=\/]/g, function (s) {
+        return ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;',
+          '/': '&#x2F;',
+          '`': '&#x60;',
+          '=': '&#x3D;'
+        })[s];
+      });
     }
 
     // Send feedback
@@ -190,7 +318,6 @@
         return
       }
 
-      // Insert and immediately return the inserted row
       const { data, error } = await supabase
         .from('feedback')
         .insert([{ name, feedback }])
@@ -199,20 +326,23 @@
       if (error) {
         alert('Error sending feedback: ' + error.message)
       } else {
-        // Clear input fields
         document.getElementById('name').value = ''
         document.getElementById('feedback').value = ''
-
-        // Add the new feedback to the list immediately
         if (data && data.length > 0) {
           const li = document.createElement('li')
-          li.textContent = `${data[0].name}: ${data[0].feedback}`
-          feedbackList.prepend(li) // newest on top
-          // Always scroll to top after adding new message
+          li.innerHTML = `<span class="name">${escapeHTML(data[0].name)}:</span> <span class="msg">${escapeHTML(data[0].feedback)}</span>`;
+          feedbackList.prepend(li)
           feedbackList.scrollTop = 0
         }
       }
     })
+
+    // Allow Enter+Ctrl to submit from textarea
+    document.getElementById('feedback').addEventListener('keydown', function(e){
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+        sendBtn.click();
+      }
+    });
 
     // Delete all messages
     deleteAllBtn.addEventListener('click', async () => {
@@ -224,11 +354,10 @@
       if (!confirm('Are you sure you want to delete ALL messages? This cannot be undone.')) {
         return
       }
-      // Delete everything
       const { error } = await supabase
         .from('feedback')
         .delete()
-        .neq('id', 0) // hack to match all rows (id always exists and is never 0)
+        .neq('id', 0)
       if (error) {
         alert('Failed to delete messages: ' + error.message)
       } else {
@@ -238,13 +367,13 @@
       }
     })
 
+    // Home button function (edit path as needed)
     function goHome() {
-      window.location.href = 'savnaclive.github.io/savnac/index.html' // adjust path if needed
+      window.location.href = '/'; // Change to "index.html" or your custom path if needed
     }
 
     // Initial load
     loadFeedback()
-    // Optional: auto-refresh every 10 seconds to catch others' submissions
     setInterval(loadFeedback, 10000)
   </script>
 </body>
