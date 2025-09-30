@@ -260,8 +260,8 @@
 
     // Bad word filter list (expand as needed, lowercase, no spaces)
     const badWords = [
-      'badword1','badword2','badword3',
-      'badword1','badword2','badword3',
+      'b@llz','bals','shat',
+      'ballz','b@lls','balls',
       'fuck','fuk','fux','f*ck','f*uk',
       'shit','sh1t','sh!t','sht','5hit',
       'bitch','b1tch','b!tch','b!tch3s','b!tches',
@@ -278,7 +278,7 @@
       'douche','twat','tit','t1t','t!t',
       'wank','gayass','g@yass','g@y',
       'suckmy','suckdick','suckd1ck','suckc*ck',
-      'anal','anus','arse','arsehole','@ss','@$$','a$$','a55','ass','assh0le','assh0l3'
+      'anal','anus','arse','arsehole','@ss','@$$','a$$','a55','ass','assh0le','assh0l3','penis','weenie','weeny','weiner','weiny','weiner','p3nis','p3n!s','pen!s','diddy','peni$','p3n!$','p3ni$'
     ];
     function cleanText(text) { return text.toLowerCase().replace(/[^a-z0-9]/g,''); }
     function containsBadWord(text) { return badWords.some(word => cleanText(text).includes(word)); }
