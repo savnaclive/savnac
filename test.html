@@ -9,34 +9,67 @@
       font-family: Arial, sans-serif;
       background-color: #121212;
       color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
       margin: 0;
+      padding: 20px;
     }
+
+    h1 { text-align: center; }
+
+    .container {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .form-container, .list-container {
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 10px;
+      flex: 1;
+      min-width: 300px;
+    }
+
     input, textarea, button {
-      margin: 10px 0;
+      width: 100%;
       padding: 10px;
-      width: 300px;
+      margin: 10px 0;
       border-radius: 5px;
       border: none;
       font-size: 16px;
     }
+
     button {
       background-color: #1e88e5;
       color: white;
       cursor: pointer;
     }
+
     button:hover {
       background-color: #1565c0;
     }
+
     .home-btn {
       background-color: #555;
     }
+
     .home-btn:hover {
       background-color: #333;
+    }
+
+    .list-container {
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .list-container ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .list-container li {
+      border-bottom: 1px solid #333;
+      padding: 5px 0;
     }
   </style>
 </head>
@@ -44,10 +77,21 @@
 
   <h1>Feedback Form</h1>
 
-  <input type="text" id="name" placeholder="Your Name" />
-  <textarea id="feedback" placeholder="Your Feedback"></textarea>
-  <button id="sendBtn">Send Feedback</button>
-  <button class="home-btn" onclick="goHome()">Home</button>
+  <div class="container">
+    <!-- Feedback Form -->
+    <div class="form-container">
+      <input type="text" id="name" placeholder="Your Name" />
+      <textarea id="feedback" placeholder="Your Feedback"></textarea>
+      <button id="sendBtn">Send Feedback</button>
+      <button class="home-btn" onclick="goHome()">Home</button>
+    </div>
+
+    <!-- Feedback List -->
+    <div class="list-container">
+      <h2>Feedback Received</h2>
+      <ul id="feedbackList"></ul>
+    </div>
+  </div>
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
@@ -58,15 +102,28 @@
     const supabase = createClient(supabaseUrl, supabaseKey)
 
     const sendBtn = document.getElementById('sendBtn')
+    const feedbackList = document.getElementById('feedbackList')
 
     // Enhanced profanity filter
-    const badWords = ['badword1','badword2','badword3'] // Add more words as needed
-    function cleanText(text) {
-      return text.toLowerCase().replace(/[^a-z0-9]/g, '') // removes spaces & symbols
-    }
-    function containsBadWord(text) {
-      const cleaned = cleanText(text)
-      return badWords.some(word => cleaned.includes(word))
+    const badWords = ['badword1','badword2','badword3'] // add more as needed
+    function cleanText(text) { return text.toLowerCase().replace(/[^a-z0-9]/g,'') }
+    function containsBadWord(text) { return badWords.some(word => cleanText(text).includes(word)) }
+
+    // Load feedback from Supabase
+    async function loadFeedback() {
+      const { data, error } = await supabase
+        .from('feedback')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      if (error) { console.error(error); return }
+
+      feedbackList.innerHTML = ''
+      data.forEach(f => {
+        const li = document.createElement('li')
+        li.textContent = `${f.name}: ${f.feedback}`
+        feedbackList.appendChild(li)
+      })
     }
 
     // Send feedback
@@ -84,22 +141,23 @@
         return
       }
 
-      const { error } = await supabase
-        .from('feedback')
-        .insert([{ name, feedback }])
-
+      const { error } = await supabase.from('feedback').insert([{ name, feedback }])
       if (error) {
         alert('Error sending feedback: ' + error.message)
       } else {
-        alert('Feedback sent! Thank you.')
         document.getElementById('name').value = ''
         document.getElementById('feedback').value = ''
+        loadFeedback()
       }
     })
 
+    // Home button
     function goHome() {
-      window.location.href = 'index.html'
+      window.location.href = 'index.html' // adjust path if needed
     }
+
+    // Initial load
+    loadFeedback()
   </script>
 </body>
 </html>
