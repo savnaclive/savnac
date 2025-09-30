@@ -1,156 +1,380 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Chatroom</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Canvas</title>
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary: #1976d2;
+      --primary-dark: #115293;
+      --bg: #181b20;
+      --bg-card: #23272e;
+      --bg-input: #22262c;
+      --border: #32363d;
+      --text: #f8f8ff;
+      --muted: #b0b8c1;
+      --danger: #e53935;
+      --danger-dark: #b71c1c;
+      --radius: 13px;
+      --shadow: 0 8px 24px 0 rgba(20,24,31,0.20);
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', Arial, sans-serif;
+    }
     body {
-      font-family: Arial, sans-serif;
-      background: #121212;
-      color: #fff;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 20px;
-      margin: 0;
+      padding: 0;
     }
-    #chat-container {
+    h1 {
+      text-align: center;
+      margin: 35px 0 15px 0;
+      font-weight: 600;
+      letter-spacing: 2px;
+      font-size: 2.3rem;
+      color: var(--primary);
+      text-shadow: 0 2px 12px #1e88e540;
+    }
+    .container {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      justify-content: center;
       width: 100%;
-      max-width: 600px;
-      background: #1e1e1e;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      max-width: 900px;
+      margin: 0 auto 30px auto;
     }
-    #messages {
-      height: 300px;
-      overflow-y: auto;
-      border: 1px solid #444;
-      border-radius: 8px;
-      padding: 10px;
-      margin: 15px 0;
-      background: #222;
+    .form-container, .list-container {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 32px 26px 24px 26px;
+      box-shadow: var(--shadow);
+      min-width: 325px;
+      flex: 1 1 325px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
     }
-    input, button {
-      padding: 10px;
-      border-radius: 6px;
+    .form-container {
+      max-width: 400px;
+      border: 1px solid var(--border);
+    }
+    .form-container input,
+    .form-container textarea {
+      background: var(--bg-input);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      font-size: 1rem;
+      margin-bottom: 13px;
+      padding: 11px 14px;
+      outline: none;
+      transition: border 0.18s;
+    }
+    .form-container input:focus,
+    .form-container textarea:focus {
+      border-color: var(--primary);
+    }
+    .form-container textarea {
+      min-height: 75px;
+      resize: vertical;
+      font-family: 'Inter', Arial, sans-serif;
+    }
+    .form-container button {
+      padding: 11px 0;
+      font-size: 1.06rem;
+      border-radius: 7px;
       border: none;
-      margin: 5px 0;
-    }
-    input {
-      width: calc(100% - 22px);
-      box-sizing: border-box;
+      margin-bottom: 10px;
+      font-weight: 600;
+      transition: background 0.15s, box-shadow 0.15s;
+      box-shadow: 0 2px 10px 0 #1976d218;
+      letter-spacing: 0.5px;
     }
     #sendBtn {
-      background-color: #4CAF50;
-      color: white;
-      width: 100%;
-      cursor: pointer;
-      font-weight: bold;
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+      color: #fff;
     }
-    #homeBtn {
-      background-color: #2196F3;
-      color: white;
-      font-weight: bold;
-      margin-bottom: 15px;
-      cursor: pointer;
-      width: 100%;
-      border-radius: 8px;
-      padding: 12px;
+    #sendBtn:hover, #sendBtn:focus {
+      background: linear-gradient(90deg, var(--primary-dark), var(--primary));
+    }
+    .home-btn {
+      background: var(--bg-input);
+      color: var(--muted);
+      margin-bottom: 14px;
+      border: 1px solid var(--border);
+      font-weight: 400;
+    }
+    .home-btn:hover, .home-btn:focus {
+      background: var(--border);
+      color: var(--text);
+    }
+    .delete-section {
+      display: flex;
+      gap: 7px;
+      margin-top: 6px;
+      align-items: stretch;
+    }
+    .delete-section input[type="password"] {
+      flex: 2;
+      background: var(--bg-input);
+      color: var(--text);
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      font-size: 1rem;
+      outline: none;
+    }
+    .delete-section button {
+      flex: 1;
+      background: linear-gradient(90deg, var(--danger), var(--danger-dark));
+      color: #fff;
+      font-weight: 600;
+      border-radius: 7px;
       border: none;
+      box-shadow: 0 2px 8px 0 #e5393530;
     }
-    h2 {
+    .delete-section button:focus,
+    .delete-section button:hover {
+      background: linear-gradient(90deg, var(--danger-dark), var(--danger));
+    }
+    .list-container {
+      max-width: 420px;
+      min-width: 300px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow);
+      padding: 0;
+      overflow: hidden;
+      height: 480px;
+    }
+    .list-container h2 {
+      margin: 0;
+      font-size: 1.2rem;
+      background: var(--primary);
+      color: #fff;
+      padding: 17px 0;
       text-align: center;
-      margin-top: 0;
+      font-weight: 600;
+      letter-spacing: 1px;
+      border-radius: var(--radius) var(--radius) 0 0;
+      box-shadow: 0 1px 8px #1e88e520;
+    }
+    #feedbackList {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      background: var(--bg-card);
+      list-style: none;
+      padding: 0 0 0 0;
+      margin: 0;
+      border-radius: 0 0 var(--radius) var(--radius);
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary) var(--bg-card);
+    }
+    #feedbackList::-webkit-scrollbar {
+      width: 8px;
+    }
+    #feedbackList::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 6px;
+    }
+    #feedbackList::-webkit-scrollbar-track {
+      background: var(--bg-card);
+    }
+    .list-container li {
+      border-bottom: 1px solid var(--border);
+      padding: 13px 18px 10px 18px;
+      word-break: break-word;
+      font-size: 1.06rem;
+      color: var(--text);
+      transition: background 0.2s;
+      background: none;
+    }
+    .list-container li:last-child {
+      border-bottom: none;
+    }
+    .list-container li .name {
+      color: var(--primary);
+      font-weight: 600;
+      margin-right: 7px;
+    }
+    .list-container li .msg {
+      color: var(--text);
+    }
+    @media (max-width: 900px) {
+      .container { flex-direction: column; align-items: center; gap: 15px; }
+      .form-container, .list-container { width: 95%; min-width: 0; max-width: none; }
+    }
+    @media (max-width: 600px) {
+      .form-container, .list-container { padding: 18px 7px 13px 7px; }
+      h1 { font-size: 1.5rem; }
     }
   </style>
 </head>
 <body>
-  <div id="chat-container">
-    <button id="homeBtn" onclick="goHome()">Home</button>
-    <h2>Supabase Chatroom</h2>
-    <input id="username" placeholder="Choose your username">
-    <div id="messages"></div>
-    <input id="message" placeholder="Type a message">
-    <button id="sendBtn" onclick="sendMessage()">Send</button>
+
+  <h1>savnac Chat</h1>
+
+  <div class="container">
+    <!-- Feedback Form -->
+    <div class="form-container">
+      <input type="text" id="name" placeholder="Your Name" maxlength="30" autocomplete="off" />
+      <textarea id="feedback" placeholder="Your Message" maxlength="200"></textarea>
+      <button id="sendBtn">Send Message</button>
+      <button class="home-btn" onclick="goHome()">Home</button>
+      <div class="delete-section">
+        <input type="password" id="deletePin" placeholder="PIN" maxlength="20" autocomplete="off" />
+        <button id="deleteAllBtn" title="Delete all messages with correct PIN">Delete all</button>
+      </div>
+    </div>
+
+    <!-- Feedback List -->
+    <div class="list-container">
+      <h2>Chat Box</h2>
+      <ul id="feedbackList"></ul>
+    </div>
   </div>
 
-  <!-- Supabase SDK -->
-  <script src="https://unpkg.com/@supabase/supabase-js"></script>
-  <!-- Bad-words filter -->
-  <script src="https://unpkg.com/bad-words"></script>
-  <script>
-    const supabaseUrl = "https://lbsnsckhikjtzgjmspau.supabase.co";
-    const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxic25zY2toaWtqdHpnam1zcGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkxODEwODYsImV4cCI6MjA3NDc1NzA4Nn0.c5upCzkqfGgzMcCg34OABo0CRJotYfB9I5IHdzXDJic";
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-    const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
-    const messagesDiv = document.getElementById("messages");
-    const filter = new Filter(); // bad-words library
+    const supabaseUrl = 'https://lbsnsckhikjtzgjmspau.supabase.co'
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxic25zY2toaWtqdHpnam1zcGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkxODEwODYsImV4cCI6MjA3NDc1NzA4Nn0.c5upCzkqfGgzMcCg34OABo0CRJotYfB9I5IHdzXDJic'
+    const supabase = createClient(supabaseUrl, supabaseKey)
 
-    // Optional: Add extra offensive words
-    filter.addWords("slur1", "slur2", "slur3");
+    const sendBtn = document.getElementById('sendBtn')
+    const feedbackList = document.getElementById('feedbackList')
+    const listContainer = feedbackList.parentElement
+    const deleteAllBtn = document.getElementById('deleteAllBtn')
+    const deletePinInput = document.getElementById('deletePin')
 
-    function goHome() {
-      window.location.href = "index.html";
-    }
+    // Bad word filter list (expand as needed, lowercase, no spaces)
+    const badWords = [
+      'badword1','badword2','badword3',
+      'fuck','shit','bitch','asshole','bastard','dick','pussy','cunt','nigger','nigga','fag','faggot','slut','whore','retard','cum','cock','douche','twat','tit','wank','gayass','fuk','suckmy','suckdick'
+    ];
+    function cleanText(text) { return text.toLowerCase().replace(/[^a-z0-9]/g,''); }
+    function containsBadWord(text) { return badWords.some(word => cleanText(text).includes(word)); }
 
-    function addMessage(msg) {
-      const div = document.createElement("div");
-      const time = new Date(msg.created_at).toLocaleTimeString();
-      div.textContent = `[${time}] ${msg.user}: ${msg.content}`;
-      messagesDiv.appendChild(div);
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
-
-    async function loadMessages() {
+    // Load all feedback
+    async function loadFeedback() {
       const { data, error } = await supabase
-        .from("messages")
-        .select("*")
-        .order("created_at", { ascending: true });
-      if (error) {
-        console.error("Error loading messages:", error);
-        return;
+        .from('feedback')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      feedbackList.innerHTML = ''
+      if (data) {
+        data.forEach(f => {
+          const li = document.createElement('li')
+          li.innerHTML = `<span class="name">${escapeHTML(f.name)}:</span> <span class="msg">${escapeHTML(f.feedback)}</span>`;
+          feedbackList.appendChild(li)
+        })
       }
-      data.forEach(addMessage);
+      feedbackList.scrollTop = 0
     }
 
-    async function sendMessage() {
-      const userInput = document.getElementById("username").value.trim();
-      const messageInput = document.getElementById("message").value.trim();
-
-      if (!userInput || !messageInput) return;
-
-      // 🔹 Block offensive usernames
-      if (filter.isProfane(userInput)) {
-        alert("⚠️ Your username contains offensive language. Choose another.");
-        return;
-      }
-
-      // 🔹 Block offensive messages
-      if (filter.isProfane(messageInput)) {
-        alert("⚠️ Your message contains offensive language and cannot be sent.");
-        return;
-      }
-
-      const { error } = await supabase.from("messages").insert([{
-        user: userInput,
-        content: messageInput
-      }]);
-      if (error) {
-        console.error("Error sending message:", error);
-      }
-
-      document.getElementById("message").value = "";
+    // Escape HTML to avoid XSS
+    function escapeHTML(str) {
+      return String(str).replace(/[&<>"'`=\/]/g, function (s) {
+        return ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;',
+          '/': '&#x2F;',
+          '`': '&#x60;',
+          '=': '&#x3D;'
+        })[s];
+      });
     }
 
-    supabase
-      .channel("chat-room")
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, (payload) => {
-        addMessage(payload.new);
-      })
-      .subscribe();
+    // Send feedback
+    sendBtn.addEventListener('click', async () => {
+      const name = document.getElementById('name').value.trim()
+      const feedback = document.getElementById('feedback').value.trim()
 
-    loadMessages();
+      if (!name || !feedback) {
+        alert('Please fill out both fields!')
+        return
+      }
+      if (name.length > 30 || feedback.length > 200) {
+        alert('Name or message too long!')
+        return
+      }
+      if (containsBadWord(name) || containsBadWord(feedback)) {
+        alert('Please avoid using offensive words!')
+        return
+      }
+
+      const { data, error } = await supabase
+        .from('feedback')
+        .insert([{ name, feedback }])
+        .select()
+
+      if (error) {
+        alert('Error sending feedback: ' + error.message)
+      } else {
+        document.getElementById('name').value = ''
+        document.getElementById('feedback').value = ''
+        if (data && data.length > 0) {
+          const li = document.createElement('li')
+          li.innerHTML = `<span class="name">${escapeHTML(data[0].name)}:</span> <span class="msg">${escapeHTML(data[0].feedback)}</span>`;
+          feedbackList.prepend(li)
+          feedbackList.scrollTop = 0
+        }
+      }
+    })
+
+    // Allow Enter+Ctrl to submit from textarea
+    document.getElementById('feedback').addEventListener('keydown', function(e){
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+        sendBtn.click();
+      }
+    });
+
+    // Delete all messages
+    deleteAllBtn.addEventListener('click', async () => {
+      const pin = deletePinInput.value.trim()
+      if (pin !== "savnacsigma") {
+        alert('Incorrect PIN!')
+        return
+      }
+      if (!confirm('Are you sure you want to delete ALL messages? This cannot be undone.')) {
+        return
+      }
+      const { error } = await supabase
+        .from('feedback')
+        .delete()
+        .neq('id', 0)
+      if (error) {
+        alert('Failed to delete messages: ' + error.message)
+      } else {
+        alert('All messages deleted!')
+        loadFeedback()
+        deletePinInput.value = ''
+      }
+    })
+
+    // Home button function (edit path as needed)
+    function goHome() {
+      window.location.href = '/'; // Change to "index.html" or your custom path if needed
+    }
+
+    // Initial load
+    loadFeedback()
+    setInterval(loadFeedback, 10000)
   </script>
 </body>
 </html>
