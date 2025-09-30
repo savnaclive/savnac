@@ -6,6 +6,7 @@
   <title>Canvas</title>
   <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
   <style>
+    /* ... keep all your CSS here unchanged ... */
     :root {
       --primary: #1976d2;
       --primary-dark: #115293;
@@ -258,13 +259,74 @@
     const deleteAllBtn = document.getElementById('deleteAllBtn')
     const deletePinInput = document.getElementById('deletePin')
 
-    // Bad word filter list (expand as needed, lowercase, no spaces)
+    // Expanded bad word filter with obfuscations and common variants
     const badWords = [
       'badword1','badword2','badword3',
-      'fuck','shit','bitch','asshole','bastard','dick','pussy','cunt','nigger','nigga','fag','faggot','slut','whore','retard','cum','cock','douche','twat','tit','wank','gayass','fuk','suckmy','suckdick'
+      'fuck','fuk','fux','f*ck','f*uk',
+      'shit','sh1t','sh!t','sht','5hit',
+      'bitch','b1tch','b!tch','b!tch3s','b!tches',
+      'asshole','@sshole','a$$hole','a55hole','4sshole',
+      'bastard','dick','d1ck','d!ck',
+      'pussy','pussi','pusy','pu55y','p*ssy',
+      'cunt','kunt','cu*t','c*nt',
+      'nigger','nigga','n1gger','n1gga','n!gga','n!gger',
+      'fag','faggot','f@g','fa99ot','f4ggot',
+      'slut','whore','h0re','wh0re',
+      'retard','r3tard','r3t@rd','ret@rd',
+      'cum','c*m','cumm','cumming','c0m',
+      'cock','c0ck','c0que','c*ck',
+      'douche','twat','tit','t1t','t!t',
+      'wank','gayass','g@yass','g@y',
+      'suckmy','suckdick','suckd1ck','suckc*ck',
+      'anal','anus','arse','arsehole','@ss','@$$','a$$','a55','ass','assh0le','assh0l3',
+      // Add more pattern entries as needed for your audience/language
     ];
-    function cleanText(text) { return text.toLowerCase().replace(/[^a-z0-9]/g,''); }
-    function containsBadWord(text) { return badWords.some(word => cleanText(text).includes(word)); }
+
+    /**
+     * Build regex pattern for each word, to match with or without
+     * special characters, numbers, and common symbol replacements.
+     */
+    function wordToPattern(word) {
+      // Replace typical leetspeak/obfuscations
+      let pattern = word
+        .replace(/a/gi, '[a@4]')
+        .replace(/e/gi, '[e3]')
+        .replace(/i/gi, '[i1!]')
+        .replace(/o/gi, '[o0]')
+        .replace(/s/gi, '[s5$]')
+        .replace(/t/gi, '[t7+]')
+        .replace(/g/gi, '[g9]')
+        .replace(/b/gi, '[b8]')
+        .replace(/c/gi, '[c<({\\[]')
+        .replace(/k/gi, '[k]')
+        .replace(/u/gi, '[u]')
+        .replace(/n/gi, '[n]')
+        .replace(/d/gi, '[d]')
+        .replace(/\*/g, '[*]')
+        .replace(/\$/g, '[$]')
+        .replace(/@/g, '[@]')
+        .replace(/1/g, '[1!]')
+        .replace(/0/g, '[0o]')
+        .replace(/5/g, '[5s$]')
+      return pattern;
+    }
+
+    // Build a list of regex patterns for bad words (whole word or inside word)
+    const badWordPatterns = badWords.map(w => {
+      const pattern = wordToPattern(w);
+      // Allow for optional non-word characters between each letter for extra obfuscation
+      const chars = pattern.split('').map(c => `[${c}]+?`).join('');
+      // Make sure the regex is case-insensitive and global
+      return new RegExp(chars, 'gi');
+    });
+
+    function containsBadWord(text) {
+      let textNoSpace = text.replace(/\s+/g, '');
+      for (const regex of badWordPatterns) {
+        if (regex.test(textNoSpace)) return true;
+      }
+      return false;
+    }
 
     // Load all feedback
     async function loadFeedback() {
@@ -367,9 +429,12 @@
       }
     })
 
-    // Home button function (edit path as needed)
+    // Home button function
     function goHome() {
-      window.location.href = '/'; // Change to "index.html" or your custom path if needed
+      // If your home is a file called index.html, use:
+      // window.location.href = 'index.html';
+      // If your home is root, use:
+      window.location.href = '/';
     }
 
     // Initial load
