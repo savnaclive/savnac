@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Feedback</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    input, textarea, button {
+      margin: 10px 0;
+      padding: 10px;
+      width: 300px;
+      border-radius: 5px;
+      border: none;
+      font-size: 16px;
+    }
+    button {
+      background-color: #1e88e5;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #1565c0;
+    }
+    .home-btn {
+      background-color: #555;
+    }
+    .home-btn:hover {
+      background-color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Feedback Form</h1>
+
+  <input type="text" id="name" placeholder="Your Name" />
+  <textarea id="feedback" placeholder="Your Feedback"></textarea>
+  <button id="sendBtn">Send Feedback</button>
+  <button class="home-btn" onclick="goHome()">Home</button>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    // Supabase setup
+    const supabaseUrl = 'https://lbsnsckhikjtzgjmspau.supabase.co'
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxic25zY2toaWtqdHpnam1zcGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkxODEwODYsImV4cCI6MjA3NDc1NzA4Nn0.c5upCzkqfGgzMcCg34OABo0CRJotYfB9I5IHdzXDJic'
+    const supabase = createClient(supabaseUrl, supabaseKey)
+
+    // Simple profanity filter
+    const badWords = ['badword1','badword2','badword3'] // Add more as needed
+    function containsBadWord(text) {
+      return badWords.some(word => text.toLowerCase().includes(word))
+    }
+
+    // Send feedback
+    const sendBtn = document.getElementById('sendBtn')
+    sendBtn.addEventListener('click', async () => {
+      const name = document.getElementById('name').value.trim()
+      const feedback = document.getElementById('feedback').value.trim()
+
+      if (!name || !feedback) {
+        alert('Please fill out both fields!')
+        return
+      }
+
+      if (containsBadWord(name) || containsBadWord(feedback)) {
+        alert('Please avoid using offensive words!')
+        return
+      }
+
+      const { error } = await supabase
+        .from('feedback')
+        .insert([{ name, feedback }])
+
+      if (error) {
+        alert('Error sending feedback: ' + error.message)
+      } else {
+        alert('Feedback sent! Thank you.')
+        document.getElementById('name').value = ''
+        document.getElementById('feedback').value = ''
+      }
+    })
+
+    function goHome() {
+      window.location.href = 'index.html'
+    }
+  </script>
+</body>
+</html>
