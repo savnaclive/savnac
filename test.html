@@ -57,14 +57,19 @@
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxic25zY2toaWtqdHpnam1zcGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkxODEwODYsImV4cCI6MjA3NDc1NzA4Nn0.c5upCzkqfGgzMcCg34OABo0CRJotYfB9I5IHdzXDJic'
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    // Simple profanity filter
-    const badWords = ['badword1','badword2','badword3'] // Add more as needed
+    const sendBtn = document.getElementById('sendBtn')
+
+    // Enhanced profanity filter
+    const badWords = ['badword1','badword2','badword3'] // Add more words as needed
+    function cleanText(text) {
+      return text.toLowerCase().replace(/[^a-z0-9]/g, '') // removes spaces & symbols
+    }
     function containsBadWord(text) {
-      return badWords.some(word => text.toLowerCase().includes(word))
+      const cleaned = cleanText(text)
+      return badWords.some(word => cleaned.includes(word))
     }
 
     // Send feedback
-    const sendBtn = document.getElementById('sendBtn')
     sendBtn.addEventListener('click', async () => {
       const name = document.getElementById('name').value.trim()
       const feedback = document.getElementById('feedback').value.trim()
