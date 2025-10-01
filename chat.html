@@ -1,4 +1,11 @@
 <!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+</head>
+<body<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -33,6 +40,16 @@ body {
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
+}
+#particles-js {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  background: #181b20;
+  transition: background .3s ease;
 }
 h1 {
   text-align: center;
@@ -160,6 +177,7 @@ h1 {
 </style>
 </head>
 <body>
+<div id="particles-js"></div>
 <h1>Savnac Chat</h1>
 <div class="container">
   <div class="form-container">
@@ -181,6 +199,11 @@ h1 {
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+particlesJS.load('particles-js', 'https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
+</script>
+
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
@@ -199,8 +222,35 @@ const chatTitle = document.getElementById('chatTitle')
 
 let privateRoom = false
 
-// Bad word filter
-const badWords = ['fuck','shit','bitch','asshole','bastard','dick','pussy','cunt','nigger','nigga','fag','slut','whore','retard','cum','cock','douche','twat','tit','wank','gayass','suckmy','anal','anus','arse','penis','weenie']
+const badWords = [
+  'fuck', 'f*ck', 'f@ck', 'f#ck', 'f%ck', 'f!ck', 'fuk', 'fux', 'fuxk',
+  'shit', 'sh1t', 'sh!t', 's#it', 's@it', '$hit', 's.h.i.t',
+  'bitch', 'b!tch', 'b1tch', 'b!+ch', 'b!+ch',
+  'asshole', '@sshole', 'a$$hole', 'a**hole', '4sshole',
+  'ass', '@ss', 'a$$', 'a.s.s', 'a55', '4ss',
+  'bastard', 'b@stard', 'bast@rd', 'bast*rd',
+  'dick', 'd!ck', 'd1ck', 'd!cK', 'd!c', 'd!k', 'd1k',
+  'pussy', 'pu$$y', 'pussi', 'puzzy', 'p*ssy',
+  'cunt', 'c*nt', 'c@nt', 'cu^t',
+  'nigger', 'nigga', 'n1gga', 'n!gga', 'n!gger', 'n1gger',
+  'fag', 'f@g', 'fa6', 'f4g',
+  'slut', 'slu+', 'slvt',
+  'whore', 'wh0re', 'wh@re', 'w#ore',
+  'retard', 'r3tard', 'ret@rd', 'r*tard', 're+ard',
+  'cum', 'c*m', 'k*m',
+  'cock', 'c0ck', 'c*ck', 'c@ck',
+  'douche', 'd0uche', 'd0uch3', 'd0uche', 'douch3',
+  'twat', 'tw@t', 'tw@+',
+  'tit', 't!t', 't1t',
+  'wank', 'w@nk', 'w4nk', 'w*nk',
+  'gayass', 'g@yass', 'gay@ss', 'g@y@ss',
+  'suckmy', 'suckmY', 's*ckmy', 'suckm1',
+  'anal', '4nal', '@nal',
+  'anus', '@nus', 'anvs',
+  'arse', '@rse', '4rse',
+  'penis', 'p3nis', 'pen!s', 'p3n1s', 'penls',
+  'weenie', 'w33nie', 'weeny', 'w3enie'
+];
 
 function cleanText(text){ return text.toLowerCase().replace(/[^a-z0-9]/g,'') }
 function containsBadWord(text){ return badWords.some(word => cleanText(text).includes(word)) }
@@ -273,5 +323,8 @@ deleteAllBtn.addEventListener('click', async ()=>{
 loadFeedback()
 setInterval(loadFeedback,10000)
 </script>
+</body>
+</html>
+
 </body>
 </html>
