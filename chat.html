@@ -125,6 +125,7 @@ h1 {
   flex-direction: column;
   height: 480px;
   overflow-y: auto;
+  overflow-x: hidden;   /* ✅ stop side scroll */
   padding: 0;
 }
 .list-container h2 {
@@ -149,6 +150,9 @@ h1 {
   padding: 13px 18px;
   font-size: 1.06rem;
   width: 100%;
+  word-wrap: break-word;   /* ✅ wrap long words */
+  overflow-wrap: anywhere; /* ✅ modern wrap */
+  white-space: normal;     /* ✅ prevent long lines */
 }
 .list-container li:last-child { border-bottom: none; }
 .list-container li .name { color: var(--primary); font-weight: 600; margin-right: 7px; }
@@ -196,7 +200,7 @@ const chatTitle = document.getElementById('chatTitle')
 let privateRoom = false
 
 // Bad word filter
-const badWords = ['ballz','b@lls','balls', 'fuck','fuk','fux','f*ck','f*uk', 'shit','sh1t','sh!t','sht','5hit', 'bitch','b1tch','b!tch','b!tch3s','b!tches', 'asshole','@sshole','a$$hole','a55hole','4sshole', 'bastard','dick','d1ck','d!ck', 'pussy','pussi','pusy','pu55y','p*ssy', 'cunt','kunt','cu*t','c*nt', 'nigger','nigga','n1gger','n1gga','n!gga','n!gger', 'fag','faggot','f@g','fa99ot','f4ggot', 'slut','whore','h0re','wh0re', 'retard','r3tard','r3t@rd','ret@rd', 'cum','c*m','cumm','cumming','c0m', 'cock','c0ck','c0que','c*ck', 'douche','twat','tit','t1t','t!t', 'wank','gayass','g@yass','g@y', 'suckmy','suckdick','suckd1ck','suckc*ck', 'anal','anus','arse','arsehole','@ss','@$$','a$$','a55','ass','assh0le','assh0l3','penis','weenie','weeny','weiner','weiny','weiner','p3nis','p3n!s','pen!s','diddy','peni$','p3n!$','p3ni$']
+const badWords = ['fuck','shit','bitch','asshole','bastard','dick','pussy','cunt','nigger','nigga','fag','slut','whore','retard','cum','cock','douche','twat','tit','wank','gayass','suckmy','anal','anus','arse','penis','weenie']
 
 function cleanText(text){ return text.toLowerCase().replace(/[^a-z0-9]/g,'') }
 function containsBadWord(text){ return badWords.some(word => cleanText(text).includes(word)) }
