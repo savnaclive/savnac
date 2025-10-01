@@ -1,332 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Savnac Chat</title>
-  <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --primary: #1976d2;
-      --primary-dark: #115293;
-      --bg: #181b20;
-      --bg-card: #23272e;
-      --bg-input: #22262c;
-      --border: #32363d;
-      --text: #f8f8ff;
-      --muted: #b0b8c1;
-      --danger: #e53935;
-      --danger-dark: #b71c1c;
-      --radius: 13px;
-      --shadow: 0 8px 24px 0 rgba(20,24,31,0.20);
-    }
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', Arial, sans-serif;
-    }
-    body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-    }
-    h1 {
-      text-align: center;
-      margin: 35px 0 15px 0;
-      font-weight: 600;
-      letter-spacing: 2px;
-      font-size: 2.3rem;
-      color: var(--primary);
-      text-shadow: 0 2px 12px #1e88e540;
-    }
-    .container {
-      display: flex;
-      gap: 32px;
-      flex-wrap: wrap;
-      justify-content: center;
-      width: 100%;
-      max-width: 950px;
-      margin-bottom: 30px;
-    }
-    .form-container, .list-container {
-      background: var(--bg-card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-      padding: 26px;
-      min-width: 325px;
-      flex: 1 1 325px;
-    }
-    .form-container input,
-    .form-container textarea {
-      background: var(--bg-input);
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      font-size: 1rem;
-      margin-bottom: 13px;
-      padding: 11px 14px;
-      width: 100%;
-      transition: border 0.18s, box-shadow 0.18s;
-    }
-    .form-container input:focus,
-    .form-container textarea:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 6px #1976d280;
-    }
-    .form-container textarea {
-      min-height: 75px;
-      resize: vertical;
-    }
-    button {
-      cursor: pointer;
-    }
-    .form-container button {
-      padding: 11px 0;
-      font-size: 1.06rem;
-      border-radius: 7px;
-      border: none;
-      margin-bottom: 10px;
-      font-weight: 600;
-      transition: all 0.2s;
-      box-shadow: 0 3px 10px 0 #0003;
-    }
-    #sendBtn {
-      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
-      color: #fff;
-    }
-    #sendBtn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 14px #1976d240;
-    }
-    .home-btn {
-      background: var(--bg-input);
-      color: var(--muted);
-    }
-    .home-btn:hover {
-      background: var(--border);
-      color: var(--text);
-    }
-    /* Smaller delete-all section */
-    .delete-section {
-      display: flex;
-      gap: 6px;
-      margin-top: 8px;
-    }
-    .delete-section input {
-      flex: 2;
-      font-size: 0.9rem;
-      padding: 6px 8px;
-    }
-    .delete-section button {
-      flex: 1;
-      font-size: 0.85rem;
-      padding: 6px 0;
-      background: linear-gradient(90deg, var(--danger), var(--danger-dark));
-      color: #fff;
-    }
-    .list-container {
-      display: flex;
-      flex-direction: column;
-      height: 480px;
-      overflow: hidden;
-      padding: 0;
-    }
-    .list-container h2 {
-      margin: 0;
-      font-size: 1.2rem;
-      background: var(--primary);
-      color: #fff;
-      padding: 15px 0;
-      text-align: center;
-      font-weight: 600;
-      letter-spacing: 1px;
-      border-radius: var(--radius) var(--radius) 0 0;
-    }
-    #feedbackList {
-      flex: 1 1 auto;
-      overflow-y: auto;
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-    .list-container li {
-      border-bottom: 1px solid var(--border);
-      padding: 13px 18px;
-      font-size: 1.06rem;
-      opacity: 0;
-      transform: translateY(10px);
-      animation: fadeIn 0.3s forwards;
-      position: relative;
-    }
-    .list-container li:last-child {
-      border-bottom: none;
-    }
-    .list-container li .name {
-      color: var(--primary);
-      font-weight: 600;
-      margin-right: 7px;
-    }
-    .msg-actions {
-      float: right;
-      cursor: pointer;
-      color: var(--muted);
-      transition: color 0.2s;
-    }
-    .msg-actions:hover { color: var(--danger); }
-    /* Delete popdown */
-    .delete-popdown {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease;
-    }
-    .delete-popdown.open {
-      max-height: 60px;
-    }
-    .delete-popdown-inner {
-      display: flex;
-      gap: 6px;
-      margin-top: 6px;
-      background: var(--bg-input);
-      padding: 6px;
-      border-radius: 7px;
-      border: 1px solid var(--border);
-    }
-    .delete-popdown input {
-      flex: 2;
-      font-size: 0.85rem;
-      padding: 5px;
-    }
-    .delete-popdown button {
-      flex: 1;
-      font-size: 0.85rem;
-      padding: 5px 0;
-      background: var(--danger);
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-    }
-    @keyframes fadeIn {
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @media (max-width: 900px) {
-      .container { flex-direction: column; gap: 15px; }
-      .form-container, .list-container { width: 95%; }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Savnac Chat</title>
+<link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #1976d2;
+  --primary-dark: #115293;
+  --bg: #181b20;
+  --bg-card: #23272e;
+  --bg-input: #22262c;
+  --border: #32363d;
+  --text: #f8f8ff;
+  --muted: #b0b8c1;
+  --danger: #e53935;
+  --danger-dark: #b71c1c;
+  --radius: 13px;
+  --shadow: 0 8px 24px 0 rgba(20,24,31,0.20);
+}
+html, body { margin:0; padding:0; height:100%; font-family:'Inter',Arial,sans-serif; background:var(--bg); color:var(--text); }
+body { display:flex; flex-direction:column; align-items:center; min-height:100vh; }
+h1 { text-align:center; margin:35px 0 15px 0; font-weight:600; letter-spacing:2px; font-size:2.3rem; color:var(--primary); text-shadow:0 2px 12px #1e88e540; }
+.container { display:flex; gap:32px; flex-wrap:wrap; justify-content:center; width:100%; max-width:950px; margin-bottom:30px; }
+.form-container, .list-container { background:var(--bg-card); border-radius:var(--radius); box-shadow:var(--shadow); border:1px solid var(--border); padding:26px; min-width:325px; flex:1 1 325px; display:flex; flex-direction:column; }
+.form-container input, .form-container textarea { background:var(--bg-input); color:var(--text); border:1px solid var(--border); border-radius:7px; font-size:1rem; margin-bottom:13px; padding:11px 14px; width:100%; transition:border 0.18s, box-shadow 0.18s; }
+.form-container input:focus, .form-container textarea:focus { border-color:var(--primary); box-shadow:0 0 6px #1976d280; }
+.form-container textarea { min-height:75px; resize:vertical; }
+.button-row { display:flex; gap:12px; margin-bottom:12px; }
+.button-row button { flex:1; padding:10px; border-radius:7px; font-weight:600; border:none; cursor:pointer; transition:all 0.2s; box-shadow:0 2px 10px 0 rgba(0,0,0,0.2); }
+#privateBtn { background:linear-gradient(90deg,#8e24aa,#6a1b9a); color:#fff; }
+#privateBtn:hover { transform:translateY(-2px); }
+#sendBtn { background:linear-gradient(90deg,var(--primary),var(--primary-dark)); color:#fff; }
+#sendBtn:hover { transform:translateY(-2px); }
+#homeBtn { background:var(--bg-input); color:var(--muted); border:1px solid var(--border); }
+#homeBtn:hover { background:var(--border); color:var(--text); }
+#deleteAllBtn { background:var(--danger); color:#fff; }
+.list-container { display:flex; flex-direction:column; height:480px; overflow:hidden; padding:0; border:1px solid var(--border); box-shadow:var(--shadow); border-radius:var(--radius); }
+.list-container h2 { margin:0; font-size:1.2rem; background:var(--primary); color:#fff; padding:15px 0; text-align:center; font-weight:600; letter-spacing:1px; border-radius:var(--radius) var(--radius) 0 0; }
+#feedbackList { flex:1 1 auto; overflow-y:auto; margin:0; padding:0; list-style:none; }
+.list-container li { border-bottom:1px solid var(--border); padding:13px 18px; font-size:1.06rem; word-break:break-word; }
+.list-container li:last-child { border-bottom:none; }
+.list-container li .name { color:var(--primary); font-weight:600; margin-right:7px; }
+@media(max-width:900px){.container{flex-direction:column; gap:15px;}.form-container,.list-container{width:95%;}}
+</style>
 </head>
 <body>
-  <h1>Savnac Chat</h1>
-  <div class="container">
-    <div class="form-container">
-      <input type="text" id="name" placeholder="Your Name" maxlength="30" autocomplete="off" />
-      <textarea id="feedback" placeholder="Your Message" maxlength="200"></textarea>
+
+<h1>Savnac Chat</h1>
+
+<div class="container">
+  <div class="form-container">
+    <input type="text" id="name" placeholder="Your Name" maxlength="30" autocomplete="off"/>
+    <textarea id="feedback" placeholder="Your Message" maxlength="200"></textarea>
+
+    <div class="button-row">
+      <button id="privateBtn">Private Chat</button>
       <button id="sendBtn">Send Message</button>
-      <button class="home-btn" id="homeBtn">Home</button>
-      <div class="delete-section">
-        <input type="password" id="deletePin" placeholder="PIN" maxlength="20" autocomplete="off" />
-        <button id="deleteAllBtn">Delete all</button>
-      </div>
+      <button id="homeBtn">Home</button>
     </div>
 
-    <div class="list-container">
-      <h2>Chat Box</h2>
-      <ul id="feedbackList"></ul>
+    <div class="button-row">
+      <button id="deleteAllBtn">Delete All Messages</button>
     </div>
   </div>
 
-  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+  <div class="list-container">
+    <h2 id="chatTitle">Public Chat</h2>
+    <ul id="feedbackList"></ul>
+  </div>
+</div>
 
-    const supabase = createClient(
-      "https://lbsnsckhikjtzgjmspau.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxic25zY2toaWtqdHpnam1zcGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkxODEwODYsImV4cCI6MjA3NDc1NzA4Nn0.c5upCzkqfGgzMcCg34OABo0CRJotYfB9I5IHdzXDJic" // replace with your anon key
-    )
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-    const sendBtn = document.getElementById('sendBtn')
-    const feedbackList = document.getElementById('feedbackList')
-    const deleteAllBtn = document.getElementById('deleteAllBtn')
-    const deletePinInput = document.getElementById('deletePin')
-    const homeBtn = document.getElementById('homeBtn')
+const supabase = createClient(
+  "https://lbsnsckhikjtzgjmspau.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxic25zY2toaWtqdHpnam1zcGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkxODEwODYsImV4cCI6MjA3NDc1NzA4Nn0.c5upCzkqfGgzMcCg34OABo0CRJotYfB9I5IHdzXDJic"
+)
 
-    // Home button
-    homeBtn.addEventListener('click', () => {
-      window.location.href = "index.html"
+const sendBtn = document.getElementById('sendBtn')
+const privateBtn = document.getElementById('privateBtn')
+const homeBtn = document.getElementById('homeBtn')
+const deleteAllBtn = document.getElementById('deleteAllBtn')
+const feedbackList = document.getElementById('feedbackList')
+const chatTitle = document.getElementById('chatTitle')
+let privateRoom = false
+
+function escapeHTML(str){
+  return String(str).replace(/[&<>"'`=\/]/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','/':'&#x2F;','`':'&#x60','=':'&#x3D;'})[s])
+}
+
+async function loadFeedback(){
+  let query = supabase.from('feedback').select('*').order('created_at',{ascending:false})
+  if(privateRoom) query = query.eq('private',true)
+  else query = query.eq('private',false)
+  const { data } = await query
+  feedbackList.innerHTML=''
+  if(data){
+    data.forEach(f=>{
+      const li = document.createElement('li')
+      li.innerHTML = `<span class="name">${escapeHTML(f.name)}:</span> ${escapeHTML(f.feedback)}`
+      feedbackList.appendChild(li)
     })
+  }
+  feedbackList.scrollTop = 0 // scroll to top so newest is on top
+}
 
-    function escapeHTML(str) {
-      return String(str).replace(/[&<>"'`=\/]/g, s => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
-        '/': '&#x2F;', '`': '&#x60;', '=': '&#x3D;'
-      }[s]))
-    }
+sendBtn.addEventListener('click', async ()=>{
+  const nameField = document.getElementById('name')
+  const feedbackField = document.getElementById('feedback')
+  const name = nameField.value.trim()
+  const feedback = feedbackField.value.trim()
+  if(!name || !feedback){alert("Fill both fields!"); return}
+  const { error } = await supabase.from('feedback').insert([{name, feedback, private:privateRoom}])
+  if(error){alert("Error: "+error.message); return}
+  feedbackField.value=''
+  loadFeedback()
+})
 
-    async function loadFeedback() {
-      const { data } = await supabase.from('feedback').select('*').order('created_at',{ascending:false})
-      feedbackList.innerHTML = ''
-      if (data) {
-        data.forEach(f => {
-          const li = document.createElement('li')
-          li.innerHTML = `
-            <span class="name">${escapeHTML(f.name)}:</span> 
-            <span>${escapeHTML(f.feedback)}</span>
-            <span class="msg-actions" onclick="toggleDelete('${f.id}')">🗑️</span>
-            <div class="delete-popdown" id="delete-${f.id}">
-              <div class="delete-popdown-inner">
-                <input type="password" placeholder="PIN" maxlength="20"/>
-                <button onclick="deleteOne('${f.id}')">Delete</button>
-              </div>
-            </div>
-          `
-          feedbackList.appendChild(li)
-        })
-      }
-    }
-
-    // Toggle popdown
-    window.toggleDelete = function(id) {
-      const box = document.getElementById(`delete-${id}`)
-      box.classList.toggle("open")
-    }
-
-    // Delete one
-    window.deleteOne = async function(id) {
-      const input = document.querySelector(`#delete-${id} input`)
-      const pin = input.value.trim()
-      if (pin !== "savnacsigma") return alert("Incorrect PIN!")
-      await supabase.from('feedback').delete().eq('id', id)
+privateBtn.addEventListener('click', ()=>{
+  if(!privateRoom){
+    const code = prompt("Enter private chat code:")
+    if(code==="savnacsigma"){
+      privateRoom=true
+      chatTitle.textContent="Private Chat"
+      privateBtn.textContent="Public Chat"
       loadFeedback()
-    }
-
-    sendBtn.addEventListener('click', async () => {
-      const name = document.getElementById('name').value.trim()
-      const feedback = document.getElementById('feedback').value.trim()
-      if (!name || !feedback) return alert("Please fill out both fields!")
-
-      const { error } = await supabase.from('feedback').insert([{ name, feedback }])
-      if (error) {
-        alert("Error: " + error.message)
-        return
-      }
-      document.getElementById('name').value = ''
-      document.getElementById('feedback').value = ''
-      loadFeedback()
-    })
-
-    deleteAllBtn.addEventListener('click', async () => {
-      if (deletePinInput.value !== "savnacsigma") return alert("Incorrect PIN!")
-      if (!confirm("Delete ALL messages?")) return
-      await supabase.from('feedback').delete().neq('id', 0)
-      loadFeedback()
-      deletePinInput.value = ''
-    })
-
+    } else alert("Incorrect code!")
+  } else {
+    privateRoom=false
+    chatTitle.textContent="Public Chat"
+    privateBtn.textContent="Private Chat"
     loadFeedback()
-    setInterval(loadFeedback, 10000)
-  </script>
+  }
+})
+
+homeBtn.addEventListener('click', ()=>{ window.location.href="index.html" })
+
+deleteAllBtn.addEventListener('click', async ()=>{
+  const pin = prompt("Enter PIN to delete all messages:")
+  if(pin !== "savnacsigma"){ alert("Incorrect PIN!"); return }
+  if(!confirm("Delete ALL messages?")) return
+  await supabase.from('feedback').delete().neq('id',0)
+  loadFeedback()
+})
+
+loadFeedback()
+setInterval(loadFeedback, 10000)
+</script>
+
 </body>
 </html>
