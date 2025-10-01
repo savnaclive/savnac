@@ -20,52 +20,157 @@
   --radius: 13px;
   --shadow: 0 8px 24px 0 rgba(20,24,31,0.20);
 }
-html, body { margin:0; padding:0; height:100%; font-family:'Inter',Arial,sans-serif; background:var(--bg); color:var(--text); }
-body { display:flex; flex-direction:column; align-items:center; min-height:100vh; }
-h1 { text-align:center; margin:35px 0 15px 0; font-weight:600; letter-spacing:2px; font-size:2.3rem; color:var(--primary); text-shadow:0 2px 12px #1e88e540; }
-.container { display:flex; gap:32px; flex-wrap:wrap; justify-content:center; width:100%; max-width:950px; margin-bottom:30px; }
-.form-container, .list-container { background:var(--bg-card); border-radius:var(--radius); box-shadow:var(--shadow); border:1px solid var(--border); padding:26px; min-width:325px; flex:1 1 325px; display:flex; flex-direction:column; }
-.form-container input, .form-container textarea { background:var(--bg-input); color:var(--text); border:1px solid var(--border); border-radius:7px; font-size:1rem; margin-bottom:13px; padding:11px 14px; width:100%; transition:border 0.18s, box-shadow 0.18s; }
-.form-container input:focus, .form-container textarea:focus { border-color:var(--primary); box-shadow:0 0 6px #1976d280; }
-.form-container textarea { min-height:75px; resize:vertical; }
-.button-row { display:flex; gap:12px; margin-bottom:12px; }
-.button-row button { flex:1; padding:10px; border-radius:7px; font-weight:600; border:none; cursor:pointer; transition:all 0.2s; box-shadow:0 2px 10px 0 rgba(0,0,0,0.2); }
-#privateBtn { background:linear-gradient(90deg,#8e24aa,#6a1b9a); color:#fff; }
-#privateBtn:hover { transform:translateY(-2px); }
-#sendBtn { background:linear-gradient(90deg,var(--primary),var(--primary-dark)); color:#fff; }
-#sendBtn:hover { transform:translateY(-2px); }
-#homeBtn { background:var(--bg-input); color:var(--muted); border:1px solid var(--border); }
-#homeBtn:hover { background:var(--border); color:var(--text); }
-#deleteAllBtn { background:var(--danger); color:#fff; }
-.list-container { display:flex; flex-direction:column; height:480px; overflow:hidden; padding:0; border:1px solid var(--border); box-shadow:var(--shadow); border-radius:var(--radius); }
-.list-container h2 { margin:0; font-size:1.2rem; background:var(--primary); color:#fff; padding:15px 0; text-align:center; font-weight:600; letter-spacing:1px; border-radius:var(--radius) var(--radius) 0 0; }
-#feedbackList { flex:1 1 auto; overflow-y:auto; margin:0; padding:0; list-style:none; }
-.list-container li { border-bottom:1px solid var(--border); padding:13px 18px; font-size:1.06rem; word-break:break-word; }
-.list-container li:last-child { border-bottom:none; }
-.list-container li .name { color:var(--primary); font-weight:600; margin-right:7px; }
-@media(max-width:900px){.container{flex-direction:column; gap:15px;}.form-container,.list-container{width:95%;}}
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', Arial, sans-serif;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+h1 {
+  text-align: center;
+  margin: 35px 0 15px 0;
+  font-weight: 600;
+  letter-spacing: 2px;
+  font-size: 2.3rem;
+  color: var(--primary);
+  text-shadow: 0 2px 12px #1e88e540;
+}
+.container {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  max-width: 950px;
+  margin-bottom: 30px;
+}
+.form-container, .list-container {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  padding: 26px;
+  min-width: 325px;
+  flex: 1 1 325px;
+}
+.form-container input,
+.form-container textarea {
+  background: var(--bg-input);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font-size: 1rem;
+  margin-bottom: 13px;
+  padding: 11px 14px;
+  width: 100%;
+  transition: border 0.18s, box-shadow 0.18s;
+}
+.form-container input:focus,
+.form-container textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 6px #1976d280;
+}
+.form-container textarea {
+  min-height: 75px;
+  resize: vertical;
+}
+.button-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.button-row button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 7px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 10px 0 rgba(0,0,0,0.2);
+}
+#privateBtn { background: linear-gradient(90deg, #8e24aa, #6a1b9a); color: #fff; }
+#privateBtn:hover { transform: translateY(-2px); }
+#sendBtn { background: linear-gradient(90deg, var(--primary), var(--primary-dark)); color: #fff; }
+#sendBtn:hover { transform: translateY(-2px); }
+#homeBtn { background: var(--bg-input); color: var(--muted); border: 1px solid var(--border); }
+#homeBtn:hover { background: var(--border); color: var(--text); }
+.delete-section {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+.delete-section input {
+  flex: 2;
+  font-size: 0.9rem;
+  padding: 6px 8px;
+}
+.delete-section button {
+  flex: 1;
+  font-size: 0.85rem;
+  padding: 6px 0;
+  background: linear-gradient(90deg, var(--danger), var(--danger-dark));
+  color: #fff;
+}
+.list-container {
+  display: flex;
+  flex-direction: column;
+  height: 480px;
+  overflow-y: auto;
+  padding: 0;
+}
+.list-container h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  background: var(--primary);
+  color: #fff;
+  padding: 15px 0;
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: 1px;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+#feedbackList {
+  flex: 1 1 auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.list-container li {
+  border-bottom: 1px solid var(--border);
+  padding: 13px 18px;
+  font-size: 1.06rem;
+  width: 100%;
+}
+.list-container li:last-child { border-bottom: none; }
+.list-container li .name { color: var(--primary); font-weight: 600; margin-right: 7px; }
+@media (max-width:900px){.container{flex-direction:column;gap:15px;}.form-container,.list-container{width:95%;}}
 </style>
 </head>
 <body>
-
 <h1>Savnac Chat</h1>
-
 <div class="container">
   <div class="form-container">
-    <input type="text" id="name" placeholder="Your Name" maxlength="30" autocomplete="off"/>
+    <input type="text" id="name" placeholder="Your Name" maxlength="30" autocomplete="off" />
     <textarea id="feedback" placeholder="Your Message" maxlength="200"></textarea>
-
     <div class="button-row">
       <button id="privateBtn">Private Chat</button>
       <button id="sendBtn">Send Message</button>
       <button id="homeBtn">Home</button>
     </div>
-
-    <div class="button-row">
-      <button id="deleteAllBtn">Delete All Messages</button>
+    <div class="delete-section">
+      <input type="password" id="deletePin" placeholder="PIN" maxlength="20" autocomplete="off" />
+      <button id="deleteAllBtn">Delete All</button>
     </div>
   </div>
-
   <div class="list-container">
     <h2 id="chatTitle">Public Chat</h2>
     <ul id="feedbackList"></ul>
@@ -81,75 +186,88 @@ const supabase = createClient(
 )
 
 const sendBtn = document.getElementById('sendBtn')
-const privateBtn = document.getElementById('privateBtn')
-const homeBtn = document.getElementById('homeBtn')
-const deleteAllBtn = document.getElementById('deleteAllBtn')
 const feedbackList = document.getElementById('feedbackList')
+const deleteAllBtn = document.getElementById('deleteAllBtn')
+const deletePinInput = document.getElementById('deletePin')
+const homeBtn = document.getElementById('homeBtn')
+const privateBtn = document.getElementById('privateBtn')
 const chatTitle = document.getElementById('chatTitle')
+
 let privateRoom = false
 
-function escapeHTML(str){
-  return String(str).replace(/[&<>"'`=\/]/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','/':'&#x2F;','`':'&#x60','=':'&#x3D;'})[s])
-}
+// Bad word filter
+const badWords = ['ballz','b@lls','balls', 'fuck','fuk','fux','f*ck','f*uk', 'shit','sh1t','sh!t','sht','5hit', 'bitch','b1tch','b!tch','b!tch3s','b!tches', 'asshole','@sshole','a$$hole','a55hole','4sshole', 'bastard','dick','d1ck','d!ck', 'pussy','pussi','pusy','pu55y','p*ssy', 'cunt','kunt','cu*t','c*nt', 'nigger','nigga','n1gger','n1gga','n!gga','n!gger', 'fag','faggot','f@g','fa99ot','f4ggot', 'slut','whore','h0re','wh0re', 'retard','r3tard','r3t@rd','ret@rd', 'cum','c*m','cumm','cumming','c0m', 'cock','c0ck','c0que','c*ck', 'douche','twat','tit','t1t','t!t', 'wank','gayass','g@yass','g@y', 'suckmy','suckdick','suckd1ck','suckc*ck', 'anal','anus','arse','arsehole','@ss','@$$','a$$','a55','ass','assh0le','assh0l3','penis','weenie','weeny','weiner','weiny','weiner','p3nis','p3n!s','pen!s','diddy','peni$','p3n!$','p3ni$']
+
+function cleanText(text){ return text.toLowerCase().replace(/[^a-z0-9]/g,'') }
+function containsBadWord(text){ return badWords.some(word => cleanText(text).includes(word)) }
+
+// Autocorrect
+function autocorrectNixon(str){ return str.replace(/nixon/gi,"the short idiot") }
+function autocorrectRustin(str){ return str.replace(/rustin/gi,"!Cubsblue2016") }
+
+function escapeHTML(str){ return String(str).replace(/[&<>"'`=\/]/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','/':'&#x2F;','`':'&#x60','=':'&#x3D;'})[s]) }
 
 async function loadFeedback(){
   let query = supabase.from('feedback').select('*').order('created_at',{ascending:false})
   if(privateRoom) query = query.eq('private',true)
   else query = query.eq('private',false)
   const { data } = await query
-  feedbackList.innerHTML=''
-  if(data){
-    data.forEach(f=>{
-      const li = document.createElement('li')
-      li.innerHTML = `<span class="name">${escapeHTML(f.name)}:</span> ${escapeHTML(f.feedback)}`
-      feedbackList.appendChild(li)
-    })
-  }
-  feedbackList.scrollTop = 0 // scroll to top so newest is on top
+  feedbackList.innerHTML = ''
+  if(data) data.forEach(f=>{
+    const li = document.createElement('li')
+    li.innerHTML = `<span class="name">${escapeHTML(f.name)}:</span> <span>${escapeHTML(f.feedback)}</span>`
+    feedbackList.appendChild(li)
+  })
 }
 
 sendBtn.addEventListener('click', async ()=>{
-  const nameField = document.getElementById('name')
-  const feedbackField = document.getElementById('feedback')
-  const name = nameField.value.trim()
-  const feedback = feedbackField.value.trim()
-  if(!name || !feedback){alert("Fill both fields!"); return}
-  const { error } = await supabase.from('feedback').insert([{name, feedback, private:privateRoom}])
-  if(error){alert("Error: "+error.message); return}
-  feedbackField.value=''
+  let name = document.getElementById('name').value.trim()
+  let feedback = document.getElementById('feedback').value.trim()
+  if(!name || !feedback){ alert("Fill both fields!"); return }
+
+  name = autocorrectNixon(autocorrectRustin(name))
+  feedback = autocorrectNixon(autocorrectRustin(feedback))
+
+  if(containsBadWord(name) || containsBadWord(feedback)){
+    alert("Please avoid using offensive words!"); return
+  }
+
+  const { error } = await supabase.from('feedback').insert([{name,feedback,private:privateRoom}])
+  if(error){ alert("Error:"+error.message); return }
+
+  document.getElementById('feedback').value='' // keep name
   loadFeedback()
 })
 
 privateBtn.addEventListener('click', ()=>{
-  if(!privateRoom){
-    const code = prompt("Enter private chat code:")
-    if(code==="savnacsigma"){
-      privateRoom=true
-      chatTitle.textContent="Private Chat"
-      privateBtn.textContent="Public Chat"
-      loadFeedback()
-    } else alert("Incorrect code!")
-  } else {
+  if(privateRoom){
     privateRoom=false
     chatTitle.textContent="Public Chat"
     privateBtn.textContent="Private Chat"
     loadFeedback()
+    return
   }
+  const code = prompt("Enter private chat code:")
+  if(code==="savnacsigma"){
+    privateRoom=true
+    chatTitle.textContent="Private Chat"
+    privateBtn.textContent="Public Chat"
+    loadFeedback()
+  }else alert("Incorrect code!")
 })
 
-homeBtn.addEventListener('click', ()=>{ window.location.href="index.html" })
+homeBtn.addEventListener('click',()=>{ window.location.href="index.html" })
 
 deleteAllBtn.addEventListener('click', async ()=>{
   const pin = prompt("Enter PIN to delete all messages:")
-  if(pin !== "savnacsigma"){ alert("Incorrect PIN!"); return }
-  if(!confirm("Delete ALL messages?")) return
+  if(pin!=="savnacsigma"){ alert("Incorrect PIN!"); return }
+  if(!confirm("Delete all messages?")) return
   await supabase.from('feedback').delete().neq('id',0)
   loadFeedback()
 })
 
 loadFeedback()
-setInterval(loadFeedback, 10000)
+setInterval(loadFeedback,10000)
 </script>
-
 </body>
 </html>
