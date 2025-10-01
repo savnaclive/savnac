@@ -77,7 +77,7 @@
     <div class="top-right">
       <button class="btn" id="favBtn">Favorites</button>
       <button class="btn" id="recentsBtn">Recents</button>
-      <button class="btn" id="musicToggleBtn" style="margin-left:6px;">🔊 Music Off</button>
+      <button class="btn" id="musicToggleBtn" style="margin-left:6px;">Seasonal Music Off</button>
       <button class="btn" id="modeToggle">Light/Dark</button>
     </div>
   </div>
@@ -345,12 +345,12 @@
             document.getElementById('musicToggleBtn').addEventListener('click', function() {
               if (!musicIsPlaying) {
                 musicPlayer.playVideo();
-                this.textContent = "🔊 Music On";
+                this.textContent = "Seasonal Music On";
                 this.classList.add("active");
                 musicIsPlaying = true;
               } else {
                 musicPlayer.pauseVideo();
-                this.textContent = "🔊 Music Off";
+                this.textContent = "Seasonal Music Off";
                 this.classList.remove("active");
                 musicIsPlaying = false;
               }
