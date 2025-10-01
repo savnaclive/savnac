@@ -258,6 +258,9 @@ function containsBadWord(text){ return badWords.some(word => cleanText(text).inc
 // Autocorrect
 function autocorrectNixon(str){ return str.replace(/nixon/gi,"the short idiot") }
 function autocorrectRustin(str){ return str.replace(/rustin/gi,"!Cubsblue2016") }
+// --- ADDED FUNCTION BELOW. DO NOT CHANGE ANYTHING ELSE. ---
+function autocorrectJack(str){ return str.replace(/\bjack\b/gi,"Cutie Pie (jack)") }
+// ---------------------------------------------------------
 
 function escapeHTML(str){ return String(str).replace(/[&<>"'`=\/]/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','/':'&#x2F;','`':'&#x60','=':'&#x3D;'})[s]) }
 
@@ -279,8 +282,10 @@ sendBtn.addEventListener('click', async ()=>{
   let feedback = document.getElementById('feedback').value.trim()
   if(!name || !feedback){ alert("Fill both fields!"); return }
 
-  name = autocorrectNixon(autocorrectRustin(name))
-  feedback = autocorrectNixon(autocorrectRustin(feedback))
+  // --- ADDED JACK AUTOCORRECT BELOW. DO NOT CHANGE ANYTHING ELSE. ---
+  name = autocorrectJack(autocorrectNixon(autocorrectRustin(name)))
+  feedback = autocorrectJack(autocorrectNixon(autocorrectRustin(feedback)))
+  // ------------------------------------------------------------------
 
   if(containsBadWord(name) || containsBadWord(feedback)){
     alert("Please avoid using offensive words!"); return
