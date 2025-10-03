@@ -222,35 +222,7 @@ const chatTitle = document.getElementById('chatTitle')
 
 let privateRoom = false
 
-const badWords = [
-  'fuck', 'f*ck', 'f@ck', 'f#ck', 'f%ck', 'f!ck', 'fuk', 'fux', 'fuxk',
-  'shit', 'sh1t', 'sh!t', 's#it', 's@it', '$hit', 's.h.i.t',
-  'bitch', 'b!tch', 'b1tch', 'b!+ch', 'b!+ch',
-  'asshole', '@sshole', 'a$$hole', 'a**hole', '4sshole',
-  'ass', '@ss', 'a$$', 'a.s.s', 'a55', '4ss','@$$',
-  'bastard', 'b@stard', 'bast@rd', 'bast*rd',
-  'dick', 'd!ck', 'd1ck', 'd!cK', 'd!c', 'd!k', 'd1k',
-  'pussy', 'pu$$y', 'pussi', 'puzzy', 'p*ssy',
-  'cunt', 'c*nt', 'c@nt', 'cu^t',
-  'nigger', 'nigga', 'n1gga', 'n!gga', 'n!gger', 'n1gger','N!GGER',
-  'fag', 'f@g', 'fa6', 'f4g',
-  'slut', 'slu+', 'slvt',
-  'whore', 'wh0re', 'wh@re', 'w#ore',
-  'retard', 'r3tard', 'ret@rd', 'r*tard', 're+ard',
-  'cum', 'c*m', 'k*m',
-  'cock', 'c0ck', 'c*ck', 'c@ck',
-  'douche', 'd0uche', 'd0uch3', 'd0uche', 'douch3',
-  'twat', 'tw@t', 'tw@+',
-  'tit', 't!t', 't1t',
-  'wank', 'w@nk', 'w4nk', 'w*nk',
-  'gayass', 'g@yass', 'gay@ss', 'g@y@ss',
-  'suckmy', 'suckmY', 's*ckmy', 'suckm1','sexy','s3xy','$exy','$3xy','sexi',
-  'anal', '4nal', '@nal',
-  'anus', '@nus', 'anvs',
-  'arse', '@rse', '4rse',
-  'penis', 'p3nis', 'pen!s', 'p3n1s', 'penls',
-  'weenie', 'w33nie', 'weeny', 'w3enie'
-];
+// put the bad words HERE
 
 function cleanText(text){ return text.toLowerCase().replace(/[^a-z0-9]/g,'') }
 function containsBadWord(text){ return badWords.some(word => cleanText(text).includes(word)) }
