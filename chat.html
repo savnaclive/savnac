@@ -1,180 +1,174 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>Canvas</title>
-</head>
-<body<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Canvas</title>
-<link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
-<style>
-:root {
-  --primary: #1976d2;
-  --primary-dark: #115293;
-  --bg: #181b20;
-  --bg-card: #23272e;
-  --bg-input: #22262c;
-  --border: #32363d;
-  --text: #f8f8ff;
-  --muted: #b0b8c1;
-  --danger: #e53935;
-  --danger-dark: #b71c1c;
-  --radius: 13px;
-  --shadow: 0 8px 24px 0 rgba(20,24,31,0.20);
-}
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Inter', Arial, sans-serif;
-}
-body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
-}
-#particles-js {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: -1;
-  background: #181b20;
-  transition: background .3s ease;
-}
-h1 {
-  text-align: center;
-  margin: 35px 0 15px 0;
-  font-weight: 600;
-  letter-spacing: 2px;
-  font-size: 2.3rem;
-  color: var(--primary);
-  text-shadow: 0 2px 12px #1e88e540;
-}
-.container {
-  display: flex;
-  gap: 32px;
-  flex-wrap: wrap;
-  justify-content: center;
-  width: 100%;
-  max-width: 950px;
-  margin-bottom: 30px;
-}
-.form-container, .list-container {
-  background: var(--bg-card);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border);
-  padding: 26px;
-  min-width: 325px;
-  flex: 1 1 325px;
-}
-.form-container input,
-.form-container textarea {
-  background: var(--bg-input);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  font-size: 1rem;
-  margin-bottom: 13px;
-  padding: 11px 14px;
-  width: 100%;
-  transition: border 0.18s, box-shadow 0.18s;
-}
-.form-container input:focus,
-.form-container textarea:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 6px #1976d280;
-}
-.form-container textarea {
-  min-height: 75px;
-  resize: vertical;
-}
-.button-row {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-.button-row button {
-  flex: 1;
-  padding: 10px;
-  border-radius: 7px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 2px 10px 0 rgba(0,0,0,0.2);
-}
-#privateBtn { background: linear-gradient(90deg, #8e24aa, #6a1b9a); color: #fff; }
-#privateBtn:hover { transform: translateY(-2px); }
-#sendBtn { background: linear-gradient(90deg, var(--primary), var(--primary-dark)); color: #fff; }
-#sendBtn:hover { transform: translateY(-2px); }
-#homeBtn { background: var(--bg-input); color: var(--muted); border: 1px solid var(--border); }
-#homeBtn:hover { background: var(--border); color: var(--text); }
-.delete-section {
-  display: flex;
-  gap: 6px;
-  margin-top: 8px;
-}
-.delete-section input {
-  flex: 2;
-  font-size: 0.9rem;
-  padding: 6px 8px;
-}
-.delete-section button {
-  flex: 1;
-  font-size: 0.85rem;
-  padding: 6px 0;
-  background: linear-gradient(90deg, var(--danger), var(--danger-dark));
-  color: #fff;
-}
-.list-container {
-  display: flex;
-  flex-direction: column;
-  height: 480px;
-  overflow-y: auto;
-  overflow-x: hidden;   /* ✅ stop side scroll */
-  padding: 0;
-}
-.list-container h2 {
-  margin: 0;
-  font-size: 1.2rem;
-  background: var(--primary);
-  color: #fff;
-  padding: 15px 0;
-  text-align: center;
-  font-weight: 600;
-  letter-spacing: 1px;
-  border-radius: var(--radius) var(--radius) 0 0;
-}
-#feedbackList {
-  flex: 1 1 auto;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.list-container li {
-  border-bottom: 1px solid var(--border);
-  padding: 13px 18px;
-  font-size: 1.06rem;
-  width: 100%;
-  word-wrap: break-word;   /* ✅ wrap long words */
-  overflow-wrap: anywhere; /* ✅ modern wrap */
-  white-space: normal;     /* ✅ prevent long lines */
-}
-.list-container li:last-child { border-bottom: none; }
-.list-container li .name { color: var(--primary); font-weight: 600; margin-right: 7px; }
-@media (max-width:900px){.container{flex-direction:column;gap:15px;}.form-container,.list-container{width:95%;}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Canvas</title>
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
+  <style>
+    /* ... all your CSS as before ... */
+    :root {
+      --primary: #1976d2;
+      --primary-dark: #115293;
+      --bg: #181b20;
+      --bg-card: #23272e;
+      --bg-input: #22262c;
+      --border: #32363d;
+      --text: #f8f8ff;
+      --muted: #b0b8c1;
+      --danger: #e53935;
+      --danger-dark: #b71c1c;
+      --radius: 13px;
+      --shadow: 0 8px 24px 0 rgba(20,24,31,0.20);
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', Arial, sans-serif;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    #particles-js {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      background: #181b20;
+      transition: background .3s ease;
+    }
+    h1 {
+      text-align: center;
+      margin: 35px 0 15px 0;
+      font-weight: 600;
+      letter-spacing: 2px;
+      font-size: 2.3rem;
+      color: var(--primary);
+      text-shadow: 0 2px 12px #1e88e540;
+    }
+    .container {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+      max-width: 950px;
+      margin-bottom: 30px;
+    }
+    .form-container, .list-container {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: 26px;
+      min-width: 325px;
+      flex: 1 1 325px;
+    }
+    .form-container input,
+    .form-container textarea {
+      background: var(--bg-input);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      font-size: 1rem;
+      margin-bottom: 13px;
+      padding: 11px 14px;
+      width: 100%;
+      transition: border 0.18s, box-shadow 0.18s;
+    }
+    .form-container input:focus,
+    .form-container textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 6px #1976d280;
+    }
+    .form-container textarea {
+      min-height: 75px;
+      resize: vertical;
+    }
+    .button-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .button-row button {
+      flex: 1;
+      padding: 10px;
+      border-radius: 7px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 10px 0 rgba(0,0,0,0.2);
+    }
+    #privateBtn { background: linear-gradient(90deg, #8e24aa, #6a1b9a); color: #fff; }
+    #privateBtn:hover { transform: translateY(-2px); }
+    #sendBtn { background: linear-gradient(90deg, var(--primary), var(--primary-dark)); color: #fff; }
+    #sendBtn:hover { transform: translateY(-2px); }
+    #homeBtn { background: var(--bg-input); color: var(--muted); border: 1px solid var(--border); }
+    #homeBtn:hover { background: var(--border); color: var(--text); }
+    .delete-section {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .delete-section input {
+      flex: 2;
+      font-size: 0.9rem;
+      padding: 6px 8px;
+    }
+    .delete-section button {
+      flex: 1;
+      font-size: 0.85rem;
+      padding: 6px 0;
+      background: linear-gradient(90deg, var(--danger), var(--danger-dark));
+      color: #fff;
+    }
+    .list-container {
+      display: flex;
+      flex-direction: column;
+      height: 480px;
+      overflow-y: auto;
+      overflow-x: hidden;   /* ✅ stop side scroll */
+      padding: 0;
+    }
+    .list-container h2 {
+      margin: 0;
+      font-size: 1.2rem;
+      background: var(--primary);
+      color: #fff;
+      padding: 15px 0;
+      text-align: center;
+      font-weight: 600;
+      letter-spacing: 1px;
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    #feedbackList {
+      flex: 1 1 auto;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .list-container li {
+      border-bottom: 1px solid var(--border);
+      padding: 13px 18px;
+      font-size: 1.06rem;
+      width: 100%;
+      word-wrap: break-word;   /* ✅ wrap long words */
+      overflow-wrap: anywhere; /* ✅ modern wrap */
+      white-space: normal;     /* ✅ prevent long lines */
+    }
+    .list-container li:last-child { border-bottom: none; }
+    .list-container li .name { color: var(--primary); font-weight: 600; margin-right: 7px; }
+    @media (max-width:900px){.container{flex-direction:column;gap:15px;}.form-container,.list-container{width:95%;}}
+  </style>
 </head>
 <body>
 <div id="particles-js"></div>
@@ -207,6 +201,9 @@ particlesJS.load('particles-js', 'https://cdn.jsdelivr.net/gh/VincentGarreau/par
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
+// You must define your bad words list here, e.g.:
+const badWords = ["badword1", "badword2"]; // <-- Replace/add your actual bad words
+
 const supabase = createClient(
   "https://lbsnsckhikjtzgjmspau.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxic25zY2toaWtqdHpnam1zcGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkxODEwODYsImV4cCI6MjA3NDc1NzA4Nn0.c5upCzkqfGgzMcCg34OABo0CRJotYfB9I5IHdzXDJic"
@@ -222,17 +219,13 @@ const chatTitle = document.getElementById('chatTitle')
 
 let privateRoom = false
 
-// put the bad words HERE
-
 function cleanText(text){ return text.toLowerCase().replace(/[^a-z0-9]/g,'') }
 function containsBadWord(text){ return badWords.some(word => cleanText(text).includes(word)) }
 
 // Autocorrect
 function autocorrectNixon(str){ return str.replace(/nixon/gi,"the short idiot") }
 function autocorrectRustin(str){ return str.replace(/rustin/gi,"!Cubsblue2016") }
-// --- ADDED FUNCTION BELOW. DO NOT CHANGE ANYTHING ELSE. ---
 function autocorrectJack(str){ return str.replace(/\bjack\b/gi,"Cutie Pie (jack)") }
-// ---------------------------------------------------------
 
 function escapeHTML(str){ return String(str).replace(/[&<>"'`=\/]/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','/':'&#x2F;','`':'&#x60','=':'&#x3D;'})[s]) }
 
@@ -254,10 +247,8 @@ sendBtn.addEventListener('click', async ()=>{
   let feedback = document.getElementById('feedback').value.trim()
   if(!name || !feedback){ alert("Fill both fields!"); return }
 
-  // --- ADDED JACK AUTOCORRECT BELOW. DO NOT CHANGE ANYTHING ELSE. ---
   name = autocorrectJack(autocorrectNixon(autocorrectRustin(name)))
   feedback = autocorrectJack(autocorrectNixon(autocorrectRustin(feedback)))
-  // ------------------------------------------------------------------
 
   if(containsBadWord(name) || containsBadWord(feedback)){
     alert("Please avoid using offensive words!"); return
@@ -300,8 +291,5 @@ deleteAllBtn.addEventListener('click', async ()=>{
 loadFeedback()
 setInterval(loadFeedback,10000)
 </script>
-</body>
-</html>
-
 </body>
 </html>
