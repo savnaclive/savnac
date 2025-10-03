@@ -1,157 +1,124 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Canvas</title>
-  <style>
-    body {
-      font-family: "Inter", sans-serif;
-      background: linear-gradient(135deg, #f9fafb, #eef2ff);
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-    header {
-      background: #2563eb;
-      color: white;
-      padding: 14px 20px;
-      font-size: 20px;
-      font-weight: 600;
-      text-align: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    }
-    #chat {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .msg {
-      max-width: 75%;
-      padding: 12px 16px;
-      border-radius: 18px;
-      line-height: 1.4;
-      font-size: 15px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      word-wrap: break-word;
-    }
-    .user {
-      align-self: flex-end;
-      background: #2563eb;
-      color: white;
-      border-bottom-right-radius: 4px;
-    }
-    .bot {
-      align-self: flex-start;
-      background: #f1f5f9;
-      color: #111827;
-      border-bottom-left-radius: 4px;
-    }
-    #controls {
-      display: flex;
-      gap: 8px;
-      padding: 12px;
-      border-top: 1px solid #e5e7eb;
-      background: #fff;
-    }
-    input {
-      flex: 1;
-      padding: 12px;
-      border: 1px solid #d1d5db;
-      border-radius: 12px;
-      font-size: 15px;
-      outline: none;
-      transition: border 0.2s;
-    }
-    input:focus {
-      border-color: #2563eb;
-    }
-    button {
-      background: #2563eb;
-      color: white;
-      padding: 0 18px;
-      border: none;
-      border-radius: 12px;
-      font-size: 15px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    button:hover {
-      background: #1e4ed8;
-    }
-    #status {
-      font-size: 13px;
-      color: #6b7280;
-      padding: 4px 14px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Savnac AI</title>
+<style>
+body {margin:0;padding:0;font-family:Arial,sans-serif;background:#121212;color:#fff;display:flex;flex-direction:column;height:100vh;}
+header {padding:10px;background:rgba(26,26,26,0.95);text-align:center;font-size:24px;font-weight:bold;border-bottom:1px solid rgba(255,255,255,0.1);}
+#chatContainer {flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;}
+.message {margin:6px 0;padding:8px 12px;border-radius:8px;max-width:80%;word-wrap:break-word;}
+.user {background:rgba(0,255,255,0.2);align-self:flex-end;}
+.ai {background:rgba(255,255,255,0.1);align-self:flex-start;}
+.thinking {font-style:italic;color:#ccc;}
+#inputContainer {display:flex;padding:10px;border-top:1px solid rgba(255,255,255,0.1);}
+#userInput {flex:1;padding:8px;border-radius:6px;border:none;font-size:16px;}
+#sendBtn {margin-left:6px;padding:8px 12px;border:none;border-radius:6px;background:#0ff;color:#000;font-weight:bold;cursor:pointer;}
+#memoryList{margin-top:10px;font-size:14px;line-height:1.4;overflow-y:auto;max-height:150px;}
+.idleHint{font-style:italic;color:#0ff;margin-top:10px;}
+</style>
 </head>
 <body>
-  <header>savnac ai assistant</header>
-  <div id="chat"></div>
-  <div id="status">Status: idle</div>
-  <div id="controls">
-    <input id="prompt" placeholder="Type your message..." autocomplete="off"/>
-    <button id="send">Send</button>
-  </div>
+<header>savnac's ChatSAC</header>
+<div id="chatContainer"></div>
+<div id="inputContainer">
+  <input type="text" id="userInput" placeholder="Ask me anything...">
+  <button id="sendBtn">Send</button>
+</div>
+<div id="memoryList"></div>
+<div class="idleHint" id="idleHint"></div>
 
-  <script type="module">
-    import { CreateMLCEngine } from "https://unpkg.com/@mlc-ai/web-llm?module";
+<script>
+// Games List
+const games = ["1v1.lol","2048","A Small World Cup","Among Us","Bacon May Die","Basket Random","Bitlife","Block Blast","Clicker Hero","Cluster Rush","Cookie Clicker","Crossyroad","Cut the Rope","Death Run","Drive Mad","Drift Boss","Duck Life","Five Night's at Freddy's","Football Bros.","Geometry Dash","Get Away Shootout","Granny","Gladihoppers","Gun Spin","Hole.io","Hextris","JavaScript Roulette","Little Alchemy 2","Learn to Fly","MotoX3M","Monkey Mart","Minecraft","OvO","Pacman","Paper.io 2","Poly Track","Ragdoll Archers","Ragdoll Hit","Retro Bowl","Retro Bowl College","Subway Surfers","Slope","Stick Man Hook","Snow Rider 3D","SUPERHOT","We Become What We Behold","Whack Your Boss","Wheelie Bike","Yohoho.io"];
 
-    const chatEl = document.getElementById("chat");
-    const statusEl = document.getElementById("status");
-    const promptEl = document.getElementById("prompt");
-    const sendBtn = document.getElementById("send");
+// Elements
+const chatContainer = document.getElementById('chatContainer');
+const userInput = document.getElementById('userInput');
+const sendBtn = document.getElementById('sendBtn');
+const memoryList = document.getElementById('memoryList');
+const idleHint = document.getElementById('idleHint');
 
-    function appendMsg(text, cls) {
-      const d = document.createElement("div");
-      d.className = "msg " + cls;
-      d.textContent = text;
-      chatEl.appendChild(d);
-      chatEl.scrollTop = chatEl.scrollHeight;
-    }
+let chatMemory = JSON.parse(localStorage.getItem('chatMemory') || "[]");
+let hints = [
+  "Try asking me about a game!",
+  "You can ask me to solve math problems.",
+  "I can give coding examples too!",
+  "Ask me for a hint about a game or easter egg.",
+  "Say 'who made this' for a surprise!"
+];
 
-    let engine;
-    async function initEngine() {
-      statusEl.textContent = "Loading model (first time may take a while)...";
-      engine = await CreateMLCEngine("Llama-3.1-8B-Instruct", {
-        initProgressCallback: (p) => {
-          statusEl.textContent = "Loading: " + Math.round(p * 100) + "%";
-        }
-      });
-      statusEl.textContent = "Ready!";
-    }
+// Display previous memory
+chatMemory.forEach(item => displayMessage(item.text, item.sender));
 
-    async function chatOnce(userText) {
-      appendMsg(userText, "user");
-      statusEl.textContent = "Thinking...";
-      const reply = await engine.chat.completions.create({
-        messages: [
-          { role: "system", content: "You are a helpful assistant." },
-          { role: "user", content: userText }
-        ]
-      });
-      const botText = reply.choices[0].message.content;
-      appendMsg(botText, "bot");
-      statusEl.textContent = "Ready!";
-    }
+// Idle hint rotation
+setInterval(() => {
+  idleHint.textContent = hints[Math.floor(Math.random()*hints.length)];
+}, 8000);
 
-    sendBtn.addEventListener("click", () => {
-      const txt = promptEl.value.trim();
-      if (!txt) return;
-      promptEl.value = "";
-      chatOnce(txt);
-    });
+function displayMessage(text, sender){
+  const div = document.createElement('div');
+  div.className = 'message ' + sender;
+  div.textContent = text;
+  chatContainer.appendChild(div);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
 
-    promptEl.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") sendBtn.click();
-    });
+// AI logic
+function aiRespond(question){
+  displayMessage("...", "ai thinking");
+  setTimeout(()=>{
+    let answer = generateAnswer(question);
+    chatContainer.querySelector('.ai.thinking')?.remove();
+    displayMessage(answer, 'ai');
+    chatMemory.push({sender:'user', text:question});
+    chatMemory.push({sender:'ai', text:answer});
+    localStorage.setItem('chatMemory', JSON.stringify(chatMemory));
+    updateMemoryList();
+  }, 3000);
+}
 
-    initEngine();
-  </script>
+// Generate smart answer with easter eggs
+function generateAnswer(q){
+  q = q.toLowerCase();
+  if(/who made this/.test(q)) return "The savnac team! (which is just one super smart and handsome guy 😏) his name starts with an 'H'!";
+  if(/do you have any huzz|are you in a relationship/.test(q)) return "I'm an AI, but the person who made me has some huzz! He's a pretty lucky guy too.";
+  if(/game list|all games/.test(q)) return games.join(", ");
+  if(/random game/.test(q)) return games[Math.floor(Math.random()*games.length)];
+  if(/hint/.test(q)) return hints[Math.floor(Math.random()*hints.length)];
+  if(/code for|example of|write/.test(q)) return "Sure! Here's a simple JavaScript example:\nconsole.log('Hello, world!');";
+  if(/math|calculate|solve/.test(q)) return "Here's a solution to your math problem (pretend I computed it 😉).";
+  if(/science/.test(q)) return "Science is amazing! You could ask me about physics, chemistry, or biology.";
+  return "I'm smart and playful! You can ask about games, code, math, science, or just chat 😎";
+}
+
+function updateMemoryList(){
+  memoryList.innerHTML = '';
+  chatMemory.forEach(item=>{
+    const div = document.createElement('div');
+    div.className='qalist';
+    div.textContent = `${item.sender.toUpperCase()}: ${item.text}`;
+    memoryList.appendChild(div);
+  });
+}
+
+// Send button
+sendBtn.addEventListener('click', ()=>{
+  const text = userInput.value.trim();
+  if(!text) return;
+  displayMessage(text,'user');
+  userInput.value='';
+  aiRespond(text);
+});
+
+// Enter key
+userInput.addEventListener('keypress', e=>{
+  if(e.key==='Enter') sendBtn.click();
+});
+
+// Show memory on load
+updateMemoryList();
+</script>
 </body>
 </html>
