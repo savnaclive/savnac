@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Savnac AI</title>
+<title>Canvas</title>
 <style>
 body {margin:0;padding:0;font-family:Arial,sans-serif;background:#121212;color:#fff;display:flex;flex-direction:column;height:100vh;}
 header {padding:10px;background:rgba(26,26,26,0.95);text-align:center;font-size:24px;font-weight:bold;border-bottom:1px solid rgba(255,255,255,0.1);}
@@ -20,7 +20,7 @@ header {padding:10px;background:rgba(26,26,26,0.95);text-align:center;font-size:
 </style>
 </head>
 <body>
-<header>savnac's ChatSAC</header>
+<header>savnac's ChatSAC (beta 1.0, this isn't a very good ai)</header>
 <div id="chatContainer"></div>
 <div id="inputContainer">
   <input type="text" id="userInput" placeholder="Ask me anything...">
@@ -90,7 +90,7 @@ function generateAnswer(q){
   if(/code for|example of|write/.test(q)) return "Sure! Here's a simple JavaScript example:\nconsole.log('Hello, world!');";
   if(/math|calculate|solve/.test(q)) return "Here's a solution to your math problem (pretend I computed it 😉).";
   if(/science/.test(q)) return "Science is amazing! You could ask me about physics, chemistry, or biology.";
-  return "I'm smart and playful! You can ask about games, code, math, science, or just chat 😎";
+  return "Hi! I'm ChatSAC. This is beta 1.0 version, which means that im not a very good ai like at all. Only a few things work. But i'll soon be able to answer math, science, coding, and game questions!!!!";
 }
 
 function updateMemoryList(){
