@@ -115,10 +115,22 @@ sendBtn.addEventListener('click', async ()=>{
 })
 
 privateBtn.addEventListener('click', ()=>{
-  privateRoom = !privateRoom
-  chatTitle.textContent = privateRoom ? "Private Chat" : "Public Chat"
-  privateBtn.textContent = privateRoom ? "Public Chat" : "Private Chat"
-  loadFeedback()
+  if(privateRoom){
+    privateRoom = false
+    chatTitle.textContent = "Public Chat"
+    privateBtn.textContent = "Private Chat"
+    loadFeedback()
+    return
+  }
+  const code = prompt("Enter private chat code:")
+  if(code === "savnaclive"){
+    privateRoom = true
+    chatTitle.textContent = "Private Chat"
+    privateBtn.textContent = "Public Chat"
+    loadFeedback()
+  } else {
+    alert("Incorrect code!")
+  }
 })
 
 deleteAllBtn.addEventListener('click', async ()=>{
