@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Savnac Chat</title>
 <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
 <style>
@@ -15,32 +15,21 @@
   --border: #32363d;
   --text: #f8f8ff;
   --muted: #b0b8c1;
-  --danger: #e53935;
-  --danger-dark: #b71c1c;
   --radius: 13px;
   --shadow: 0 8px 24px 0 rgba(20,24,31,0.20);
   --badword-color: #ff4d4d;
 }
 html, body {height:100%;margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'Inter',Arial,sans-serif;}
 body {display:flex;flex-direction:column;align-items:center;min-height:100vh;}
-#particles-js {position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-1;background:#181b20;transition:background .3s ease;}
-h1 {text-align:center;margin:35px 0 15px 0;font-weight:600;letter-spacing:2px;font-size:2.3rem;color:var(--primary);text-shadow:0 2px 12px #1e88e540;}
+h1 {margin:35px 0 15px 0;font-weight:600;letter-spacing:2px;font-size:2.3rem;color:var(--primary);}
 .container {display:flex;gap:32px;flex-wrap:wrap;justify-content:center;width:100%;max-width:950px;margin-bottom:30px;}
 .form-container, .list-container {background:var(--bg-card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);padding:26px;min-width:325px;flex:1 1 325px;}
-.form-container input,.form-container textarea {background:var(--bg-input);color:var(--text);border:1px solid var(--border);border-radius:7px;font-size:1rem;margin-bottom:13px;padding:11px 14px;width:100%;transition:border 0.18s,box-shadow 0.18s;}
-.form-container input:focus,.form-container textarea:focus {border-color:var(--primary);box-shadow:0 0 6px #1976d280;}
-.form-container textarea {min-height:75px;resize:vertical;}
+.form-container input, .form-container textarea {background:var(--bg-input);color:var(--text);border:1px solid var(--border);border-radius:7px;font-size:1rem;margin-bottom:13px;padding:11px 14px;width:100%;}
 .button-row {display:flex;gap:12px;margin-bottom:12px;}
-.button-row button {flex:1;padding:10px;border-radius:7px;font-weight:600;border:none;cursor:pointer;transition:all 0.2s;box-shadow:0 2px 10px 0 rgba(0,0,0,0.2);}
+.button-row button {flex:1;padding:10px;border-radius:7px;font-weight:600;border:none;cursor:pointer;transition:all 0.2s;}
 #privateBtn {background:linear-gradient(90deg,#8e24aa,#6a1b9a);color:#fff;}
-#privateBtn:hover {transform:translateY(-2px);}
 #sendBtn {background:linear-gradient(90deg,var(--primary),var(--primary-dark));color:#fff;}
-#sendBtn:hover {transform:translateY(-2px);}
 #homeBtn {background:var(--bg-input);color:var(--muted);border:1px solid var(--border);}
-#homeBtn:hover {background:var(--border);color:var(--text);}
-.delete-section {display:flex;gap:6px;margin-top:8px;}
-.delete-section input {flex:2;font-size:0.9rem;padding:6px 8px;}
-.delete-section button {flex:1;font-size:0.85rem;padding:6px 0;background:linear-gradient(90deg,var(--danger),var(--danger-dark));color:#fff;}
 .list-container {display:flex;flex-direction:column;height:480px;overflow-y:auto;overflow-x:hidden;padding:0;}
 .list-container h2 {margin:0;font-size:1.2rem;background:var(--primary);color:#fff;padding:15px 0;text-align:center;font-weight:600;letter-spacing:1px;border-radius:var(--radius) var(--radius) 0 0;}
 #feedbackList {flex:1 1 auto;margin:0;padding:0;list-style:none;}
@@ -48,24 +37,18 @@ h1 {text-align:center;margin:35px 0 15px 0;font-weight:600;letter-spacing:2px;fo
 .list-container li:last-child {border-bottom:none;}
 .list-container li .name {color:var(--primary);font-weight:600;margin-right:7px;}
 .badword {color: var(--badword-color); font-weight: 600;}
-@media (max-width:900px){.container{flex-direction:column;gap:15px;}.form-container,.list-container{width:95%;}}
 </style>
 </head>
 <body>
-<div id="particles-js"></div>
 <h1>Savnac Chat</h1>
 <div class="container">
   <div class="form-container">
-    <input type="text" id="name" placeholder="Your Name" maxlength="30" autocomplete="off" />
+    <input type="text" id="name" placeholder="Your Name" maxlength="30" autocomplete="off">
     <textarea id="feedback" placeholder="Your Message" maxlength="200"></textarea>
     <div class="button-row">
       <button id="privateBtn">Private Chat</button>
       <button id="sendBtn">Send Message</button>
       <button id="homeBtn">Home</button>
-    </div>
-    <div class="delete-section">
-      <input type="password" id="deletePin" placeholder="PIN" maxlength="20" autocomplete="off" />
-      <button id="deleteAllBtn">Delete All</button>
     </div>
   </div>
   <div class="list-container">
@@ -73,11 +56,6 @@ h1 {text-align:center;margin:35px 0 15px 0;font-weight:600;letter-spacing:2px;fo
     <ul id="feedbackList"></ul>
   </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-<script>
-particlesJS.load('particles-js','https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
-</script>
 
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
@@ -89,133 +67,60 @@ const supabase = createClient(
 
 const sendBtn = document.getElementById('sendBtn')
 const feedbackList = document.getElementById('feedbackList')
-const deleteAllBtn = document.getElementById('deleteAllBtn')
-const homeBtn = document.getElementById('homeBtn')
 const privateBtn = document.getElementById('privateBtn')
 const chatTitle = document.getElementById('chatTitle')
-const nameInput = document.getElementById('name')
+
 let privateRoom = false
 
-const reservedNames = ['savnac admin','Harrison']
-const badWords = [
-  'nigga','nigger','dick','sh*t','shit','ass','cum','cummer','cumming','fuck','f*ck','fucker',
-  'penis','weener','weiner','vagina','bitch','slut','whore','cock','pussy','fag','faggot',
-  'cunt','motherfucker','douche','twat','bastard','arse','bollocks','bugger','damn','crap',
-  'd!ck','sh!t','b!tch','c0ck','f4gg0t','c*nt','m0therf*cker','puss1','a$$hole','f💩ck'
-]
+const badWords = ['nigga','nigger','dick','shit','ass','cum','fuck','penis','vagina','bitch','slut','whore']
 
-function normalizeText(text){ return text.toLowerCase().replace(/[^a-z0-9]/g,''); }
-function maskBadWordsHTML(text){
-  let words = text.split(/\b/);
-  for(let i=0;i<words.length;i++){
-    if(badWords.some(b=>normalizeText(words[i]).includes(normalizeText(b)))){
-      words[i] = `<span class="badword">****</span>`;
-    }
-  }
-  return words.join('');
+function normalize(text){ return text.toLowerCase().replace(/[^a-z0-9]/g,'') }
+function maskBadWords(text){
+  return text.split(/\b/).map(word=>{
+    return badWords.some(b=>normalize(word).includes(normalize(b))) ? '<span class="badword">****</span>' : word
+  }).join('')
 }
-function autocorrect(str){
-  str = str.replace(/nixon/gi,"the short idiot")
-  str = str.replace(/rustin/gi,"!Cubsblue2016")
-  str = str.replace(/\bjack\b/gi,"Cutie Pie (jack)")
-  return str
-}
-function escapeHTML(str){ return String(str).replace(/[&<>"'`=\/]/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','/':'&#x2F;','`':'&#x60','=':'&#x3D;'})[s]) }
 
 async function loadFeedback(){
   let query = supabase.from('feedback').select('*').order('created_at',{ascending:false})
   query = privateRoom ? query.eq('private',true) : query.eq('private',false)
   const { data, error } = await query
-  if(error){ console.error("Error loading feedback:", error); return }
+  if(error) { console.error(error); return }
   feedbackList.innerHTML = ''
-  if(data) data.forEach(f=>{
+  data.forEach(f=>{
     const li = document.createElement('li')
-    const nameHTML = maskBadWordsHTML(escapeHTML(f.name))
-    const feedbackHTML = maskBadWordsHTML(escapeHTML(f.feedback))
-    li.innerHTML = `<span class="name">${nameHTML}:</span> <span>${feedbackHTML}</span>`
+    li.innerHTML = `<span class="name">${maskBadWords(f.name)}:</span> <span>${maskBadWords(f.feedback)}</span>`
     feedbackList.appendChild(li)
   })
 }
 
-async function loadLockedName(){
-  const stored = localStorage.getItem('lockedName')
-  if(stored){
-    nameInput.value = stored
-    nameInput.disabled = true
-  }
-}
-loadLockedName()
-loadFeedback()
-
 sendBtn.addEventListener('click', async ()=>{
-  let name = nameInput.value.trim()
-  let feedback = document.getElementById('feedback').value.trim()
-  if(!name || !feedback){ alert("Fill both fields!"); return; }
+  const name = document.getElementById('name').value.trim()
+  const feedback = document.getElementById('feedback').value.trim()
+  if(!name || !feedback){ alert("Fill both fields!"); return }
 
-  if(!nameInput.disabled){
-    const lowerName = name.toLowerCase()
-
-    // Reserved names check
-    if(reservedNames.some(r=>r.toLowerCase()===lowerName)){
-      const code = prompt("This name is reserved! Enter the code to use it:")
-      if(code!=="harrison"){ alert("Incorrect code! You cannot use this name."); return; }
-    }
-
-    // Bad word check
-    if(badWords.some(b=>normalizeText(name).includes(normalizeText(b)))){
-      alert("This name contains inappropriate words. Choose another."); return
-    }
-
-    // Already taken check
-    const { data: existingNames, error } = await supabase.from('users').select('name').eq('name',name)
-    if(error){ console.error(error); alert("Error checking name"); return; }
-    if(existingNames.length>0){ alert("This name is already taken! Pick another."); return }
-
-    // Confirm permanent name
-    if(!confirm(`This will be your name forever: "${name}". Do you want to use this name?`)) return
-
-    // Lock name
-    await supabase.from('users').insert([{name}])
-    nameInput.disabled = true
-    localStorage.setItem('lockedName', name)
+  if(badWords.some(b=>normalize(name).includes(normalize(b))) || badWords.some(b=>normalize(feedback).includes(normalize(b)))){
+    alert("Please avoid using offensive words!"); return
   }
-
-  name = autocorrect(name)
-  feedback = autocorrect(feedback)
 
   const { error } = await supabase.from('feedback').insert([{ name, feedback, private: privateRoom }])
-  if(error){ console.error(error); alert("Error sending message:"+error.message); return }
+  if(error){ alert("Error sending message: "+error.message); return }
 
-  document.getElementById('feedback').value=''
+  document.getElementById('feedback').value = ''
   loadFeedback()
 })
 
 privateBtn.addEventListener('click', ()=>{
-  if(privateRoom){
-    privateRoom=false
-    chatTitle.textContent="Public Chat"
-    privateBtn.textContent="Private Chat"
-    loadFeedback()
-    return
-  }
-  const code = prompt("Enter private chat code:")
-  if(code==="savnaclive"){
-    privateRoom=true
-    chatTitle.textContent="Private Chat"
-    privateBtn.textContent="Public Chat"
-    loadFeedback()
-  } else alert("Incorrect code!")
-})
-
-homeBtn.addEventListener('click',()=>{ window.location.href="index.html" })
-
-deleteAllBtn.addEventListener('click', async ()=>{
-  const pin = prompt("Enter PIN to delete all messages:")
-  if(pin!=="savnacsigma"){ alert("Incorrect PIN!"); return }
-  if(!confirm("Delete all messages?")) return
-  await supabase.from('feedback').delete().neq('id',0)
+  privateRoom = !privateRoom
+  chatTitle.textContent = privateRoom ? "Private Chat" : "Public Chat"
+  privateBtn.textContent = privateRoom ? "Public Chat" : "Private Chat"
   loadFeedback()
 })
+
+document.getElementById('homeBtn').addEventListener('click',()=>window.location.href="index.html")
+
+loadFeedback()
+setInterval(loadFeedback,10000)
 </script>
 </body>
 </html>
