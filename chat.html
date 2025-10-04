@@ -18,6 +18,8 @@
   --radius: 13px;
   --shadow: 0 8px 24px 0 rgba(20,24,31,0.20);
   --badword-color: #ff4d4d;
+  --danger: #e53935;
+  --danger-dark: #b71c1c;
 }
 html, body {height:100%;margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'Inter',Arial,sans-serif;}
 body {display:flex;flex-direction:column;align-items:center;min-height:100vh;}
@@ -30,6 +32,7 @@ h1 {margin:35px 0 15px 0;font-weight:600;letter-spacing:2px;font-size:2.3rem;col
 #privateBtn {background:linear-gradient(90deg,#8e24aa,#6a1b9a);color:#fff;}
 #sendBtn {background:linear-gradient(90deg,var(--primary),var(--primary-dark));color:#fff;}
 #homeBtn {background:var(--bg-input);color:var(--muted);border:1px solid var(--border);}
+#deleteAllBtn {background:linear-gradient(90deg,var(--danger),var(--danger-dark));color:#fff;}
 .list-container {display:flex;flex-direction:column;height:480px;overflow-y:auto;overflow-x:hidden;padding:0;}
 .list-container h2 {margin:0;font-size:1.2rem;background:var(--primary);color:#fff;padding:15px 0;text-align:center;font-weight:600;letter-spacing:1px;border-radius:var(--radius) var(--radius) 0 0;}
 #feedbackList {flex:1 1 auto;margin:0;padding:0;list-style:none;}
@@ -49,6 +52,7 @@ h1 {margin:35px 0 15px 0;font-weight:600;letter-spacing:2px;font-size:2.3rem;col
       <button id="privateBtn">Private Chat</button>
       <button id="sendBtn">Send Message</button>
       <button id="homeBtn">Home</button>
+      <button id="deleteAllBtn">Delete All</button>
     </div>
   </div>
   <div class="list-container">
@@ -69,9 +73,9 @@ const sendBtn = document.getElementById('sendBtn')
 const feedbackList = document.getElementById('feedbackList')
 const privateBtn = document.getElementById('privateBtn')
 const chatTitle = document.getElementById('chatTitle')
+const deleteAllBtn = document.getElementById('deleteAllBtn')
 
 let privateRoom = false
-
 const badWords = ['nigga','nigger','dick','shit','ass','cum','fuck','penis','vagina','bitch','slut','whore']
 
 function normalize(text){ return text.toLowerCase().replace(/[^a-z0-9]/g,'') }
@@ -85,7 +89,7 @@ async function loadFeedback(){
   let query = supabase.from('feedback').select('*').order('created_at',{ascending:false})
   query = privateRoom ? query.eq('private',true) : query.eq('private',false)
   const { data, error } = await query
-  if(error) { console.error(error); return }
+  if(error){ console.error(error); return }
   feedbackList.innerHTML = ''
   data.forEach(f=>{
     const li = document.createElement('li')
@@ -114,6 +118,14 @@ privateBtn.addEventListener('click', ()=>{
   privateRoom = !privateRoom
   chatTitle.textContent = privateRoom ? "Private Chat" : "Public Chat"
   privateBtn.textContent = privateRoom ? "Public Chat" : "Private Chat"
+  loadFeedback()
+})
+
+deleteAllBtn.addEventListener('click', async ()=>{
+  const pin = prompt("Enter PIN to delete all messages:")
+  if(pin !== "savnacsigma"){ alert("Incorrect PIN!"); return }
+  if(!confirm("Are you sure you want to delete all messages?")) return
+  await supabase.from('feedback').delete().neq('id',0)
   loadFeedback()
 })
 
