@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Canvas</title>
+  <style>
+    html, body {margin:0;padding:0;height:100%;box-sizing:border-box;overflow-x:hidden;font-family:Arial, sans-serif;-webkit-font-smoothing:antialiased;}
+    body {background:#121212;color:#fff;transition:background .28s ease,color .28s ease;min-height:100vh;padding-top:48px;}
+    .top-bar{position:fixed;top:0;left:0;right:0;height:48px;display:flex;align-items:center;justify-content:space-between;padding:6px 14px;background:rgba(26,26,26,0.78);backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,0.03);z-index:9999;gap:12px;}
+    .top-left,.top-center,.top-right{display:flex;align-items:center;gap:10px;font-size:14px;color:inherit;}
+    .btn{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);color:inherit;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:13px;transition:transform .12s,box-shadow .12s,background .12s;}
+    .btn:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(0,0,0,0.4);background:rgba(255,255,255,0.06);}
+    .btn.active{box-shadow:0 8px 26px rgba(0,0,0,0.55);transform:translateY(-1px);}
+    body.light-mode .btn.active{background:rgba(0,0,0,0.06);}
+    #particles-js{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:#121212;transition:background .3s ease;}
+    body.light-mode{background:#fff;color:#000;}
+    body.light-mode #particles-js{background:#fff;}
+    .page-wrap{display:flex;justify-content:center;align-items:center;padding:20px;min-height:calc(100vh - 48px);}
+    .menu-content{display:flex;flex-direction:column;gap:16px;width:100%;max-width:400px;text-align:center;}
+    .menu-btn{font-size:16px;padding:10px 14px;}
+    body.light-mode .top-bar{background:rgba(255,255,255,0.9);color:#000;border-bottom:1px solid rgba(0,0,0,0.06);}
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+
+  <div class="top-bar">
+    <div class="top-left">
+      <a href="index.html" class="btn">Home</a>
+    </div>
+    <div class="top-right">
+      <button class="btn" id="modeToggle">Light/Dark</button>
+    </div>
+  </div>
+
+  <div class="page-wrap">
+    <div class="menu-content">
+      <h1>Minecraft Menu</h1>
+      <a href="minecraft-1.5.2.html" class="btn menu-btn">Minecraft 1.5.2 (recomended)</a>
+      <a href="minecraft.html" class="btn menu-btn">Minecraft 1.8.8</a>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script>
+    // Highlight menu button automatically
+    if (window.location.pathname.endsWith("menu.html")) {
+      document.getElementById("menuBtn").classList.add("active");
+    }
+
+    // Light/Dark Mode Toggle
+    document.getElementById("modeToggle").onclick = () => {
+      document.body.classList.toggle("light-mode");
+    };
+
+    // Load particle background
+    particlesJS.load('particles-js', 'https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
+  </script>
+</body>
+</html>
