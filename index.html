@@ -352,12 +352,12 @@
             document.getElementById('musicToggleBtn').addEventListener('click', function() {
               if (!musicIsPlaying) {
                 musicPlayer.playVideo();
-                this.textContent = "Music";
+                this.textContent = "♬";
                 this.classList.add("active");
                 musicIsPlaying = true;
               } else {
                 musicPlayer.pauseVideo();
-                this.textContent = "Music";
+                this.textContent = "♬";
                 this.classList.remove("active");
                 musicIsPlaying = false;
               }
