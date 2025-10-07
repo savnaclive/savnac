@@ -64,21 +64,22 @@
 
   <div class="top-bar">
     <div class="top-left">
-      <a href="menu.html" class="btn" id="menuBtn">Menu</a>
+      <a href="menu.html" class="btn" id="menuBtn">𓃑</a>
       <span id="welcomeMessage" style="font-weight:600;"></span>
-      <button class="btn" id="randomTopBtn">Random Game</button>
       <button class="btn" id="settingsBtn">⚙</button>
-      <a href="chat.html" class="btn" id="chatBtn" style="margin-left:4px;">Chat</a>
+      <a href="chat.html" class="btn" id="chatBtn" style="margin-left:4px;">🗫</a>
+      <button class="btn" id="randomTopBtn">Random</button>
     </div>
     <div class="top-center">
       <span id="visitorDisplay" class="visitor-highlight" style="opacity:0;">Visitors: loading...</span>
       <span id="dateTime" style="margin-left:10px;"></span>
     </div>
     <div class="top-right">
-      <button class="btn" id="favBtn">Favorites</button>
+      <a href="ytu.html" class="btn" id="YouTubeUnblockerBtn" style="margin-left:4px;">[ ▶︎ ]</a>
+      <button class="btn" id="favBtn">Fav ⭐</button>
       <button class="btn" id="recentsBtn">Recents</button>
-      <button class="btn" id="musicToggleBtn" style="margin-left:6px;">Seasonal Music Off</button>
-      <button class="btn" id="modeToggle">Light/Dark</button>
+      <button class="btn" id="musicToggleBtn" style="margin-left:6px;">Music</button>
+      <button class="btn" id="modeToggle">☾☀︎</button>
     </div>
   </div>
 
@@ -347,12 +348,12 @@
             document.getElementById('musicToggleBtn').addEventListener('click', function() {
               if (!musicIsPlaying) {
                 musicPlayer.playVideo();
-                this.textContent = "Seasonal Music On";
+                this.textContent = "Music";
                 this.classList.add("active");
                 musicIsPlaying = true;
               } else {
                 musicPlayer.pauseVideo();
-                this.textContent = "Seasonal Music Off";
+                this.textContent = "Music";
                 this.classList.remove("active");
                 musicIsPlaying = false;
               }
