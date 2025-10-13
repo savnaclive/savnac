@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guess the 3-Digit Password</title>
+    <title>Canvas</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -69,7 +69,7 @@
 
     <script>
         // Correct password
-        const correctPassword = "067";
+        const correctPassword = "151";
 
         function checkPassword() {
             const userInput = document.getElementById("passwordInput").value;
@@ -80,7 +80,7 @@
                 messageDiv.className = "message correct";
                 
                 // Open the URL in a new tab if the guess is correct
-                window.open("https://sites.google.com/view/savnac/cloak/nothing", "_blank");
+                window.open("", "_blank");
             } else {
                 messageDiv.textContent = "Incorrect! Try again.";
                 messageDiv.className = "message incorrect";
