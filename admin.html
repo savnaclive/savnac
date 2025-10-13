@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the 3-Digit Password</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .container {
+            max-width: 300px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 18px;
+            width: 100%;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .correct {
+            color: green;
+        }
+
+        .incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Guess the 3-Digit Password</h2>
+        <p>Enter a 3-digit number:</p>
+        <input type="text" id="passwordInput" maxlength="3" placeholder="Enter password" />
+        <button onclick="checkPassword()">Submit</button>
+        <div id="message" class="message"></div>
+    </div>
+
+    <script>
+        // Correct password
+        const correctPassword = "067";
+
+        function checkPassword() {
+            const userInput = document.getElementById("passwordInput").value;
+            const messageDiv = document.getElementById("message");
+
+            if (userInput === correctPassword) {
+                messageDiv.textContent = "Correct! You guessed the password.";
+                messageDiv.className = "message correct";
+                
+                // Open the URL in a new tab if the guess is correct
+                window.open("https://sites.google.com/view/savnac/cloak/nothing", "_blank");
+            } else {
+                messageDiv.textContent = "Incorrect! Try again.";
+                messageDiv.className = "message incorrect";
+            }
+        }
+      <br>
+        <a href="index.html" class="btn" id="homeBtn">"Home"</a>
+    </script>
+
+</body>
+</html>
