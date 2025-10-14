@@ -9,8 +9,8 @@
 <body>
 
     <div class="container">
-        <h2>Guess the 3-Digit Password</h2>
-        <p>Enter a 3-digit number:</p>
+        <h2>Guess the 4-Digit Password</h2>
+        <p>Enter a 4-digit number:</p>
         <input type="text" id="passwordInput" maxlength="3" placeholder="Enter password" />
         <button onclick="checkPassword()">Submit</button>
         <div id="message" class="message"></div>
@@ -19,7 +19,7 @@
 
     <script>
         // Correct password
-        const correctPassword = "151";
+        const correctPassword = "4167";
 
         function checkPassword() {
             const userInput = document.getElementById("passwordInput").value;
