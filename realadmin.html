@@ -1,14 +1,143 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>JS Bin</title>
-  <h2>Welcome to the admin page</h2>
-  <h4>The code for the private chat is "savnaclive", the code for the admin login on the sign in page is "savnacsigma"
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Dark Dashboard</title>
+    
+    <style>
+        /* CSS for the Dark Theme and Corner Layout */
+        
+        /* 1. Reset and Dark Background */
+        body {
+            background-color: #121212; /* Very dark grey/black background */
+            margin: 0;
+            padding: 20px; 
+            font-family: Arial, sans-serif;
+            color: #E0E0E0; /* Light text color for contrast */
+            min-height: 100vh;
+            width: 100vw;
+            box-sizing: border-box; 
+            display: grid;
+            /* Default grid for desktop: 2 columns, 2 rows */
+            grid-template-columns: 1fr 1fr; 
+            grid-template-rows: 1fr 1fr;
+            gap: 20px; /* Space between the boxes */
+        }
+
+        /* 2. Style for the Boxes */
+        .box {
+            background-color: #1F1F1F; /* Slightly lighter dark shade for box background */
+            border: 4px solid gold; /* Gold outline */
+            padding: 20px;
+            display: flex; 
+            flex-direction: column;
+            align-items: flex-start; /* Align content to the left inside the box */
+            text-align: left;
+            min-height: 150px;
+            border-radius: 8px; 
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.2); 
+        }
+        
+        /* 3. Text and Link Styles */
+        .title {
+            color: gold;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            font-size: 0.9em;
+            color: #AAAAAA;
+            margin-bottom: 15px;
+        }
+
+        /* Styling for all anchor tags (links) */
+        a {
+            color: #ADD8E6; /* Light blue/cyan for links */
+            text-decoration: none;
+            margin-bottom: 8px;
+            transition: color 0.3s;
+        }
+        a:hover {
+            color: gold;
+            text-decoration: underline;
+        }
+        
+        /* 4. Partials/Separators */
+        .separator {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, #1F1F1F, gold, #1F1F1F);
+            margin: 10px 0 15px 0;
+        }
+
+        /* 5. Home Button Specific Style */
+        .home-btn {
+            display: inline-block;
+            background-color: gold;
+            color: #121212; /* Dark text on gold button */
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 10px;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+        .home-btn:hover {
+            background-color: #FFD700; /* Slightly lighter gold */
+            text-decoration: none;
+        }
+        
+        /* 6. Media Query for Responsiveness (Mobile View) */
+        @media (max-width: 768px) {
+            body {
+                /* Change to a single column layout on smaller screens */
+                grid-template-columns: 1fr;
+                grid-template-rows: auto; /* Rows adjust to content */
+                padding: 15px;
+                gap: 15px;
+            }
+        }
+        
+    </style>
 </head>
-  <script src="script.ccs"></script>
 <body>
+
+    <div class="box">
+        <div class="title">Links For Games</div>
+        <div class="separator"></div>
+        <p class="subtitle">You can steal some games from these links.</p>
+        <a href="index.html" class="home-btn">Go Home</a> 
+        <a href="https://monkeygg2.github.io/">MonkeyGG2</a>
+        <a href="https://nintendoboi22.github.io/">Nintendoboi22</a>
+    </div>
+
+    <div class="box">
+        <div class="title">Passwords</div>
+        <div class="separator"></div>
+        <p class="subtitle">These are passwords to stuff on savnac.</p>
+        <a href="/chat.html" target="_blank">Private Chat = sanvaclive</a>
+        <a href="/sign-in" target="_blank">Admin Login = savnacsigma</a>
+        <a href="/admin" target="_blank">Guess the 4-digit password = 6741</a>
+    </div>
+
+    <div class="box">
+        <div class="title">Stat Counter URL</div>
+        <div class="separator"></div>
+        <p>https://www.websiteout.net/counter.php</p>
+        <p>here's one to see how much people have been on this page</p>
+        <script type="text/javascript" src="https://counter.websiteout.com/js/31/3/0/0"></script>
+    </div>
+
+    
 
 </body>
 </html>
