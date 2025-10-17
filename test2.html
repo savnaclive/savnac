@@ -1,99 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Canvas</title>
-  <link rel="icon" href="https://www.wabash.edu/images2/technology/canvas.png" type="image/png" />
-  <style>
-    html, body {margin:0;padding:0;height:100%;box-sizing:border-box;overflow-x:hidden;font-family:Arial, sans-serif;-webkit-font-smoothing:antialiased;}
-    body {background:#121212;color:#fff;transition:background .28s ease,color .28s ease;min-height:100vh;padding-top:48px;cursor:none;}
-    .top-bar{position:fixed;top:0;left:0;right:0;height:48px;display:flex;align-items:center;justify-content:space-between;padding:6px 14px;background:rgba(26,26,26,0.78);backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,0.03);z-index:9999;gap:12px;}
-    .top-left,.top-center,.top-right{display:flex;align-items:center;gap:10px;font-size:14px;color:inherit;}
-    .top-center{margin:0 auto;gap:12px;}
-    .btn{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);color:inherit;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:13px;transition:transform .12s,box-shadow .12s,background .12s;}
-    .btn:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(0,0,0,0.4);background:rgba(255,255,255,0.06);}
-    .btn.active{box-shadow:0 8px 26px rgba(0,0,0,0.55);transform:translateY(-1px);}
-    body.light-mode .btn.active{background:rgba(0,0,0,0.06);}
-    .page-wrap{display:flex;justify-content:center;align-items:flex-start;padding:18px;}
-    .content-wrapper{width:100%;max-width:500px;text-align:center;z-index:2;position:relative;}
-    #particles-js{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:#121212;transition:background .3s ease;}
-    h1{font-size:34px;margin:6px 0 14px 0;text-shadow:0 0 10px rgba(255,255,255,0.6);color:inherit;}
-    #randomAbove{margin-bottom:8px;}
-    #searchInput{width:100%;box-sizing:border-box;padding:10px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:rgba(31,31,31,0.9);color:inherit;font-size:16px;outline:none;transition:background .2s,color .2s;}
-    #gamesContainer{width:100%;max-height:400px;overflow-y:auto;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:rgba(26,26,26,0.85);backdrop-filter:blur(6px);margin-top:10px;position:relative;}
-    #filterActions{padding:6px;display:none;}
-    #gamesList{list-style:none;margin:0;padding:0;}
-    #gamesList li{border-bottom:1px solid rgba(255,255,255,0.03);display:flex;justify-content:space-between;align-items:center;}
-    #gamesList li a{display:flex;align-items:center;gap:10px;padding:10px;color:inherit;text-decoration:none;flex:1;}
-    #gamesList li a:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,0.6);text-shadow:0 0 10px currentColor;}
-    #gamesList img{width:40px;height:40px;object-fit:cover;border-radius:4px;}
-    .star{cursor:pointer;font-size:18px;padding:0 8px;color:#fff;transition:color .2s;user-select:none;}
-    .star.favorited{color:gold;}
-    body.light-mode .star{color:#888;}
-    .panic-text{margin-top:18px;font-size:20px;color:inherit;}
-    .visitor-highlight{transition:opacity .6s, text-shadow .45s;}
-    .visitor-animate{ text-shadow:0 0 16px rgba(0,255,200,0.25); }
-    body.light-mode{background:#fff;color:#000;}
-    body.light-mode #particles-js{background:#fff;}
-    body.light-mode #searchInput{background:#f7f7f7;color:#000;border:1px solid #ddd;}
-    body.light-mode #gamesContainer{background:rgba(250,250,250,0.9);border:1px solid #e6e6e6;}
-    body.light-mode .top-bar{background:rgba(255,255,255,0.9);color:#000;border-bottom:1px solid rgba(0,0,0,0.06);}
-    .settings-modal {position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.95);background:rgba(26,26,26,0.95);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:20px;z-index:10000;display:none;flex-direction:column;gap:12px;min-width:260px;backdrop-filter:blur(6px);transition:transform .2s ease,opacity .2s ease;}
-    .settings-modal.show {display:flex;opacity:1;transform:translate(-50%,-50%) scale(1);}
-    .settings-input {padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:inherit;}
-    .checkmark {display:none;color:limegreen;font-weight:bold;}
-    .checkmark.show {display:inline;}
-    @media (max-width:600px){.top-center{display:none;}h1{font-size:28px}.top-bar{padding:6px 8px;height:44px}}
-    .cursor {
-      position: fixed;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: rgba(0, 255, 255, 0.8);
-      pointer-events: none;
-      transform: translate(-50%, -50%);
-      transition: transform 0.05s ease;
-      z-index:9999;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Canvas</title>
+<link rel="icon" href="https://www.wabash.edu/images2/technology/canvas.png" type="image/png" />
+<style>
+html, body {margin:0;padding:0;height:100%;box-sizing:border-box;overflow-x:hidden;font-family:Arial, sans-serif;-webkit-font-smoothing:antialiased;}
+body {background:#121212;color:#fff;transition:background .28s ease,color .28s ease;min-height:100vh;padding-top:48px;cursor:none;}
+.top-bar{position:fixed;top:0;left:0;right:0;height:48px;display:flex;align-items:center;justify-content:space-between;padding:6px 14px;background:rgba(26,26,26,0.78);backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,0.03);z-index:9999;gap:12px;}
+.top-left,.top-center,.top-right{display:flex;align-items:center;gap:10px;font-size:14px;color:inherit;}
+.top-center{margin:0 auto;gap:12px;}
+.btn{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);color:inherit;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:13px;transition:transform .12s,box-shadow .12s,background .12s;}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(0,0,0,0.4);background:rgba(255,255,255,0.06);}
+.btn.active{box-shadow:0 8px 26px rgba(0,0,0,0.55);transform:translateY(-1px);}
+body.light-mode .btn.active{background:rgba(0,0,0,0.06);}
+.page-wrap{display:flex;justify-content:center;align-items:flex-start;padding:18px;}
+.content-wrapper{width:100%;max-width:500px;text-align:center;z-index:2;position:relative;}
+#particles-js{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:#121212;transition:background .3s ease;}
+h1{font-size:34px;margin:6px 0 14px 0;text-shadow:0 0 10px rgba(255,255,255,0.6);color:inherit;}
+#randomAbove{margin-bottom:8px;}
+#searchInput{width:100%;box-sizing:border-box;padding:10px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:rgba(31,31,31,0.9);color:inherit;font-size:16px;outline:none;transition:background .2s,color .2s;}
+#gamesContainer{width:100%;max-height:400px;overflow-y:auto;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:rgba(26,26,26,0.85);backdrop-filter:blur(6px);margin-top:10px;position:relative;}
+#gamesList{list-style:none;margin:0;padding:0;}
+#gamesList li{border-bottom:1px solid rgba(255,255,255,0.03);display:flex;justify-content:space-between;align-items:center;}
+#gamesList li a{display:flex;align-items:center;gap:10px;padding:10px;color:inherit;text-decoration:none;flex:1;}
+#gamesList li a:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,0.6);text-shadow:0 0 10px currentColor;}
+#gamesList img{width:40px;height:40px;object-fit:cover;border-radius:4px;}
+.star{cursor:pointer;font-size:18px;padding:0 8px;color:#fff;transition:color .2s;user-select:none;}
+.star.favorited{color:gold;}
+body.light-mode .star{color:#888;}
+.cursor{position:fixed;width:20px;height:20px;border-radius:50%;background:rgba(0,255,255,0.8);pointer-events:none;transform:translate(-50%,-50%);transition:transform .05s ease;z-index:9999;}
+</style>
 </head>
 <body>
-  <div id="particles-js"></div>
-  <div class="top-bar">
-    <div class="top-left">
-      <a href="menu.html" class="btn" id="menuBtn">𓃑</a>
-      <span id="welcomeMessage" style="font-weight:600;"></span>
-      <button class="btn" id="settingsBtn">⚙</button>
-      <a href="chat.html" class="btn" id="chatBtn" style="margin-left:4px;">🗫</a>
-      <button class="btn" id="randomTopBtn">🎲</button>
-      <a href="admin.html" class="btn" id="adminBtn">🔒</a>
-    </div>
-    <div class="top-center">
-      <span id="dateTime" style="margin-left:10px;"></span>
-      <script type="text/javascript" src="https://counter.websiteout.com/js/2/5/1200/0"></script> 
-      <h5>Visitors<h5>
-    </div>
-    <div class="top-right">
-      <a href="ytu.html" class="btn" id="YouTubeUnblockerBtn" style="margin-left:4px;">[ ▶︎ ]</a>
-      <button class="btn" id="favBtn">⭐</button>
-      <button class="btn" id="recentsBtn">↻</button>
-      <button class="btn" id="bgToggleBtn">🎨</button>
-      <button class="btn" id="musicToggleBtn" style="margin-left:6px;">♬</button>
-      <button class="btn" id="modeToggle">☀︎</button>
-    </div>
+<div id="particles-js"></div>
+<div class="top-bar">
+  <div class="top-left">
+    <a href="menu.html" class="btn" id="menuBtn">𓃑</a>
+    <span id="welcomeMessage" style="font-weight:600;"></span>
+    <button class="btn" id="settingsBtn">⚙</button>
+    <a href="chat.html" class="btn" id="chatBtn" style="margin-left:4px;">🗫</a>
+    <button class="btn" id="randomTopBtn">🎲</button>
+    <a href="admin.html" class="btn" id="adminBtn">🔒</a>
   </div>
+  <div class="top-center">
+    <span id="dateTime" style="margin-left:10px;"></span>
+    <script type="text/javascript" src="https://counter.websiteout.com/js/2/5/1200/0"></script> 
+    <h5>Visitors<h5>
+  </div>
+  <div class="top-right">
+    <a href="ytu.html" class="btn" id="YouTubeUnblockerBtn" style="margin-left:4px;">[ ▶︎ ]</a>
+    <button class="btn" id="favBtn">⭐</button>
+    <button class="btn" id="recentsBtn">↻</button>
+    <button class="btn" id="bgToggleBtn">🎨</button>
+    <button class="btn" id="musicToggleBtn" style="margin-left:6px;">♬</button>
+    <button class="btn" id="modeToggle">☀︎</button>
+  </div>
+</div>
 
-  <div class="page-wrap">
-    <div class="content-wrapper">
-      <h1 id="siteTitle">S</h1>
-      <img src="images/logo-halloween.png" alt="Site Title" style="height: 80px;" />
-      <div id="randomAbove"></div>
-      <input id="searchInput" type="text" placeholder="Search our 51 games..." />
-
-      <div id="gamesContainer">
-        <div id="filterActions"></div>
-        <ul id="gamesList">
+<div class="page-wrap">
+<div class="content-wrapper">
+  <h1 id="siteTitle"> </h1>
+  <img src="images/logo-halloween.png" alt="Site Title" style="height: 80px;" />
+  <div id="randomAbove"></div>
+  <input id="searchInput" type="text" placeholder="Search our 51 games..." />
+  <div id="gamesContainer">
+    <ul id="gamesList">
                             <li><a href="1v1lol.html"><img src="https://img.utdstc.com/icon/983/22a/98322a3b2be892eed31589906ffd949b68bcccc9a21ba562987965b5ec6bc6de:200" alt=""><span>1v1.lol</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="2048.html"><img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/95/8e/c3/958ec36e-06b1-0897-53b3-c968234bf47f/AppIcon-0-0-1x_U007emarketing-0-6-85-220.png/512x512bb.jpg" alt=""><span>2048</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="aswc.html"><img src="https://play-lh.googleusercontent.com/R47kNu-wEYMVnoo7rFOXiAHoBvW26KHps65Oi0S6zMF722x0LYqHJUiXRvB_xhsj0CM" alt=""><span>A Small World Cup</span></a><span class="star" aria-label="favorite">★</span></li>
@@ -151,118 +124,101 @@
           <li><a href="whackyourboss.html"><img src="https://e.snmc.io/lk/lv/x/123e965239a426aa18c9348609293ced/11817567" alt=""><span>Whack Your Boss</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="wheeliebike.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRc8giRTerjerQtYjy5u3crHHI5XFm9GYG1WA&s" alt=""><span>Wheelie Bike</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="yohoho-io.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQubF63Qipw_s45n_3fqCpncogxSjPzVTK0nw&s" alt=""><span>Yohoho.io</span></a><span class="star" aria-label="favorite">★</span></li>
-        </ul>
-        <div id="randomText" style="font-size:14px; font-family:Arial, sans-serif; color:#ccc; min-height:24px;"></div>
-      </div>
-    </div>
+    </ul>
   </div>
+</div>
+</div>
 
-  <div class="settings-modal" id="settingsModal">
-    <label>Site Title (changes tab name):</label>
-    <input type="text" id="titleInput" class="settings-input">
-    <button class="btn" id="saveTitleBtn">Save</button>
-    <span id="saveCheck" class="checkmark">✔</span>
-  </div>
+<div class="cursor" id="cursor"></div>
 
-  <!-- Hidden YouTube music player -->
-  <div id="musicPlayer" style="display:none;"></div>
-  <div class="cursor" id="cursor"></div>
-  
-  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-  <script>
-    // Random text
-    const texts = [
-      "gotta glock in my 'rari",
-      "m&m's, sweet like candy cane",
-      "pst. i see dead people",
-      "not afraid to take a stand",
-      "ay, mustard on the beat, h0",
-      "teacher panic key is q, do 'ctrl+d' to bookmark",
-    ];
-    document.getElementById('randomText').textContent = texts[Math.floor(Math.random() * texts.length)];
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+  // CUSTOM CURSOR
+  const cursor = document.getElementById("cursor");
+  document.addEventListener("mousemove", e => {
+    cursor.style.left = e.clientX + "px";
+    cursor.style.top = e.clientY + "px";
+  });
 
-    document.getElementById('siteTitle').textContent = " ";
-    document.title = localStorage.getItem('siteTitle') || "Canvas";
+  // TIME
+  function updateTime() { document.getElementById("dateTime").textContent = new Date().toLocaleString(); }
+  setInterval(updateTime, 1000); updateTime();
 
-    if (window.location.pathname.endsWith("menu.html")) {
-      document.getElementById("menuBtn").classList.add("active");
-    }
+  // LIGHT MODE TOGGLE
+  document.getElementById("modeToggle").onclick = () => document.body.classList.toggle("light-mode");
 
-    // CUSTOM CURSOR
-    const cursor = document.getElementById("cursor");
-    document.addEventListener("mousemove", e => {
-      cursor.style.left = e.clientX + "px";
-      cursor.style.top = e.clientY + "px";
-    });
+  // PARTICLES INIT
+  particlesJS.load('particles-js','https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
 
-    // TIME
-    function updateTime() { document.getElementById("dateTime").textContent = new Date().toLocaleString(); }
-    setInterval(updateTime, 1000); updateTime();
-
-    // LIGHT MODE TOGGLE
-    document.getElementById("modeToggle").onclick = () => document.body.classList.toggle("light-mode");
-
-    // SETTINGS MODAL
-    const settingsBtn = document.getElementById('settingsBtn');
-    const settingsModal = document.getElementById('settingsModal');
-    const titleInput = document.getElementById('titleInput');
-    const saveTitleBtn = document.getElementById('saveTitleBtn');
-    const saveCheck = document.getElementById('saveCheck');
-
-    settingsBtn.addEventListener('click', () => {
-      titleInput.value = document.title;
-      settingsModal.classList.add('show');
-    });
-
-    saveTitleBtn.addEventListener('click', () => {
-      localStorage.setItem('siteTitle', titleInput.value);
-      document.title = titleInput.value || "Savnac";
-      saveCheck.classList.add('show');
-      setTimeout(()=>saveCheck.classList.remove('show'),1500);
-      settingsModal.classList.remove('show');
-    });
-
-    document.addEventListener('keydown', e => {
-      if (e.key === "Escape") {
-        if (settingsModal.classList.contains('show')) settingsModal.classList.remove('show');
+  // BACKGROUND TOGGLE
+  let bgIsParticles = true;
+  const bgToggleBtn = document.getElementById('bgToggleBtn');
+  const particlesDiv = document.getElementById('particles-js');
+  bgToggleBtn.addEventListener('click', () => {
+    if (bgIsParticles) {
+      if (window.pJSDom && window.pJSDom.length) {
+        window.pJSDom[0].pJS.fn.vendors.destroypJS();
+        window.pJSDom = [];
       }
-      if (e.key==="q") window.location.href="https://canvas.nebo.edu/";
-    });
-
-    // YOUTUBE MUSIC PLAYER
-    var tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api"; document.body.appendChild(tag);
-    var musicPlayer, musicIsPlaying = false;
-    function onYouTubeIframeAPIReady() {
-      musicPlayer = new YT.Player('musicPlayer', {height:'0',width:'0',videoId:'Jr55EzQeHf4',playerVars:{'autoplay':0,'controls':0,'loop':1,'playlist':'Jr55EzQeHf4'},events:{'onReady': function() {
-        document.getElementById('musicToggleBtn').addEventListener('click', function() {
-          if (!musicIsPlaying) { musicPlayer.playVideo(); this.classList.add("active"); musicIsPlaying = true; } 
-          else { musicPlayer.pauseVideo(); this.classList.remove("active"); musicIsPlaying = false; }
-        });
-      }}});
+      particlesDiv.style.background = "url('images/background/bg1.jpg') center/cover no-repeat";
+      particlesDiv.innerHTML = "";
+    } else {
+      particlesDiv.style.background = "#121212";
+      particlesJS.load('particles-js','https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
     }
+    bgIsParticles = !bgIsParticles;
+  });
 
-    // PARTICLES INIT
-    particlesJS.load('particles-js','https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
+  // FAVORITES & RECENTS
+  const stars = document.querySelectorAll('.star');
+  const favBtn = document.getElementById('favBtn');
+  const recentsBtn = document.getElementById('recentsBtn');
+  const gamesList = document.getElementById('gamesList');
 
-    // BACKGROUND TOGGLE
-    let bgIsParticles = true;
-    const bgToggleBtn = document.getElementById('bgToggleBtn');
-    const particlesDiv = document.getElementById('particles-js');
+  let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+  let recents = JSON.parse(localStorage.getItem('recents')) || [];
 
-    bgToggleBtn.addEventListener('click', () => {
-      if (bgIsParticles) {
-        if (window.pJSDom && window.pJSDom.length) {
-          window.pJSDom[0].pJS.fn.vendors.destroypJS();
-          window.pJSDom = [];
-        }
-        particlesDiv.style.background = "url('images/background/bg1.jpg') center/cover no-repeat";
-        particlesDiv.innerHTML = "";
+  stars.forEach(star => {
+    const gameName = star.previousElementSibling.querySelector('span').textContent;
+    if (favorites.includes(gameName)) star.classList.add('favorited');
+
+    star.addEventListener('click', e => {
+      e.stopPropagation();
+      if (star.classList.contains('favorited')) {
+        star.classList.remove('favorited');
+        favorites = favorites.filter(f => f !== gameName);
       } else {
-        particlesDiv.style.background = "#121212";
-        particlesJS.load('particles-js','https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
+        star.classList.add('favorited');
+        favorites.push(gameName);
       }
-      bgIsParticles = !bgIsParticles;
+      localStorage.setItem('favorites', JSON.stringify(favorites));
     });
-  </script>
+
+    star.previousElementSibling.addEventListener('click', () => {
+      recents = recents.filter(r => r !== gameName);
+      recents.unshift(gameName);
+      if (recents.length > 20) recents.pop();
+      localStorage.setItem('recents', JSON.stringify(recents));
+    });
+  });
+
+  favBtn.addEventListener('click', () => {
+    const showingFavs = favBtn.classList.toggle('active');
+    Array.from(gamesList.children).forEach(li => {
+      const name = li.querySelector('span').textContent;
+      li.style.display = showingFavs ? (favorites.includes(name) ? 'flex' : 'none') : 'flex';
+    });
+    recentsBtn.classList.remove('active');
+  });
+
+  recentsBtn.addEventListener('click', () => {
+    const showingRecents = recentsBtn.classList.toggle('active');
+    Array.from(gamesList.children).forEach(li => {
+      const name = li.querySelector('span').textContent;
+      li.style.display = showingRecents ? (recents.includes(name) ? 'flex' : 'none') : 'flex';
+    });
+    favBtn.classList.remove('active');
+  });
+</script>
 </body>
 </html>
