@@ -354,6 +354,73 @@ recentsBtn.addEventListener('click', () => {
   });
   favBtn.classList.remove('active');
 });
+  <script>
+// ------------------ FAVORITES ------------------
+const favBtn = document.getElementById('favBtn');
+let favorites = JSON.parse(localStorage.getItem('favorites') || "[]");
+
+function saveFavorites() { localStorage.setItem('favorites', JSON.stringify(favorites)); }
+function updateFavoriteStars() {
+  document.querySelectorAll('#gamesList li').forEach(li => {
+    const gameId = li.dataset.id;
+    const star = li.querySelector('.star');
+    if (favorites.includes(gameId)) star.classList.add('favorited');
+    else star.classList.remove('favorited');
+  });
+}
+
+// Add stars click
+document.querySelectorAll('#gamesList li').forEach(li => {
+  const star = li.querySelector('.star');
+  star?.addEventListener('click', e => {
+    const gameId = li.dataset.id;
+    if (favorites.includes(gameId)) {
+      favorites = favorites.filter(f => f !== gameId);
+    } else favorites.push(gameId);
+    updateFavoriteStars();
+    saveFavorites();
+    e.stopPropagation();
+  });
+});
+updateFavoriteStars();
+
+// ------------------ RECENTS ------------------
+const recentsBtn = document.getElementById('recentsBtn');
+let recents = JSON.parse(localStorage.getItem('recents') || "[]");
+
+document.querySelectorAll('#gamesList li a').forEach(a => {
+  a.addEventListener('click', () => {
+    const gameId = a.parentElement.dataset.id;
+    recents = recents.filter(r => r !== gameId);
+    recents.unshift(gameId); // most recent first
+    if (recents.length > 20) recents.pop(); // max 20 recents
+    localStorage.setItem('recents', JSON.stringify(recents));
+  });
+});
+
+// ------------------ BUTTON TOGGLE ------------------
+let showing = 'all'; // all, favorites, recents
+favBtn.addEventListener('click', () => {
+  showing = showing === 'favorites' ? 'all' : 'favorites';
+  filterGames();
+});
+recentsBtn.addEventListener('click', () => {
+  showing = showing === 'recents' ? 'all' : 'recents';
+  filterGames();
+});
+
+function filterGames() {
+  document.querySelectorAll('#gamesList li').forEach(li => {
+    const gameId = li.dataset.id;
+    li.style.display = 'none';
+    if (showing === 'all') li.style.display = 'flex';
+    else if (showing === 'favorites' && favorites.includes(gameId)) li.style.display = 'flex';
+    else if (showing === 'recents' && recents.includes(gameId)) li.style.display = 'flex';
+  });
+}
+filterGames();
+</script>
+
 </script>
 </body>
 </html>
