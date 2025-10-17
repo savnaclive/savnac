@@ -288,6 +288,61 @@ recentsBtn.addEventListener('click', () => {
   });
   favBtn.classList.remove('active');
 });
+  // === BACKGROUND TOGGLE SYSTEM WITH LOCALSTORAGE + FADE TRANSITION ===
+
+// load saved mode (default to particles)
+let bgMode = localStorage.getItem('bgMode') || 'particles';
+const bgDiv = document.getElementById('particles-js');
+const bgToggleBtn = document.getElementById('bgToggleBtn');
+
+// completely stop particles when switching away
+function stopParticles() {
+  if (window.pJSDom && window.pJSDom.length) {
+    window.pJSDom[0].pJS.fn.vendors.destroypJS();
+    window.pJSDom = [];
+  }
+}
+
+// fade effect for smooth transitions
+function fadeBackground(callback) {
+  bgDiv.style.opacity = 0;
+  setTimeout(() => {
+    callback();
+    bgDiv.style.opacity = 1;
+  }, 500);
+}
+
+// apply the chosen background mode
+function applyBackground(mode) {
+  fadeBackground(() => {
+    stopParticles();
+    if (mode === 'image1') {
+      bgDiv.style.background = "url('/images/background/bg1.jpg') center center / cover no-repeat fixed";
+      bgDiv.style.zIndex = '-1';
+      localStorage.setItem('bgMode', 'image1');
+    } else if (mode === 'image2') {
+      bgDiv.style.background = "url('/images/background/bg2.jpg') center center / cover no-repeat fixed";
+      bgDiv.style.zIndex = '-1';
+      localStorage.setItem('bgMode', 'image2');
+    } else {
+      bgDiv.style.background = '#121212';
+      particlesJS.load('particles-js', 'https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
+      localStorage.setItem('bgMode', 'particles');
+    }
+  });
+}
+
+// toggle between backgrounds when 🎨 is clicked
+bgToggleBtn.addEventListener('click', () => {
+  if (bgMode === 'particles') bgMode = 'image1';
+  else if (bgMode === 'image1') bgMode = 'image2';
+  else bgMode = 'particles';
+  applyBackground(bgMode);
+});
+
+// apply saved mode on page load
+applyBackground(bgMode);
+
 </script>
 </body>
 </html>
