@@ -226,7 +226,7 @@ const particlesDiv = document.getElementById('particles-js');
 const backgrounds = [
   { type: 'particles' },
   { type: 'image', url: 'images/background/bg1.jpg' },
-  { type: 'image', url: 'images/background/bg2.jpg' }, // add more images here
+  { type: 'image', url: 'images/background/bg2.jpg' }, // add more images if needed
 ];
 
 // Load last selected background from localStorage
@@ -234,18 +234,23 @@ let currentBgIndex = parseInt(localStorage.getItem('bgIndex')) || 0;
 
 function applyBackground(index) {
   const bg = backgrounds[index];
+
+  // Destroy particles if any
+  if (window.pJSDom && window.pJSDom.length) {
+    window.pJSDom[0].pJS.fn.vendors.destroypJS();
+    window.pJSDom = [];
+  }
+
+  // Apply the selected background
   if (bg.type === 'particles') {
     particlesDiv.style.background = "#121212";
     particlesDiv.innerHTML = "";
     particlesJS.load('particles-js','https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
   } else if (bg.type === 'image') {
-    if (window.pJSDom && window.pJSDom.length) {
-      window.pJSDom[0].pJS.fn.vendors.destroypJS();
-      window.pJSDom = [];
-    }
     particlesDiv.style.background = `url('${bg.url}') center/cover no-repeat`;
     particlesDiv.innerHTML = "";
   }
+
   localStorage.setItem('bgIndex', index);
 }
 
@@ -257,6 +262,7 @@ bgToggleBtn.addEventListener('click', () => {
   currentBgIndex = (currentBgIndex + 1) % backgrounds.length;
   applyBackground(currentBgIndex);
 });
+
 
 
 // ------------------ FAVORITES & RECENTS ------------------
