@@ -218,51 +218,89 @@ function onYouTubeIframeAPIReady() {
 // PARTICLES INIT
 particlesJS.load('particles-js','https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
 
-// ------------------ BACKGROUND WITH LOCALSTORAGE ------------------
+// ------------------ BACKGROUND TOGGLE WITH SLIDE/FADE & LOCALSTORAGE ------------------
+let bgIsParticles = true;
 const bgToggleBtn = document.getElementById('bgToggleBtn');
 const particlesDiv = document.getElementById('particles-js');
 
-// Define backgrounds
-const backgrounds = [
-  { type: 'particles' },
-  { type: 'image', url: 'images/background/bg1.jpg' },
-  { type: 'image', url: 'images/background/bg2.jpg' } // add more if needed
-];
+// Wrap particlesDiv in a container for animations
+particlesDiv.style.position = "relative";
+particlesDiv.style.overflow = "hidden";
 
-// Load last background index
-let currentBgIndex = parseInt(localStorage.getItem('bgIndex')) || 0;
+// Function to create a background layer
+function createBgLayer(type) {
+  const layer = document.createElement('div');
+  layer.style.position = "absolute";
+  layer.style.top = 0;
+  layer.style.left = "100%"; // start off-screen right
+  layer.style.width = "100%";
+  layer.style.height = "100%";
+  layer.style.transition = "all 0.7s ease";
+  layer.style.zIndex = -1;
 
-function applyBackground(index) {
-  const bg = backgrounds[index];
-
-  // Always destroy particles first
-  if (window.pJSDom && window.pJSDom.length) {
-    window.pJSDom[0].pJS.fn.vendors.destroypJS();
-    window.pJSDom = [];
+  if (type === 'particles') {
+    layer.style.background = "#121212";
+  } else {
+    layer.style.background = `url('${type}') center/cover no-repeat`;
   }
 
-  // Apply background
-  if (bg.type === 'particles') {
-    particlesDiv.style.background = "#121212";
-    particlesDiv.innerHTML = "";
-    particlesJS.load('particles-js','https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
-  } else if (bg.type === 'image') {
-    particlesDiv.style.background = `url('${bg.url}') center/cover no-repeat`;
-    particlesDiv.innerHTML = "";
-  }
+  particlesDiv.appendChild(layer);
+  requestAnimationFrame(() => {
+    layer.style.left = "0"; // slide in
+  });
 
-  // Save to localStorage
-  localStorage.setItem('bgIndex', index);
+  // Remove old layers after transition
+  Array.from(particlesDiv.children).forEach(child => {
+    if (child !== layer) {
+      child.style.left = "-100%"; // slide out left
+      setTimeout(() => child.remove(), 700);
+    }
+  });
+
+  return layer;
 }
 
-// Apply saved background on page load
-applyBackground(currentBgIndex);
+// Function to set background
+function setBackground(type) {
+  if (type === 'particles') {
+    // Destroy particles if they exist
+    if (window.pJSDom && window.pJSDom.length) {
+      window.pJSDom[0].pJS.fn.vendors.destroypJS();
+      window.pJSDom = [];
+    }
+    const layer = createBgLayer('particles');
+    // Load particles after slide-in
+    setTimeout(() => {
+      if (!window.pJSDom || !window.pJSDom.length) {
+        particlesJS.load('particles-js','https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
+      }
+    }, 700);
+    bgIsParticles = true;
+  } else {
+    // Remove particles if running
+    if (window.pJSDom && window.pJSDom.length) {
+      window.pJSDom[0].pJS.fn.vendors.destroypJS();
+      window.pJSDom = [];
+    }
+    createBgLayer(type);
+    bgIsParticles = false;
+  }
+  localStorage.setItem('bgType', type);
+}
 
-// Toggle to next background on button click
+// Load background on page load
+const savedBg = localStorage.getItem('bgType');
+if (savedBg) setBackground(savedBg);
+else setBackground('particles');
+
+// Button click to toggle (example cycle)
 bgToggleBtn.addEventListener('click', () => {
-  currentBgIndex = (currentBgIndex + 1) % backgrounds.length;
-  applyBackground(currentBgIndex);
+  let cycle = ['particles','images/background/bg1.jpg','images/background/bg2.jpg'];
+  let currentIndex = cycle.indexOf(localStorage.getItem('bgType')) || 0;
+  let nextIndex = (currentIndex + 1) % cycle.length;
+  setBackground(cycle[nextIndex]);
 });
+
 
 
 
