@@ -1,0 +1,376 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Canvas</title>
+  <link rel="icon" href="https://www.wabash.edu/images2/technology/canvas.png" type="image/png" />
+  <style>
+    html, body {margin:0;padding:0;height:100%;box-sizing:border-box;overflow-x:hidden;font-family:Arial, sans-serif;-webkit-font-smoothing:antialiased;}
+    body {background:#121212;color:#fff;transition:background .28s ease,color .28s ease;min-height:100vh;padding-top:48px;}
+    .top-bar{position:fixed;top:0;left:0;right:0;height:48px;display:flex;align-items:center;justify-content:space-between;padding:6px 14px;background:rgba(26,26,26,0.78);backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,0.03);z-index:9999;gap:12px;}
+    .top-left,.top-center,.top-right{display:flex;align-items:center;gap:10px;font-size:14px;color:inherit;}
+    .top-center{margin:0 auto;gap:12px;}
+    .btn{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);color:inherit;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:13px;transition:transform .12s,box-shadow .12s,background .12s;}
+    .btn:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(0,0,0,0.4);background:rgba(255,255,255,0.06);}
+    .btn.active{box-shadow:0 8px 26px rgba(0,0,0,0.55);transform:translateY(-1px);}
+    body.light-mode .btn.active{background:rgba(0,0,0,0.06);}
+    .page-wrap{display:flex;justify-content:center;align-items:flex-start;padding:18px;}
+    .content-wrapper{width:100%;max-width:500px;text-align:center;z-index:2;}
+    #particles-js{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:#121212;transition:background .3s ease;}
+    h1{font-size:34px;margin:6px 0 14px 0;text-shadow:0 0 10px rgba(255,255,255,0.6);color:inherit;}
+    #randomAbove{margin-bottom:8px;}
+    #searchInput{width:100%;box-sizing:border-box;padding:10px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:rgba(31,31,31,0.9);color:inherit;font-size:16px;outline:none;transition:background .2s,color .2s;}
+    #gamesContainer{width:100%;max-height:400px;overflow-y:auto;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:rgba(26,26,26,0.85);backdrop-filter:blur(6px);margin-top:10px;position:relative;}
+    #filterActions{padding:6px;display:none;}
+    #gamesList{list-style:none;margin:0;padding:0;}
+    #gamesList li{border-bottom:1px solid rgba(255,255,255,0.03);display:flex;justify-content:space-between;align-items:center;}
+    #gamesList li a{display:flex;align-items:center;gap:10px;padding:10px;color:inherit;text-decoration:none;flex:1;}
+    #gamesList li a:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,0.6);text-shadow:0 0 10px currentColor;}
+    #gamesList img{width:40px;height:40px;object-fit:cover;border-radius:4px;}
+    .star{cursor:pointer;font-size:18px;padding:0 8px;color:#fff;transition:color .2s;user-select:none;}
+    .star.favorited{color:gold;}
+    body.light-mode .star{color:#888;}
+    .panic-text{margin-top:18px;font-size:20px;color:inherit;}
+    .visitor-highlight{transition:opacity .6s, text-shadow .45s;}
+    .visitor-animate{ text-shadow:0 0 16px rgba(0,255,200,0.25); }
+    body.light-mode{background:#fff;color:#000;}
+    body.light-mode #particles-js{background:#fff;}
+    body.light-mode #searchInput{background:#f7f7f7;color:#000;border:1px solid #ddd;}
+    body.light-mode #gamesContainer{background:rgba(250,250,250,0.9);border:1px solid #e6e6e6;}
+    body.light-mode .top-bar{background:rgba(255,255,255,0.9);color:#000;border-bottom:1px solid rgba(0,0,0,0.06);}
+    .settings-modal {position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.95);background:rgba(26,26,26,0.95);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:20px;z-index:10000;display:none;flex-direction:column;gap:12px;min-width:260px;backdrop-filter:blur(6px);transition:transform .2s ease,opacity .2s ease;}
+    .settings-modal.show {display:flex;opacity:1;transform:translate(-50%,-50%) scale(1);}
+    .settings-input {padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:inherit;}
+    .checkmark {display:none;color:limegreen;font-weight:bold;}
+    .checkmark.show {display:inline;}
+    @media (max-width:600px){.top-center{display:none;}h1{font-size:28px}.top-bar{padding:6px 8px;height:44px}}
+    body { cursor: none; }
+    .cursor {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(0, 255, 255, 0.8);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+  <div class="top-bar">
+    <div class="top-left">
+      <a href="menu.html" class="btn" id="menuBtn">𓃑</a>
+      <span id="welcomeMessage" style="font-weight:600;"></span>
+      <button class="btn" id="settingsBtn">⚙</button>
+      <a href="chat.html" class="btn" id="chatBtn" style="margin-left:4px;">🗫</a>
+      <button class="btn" id="randomTopBtn">🎲</button>
+      <a href="admin.html" class="btn" id="adminBtn">🔒</a>
+    </div>
+    <div class="top-center">
+      <span id="dateTime" style="margin-left:10px;"></span>
+      <script type="text/javascript" src="https://counter.websiteout.com/js/2/5/1200/0"></script> <h5>Visitors<h5>
+    </div>
+    <div class="top-right">
+      <a href="ytu.html" class="btn" id="YouTubeUnblockerBtn" style="margin-left:4px;">[ ▶︎ ]</a>
+      <button class="btn" id="favBtn">⭐</button>
+      <button class="btn" id="recentsBtn">↻</button>
+      <button class="btn" id="musicToggleBtn" style="margin-left:6px;">♬</button>
+      <button class="btn" id="modeToggle">☾ / ☀︎</button>
+    </div>
+  </div>
+  <br>
+<div class="page-wrap">
+  <div class="content-wrapper">
+    <h1 id="siteTitle">S</h1>
+    <img src="images/logo-halloween.png" alt="Site Title" style="height: 80px;" />
+    <div id="randomAbove"></div>
+    <input id="searchInput" type="text" placeholder="Search our 51 games..." />
+
+    <div id="gamesContainer">
+      <div id="filterActions"></div>
+      <ul id="gamesList">
+                  <li><a href="1v1lol.html"><img src="https://img.utdstc.com/icon/983/22a/98322a3b2be892eed31589906ffd949b68bcccc9a21ba562987965b5ec6bc6de:200" alt=""><span>1v1.lol</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="2048.html"><img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/95/8e/c3/958ec36e-06b1-0897-53b3-c968234bf47f/AppIcon-0-0-1x_U007emarketing-0-6-85-220.png/512x512bb.jpg" alt=""><span>2048</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="aswc.html"><img src="https://play-lh.googleusercontent.com/R47kNu-wEYMVnoo7rFOXiAHoBvW26KHps65Oi0S6zMF722x0LYqHJUiXRvB_xhsj0CM" alt=""><span>A Small World Cup</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="asrp.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZDCGdZc8f2TLbgcv4aULu8Gf4_D3qwe6eiPo8mDGxn3jL3GpWzsquaflVA800tU2hl5I:https://s.cafebazaar.ir/images/icons/superheroes.herogames.spider.rope.hero.battle.fighting.apps-c8cf8b40-2e0c-4bd5-80cd-007c8ad2f9e5_512x512.png%3Fx-img%3Dv1/resize,h_256,w_256,lossless_false/optimize&usqp=CAU" alt=""><span>Amazing Strange Rope Police</span></a><span class="star" aria-label="favorite">★</span></li>
+
+          <li><a href="amongus.html"><img src="https://images.sftcdn.net/images/t_app-icon-m/p/d10217b5-1ae1-44dd-a82c-6e2d60d086d6/3969265935/among-us-Download-Among-Us.jpg" alt=""><span>Among Us</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="baconmaydie.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlgNyBQroC5JSJh1gOrStxprpzi0u95828vA&s" alt=""><span>Bacon May Die</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="basketrandom.html"><img src="https://geometrydash2.com/data/image/basket-random.jpg" alt=""><span>Basket Random</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="bitplanes.html"><img src="https://images.rocketgames.io/uploads/games/b/bit-planes/bit-planes.16800f.jpg" alt=""><span>Bit Planes</span></a><span class="star" aria-label="favorite">★</span></li>
+
+          <li><a href="bitlife.html"><img src="https://play-lh.googleusercontent.com/fUM-UyywXxjC8soxAZdIlxJrlRRXmql8wkE426SHzft4lJycSKVd2jCYQQX1BEG9Xw" alt=""><span>Bitlife</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="blockblast.html"><img src="https://camo.githubusercontent.com/fed5c30c2eaffc5f8ad4d5198cc3da233226d58502ac973784459ad42bd10af1/68747470733a2f2f626c6f636b626c6173742e6465762f66617669636f6e2e706e67" alt=""><span>Block Blast</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="bloonstd.html"><img src="https://play-lh.googleusercontent.com/4te8y2It_nyY4yX5jcSEFaTDro98302l9EnSbkJyCobGUo8GWxteV_8kJ8nlXyStxw" alt=""><span>Bloons TD</span></a><span class="star" aria-label="favorite">★</span></li>
+
+          <li><a href="clickerhero.html"><img src="https://play-lh.googleusercontent.com/XqysWlDWj5nBr0zZMtB08Bt4pe3MsE8XXOAgqZYiD1s65phAUWUcLIBLxdiAkfjfIsM" alt=""><span>Clicker Hero</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="clusterrush.html"><img src="https://clusterrushonline.github.io/img/cluster-rush.png" alt=""><span>Cluster Rush</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="cookieclicker.html"><img src="https://super142.wordpress.com/wp-content/uploads/2022/07/cookie-clicker.jpg?w=640" alt=""><span>Cookie Clicker</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="crossyroad.html"><img src="https://downloadr2.apkmirror.com/wp-content/uploads/2025/06/65/683f96bad3438_com.yodo1.crossyroad.png" alt=""><span>Crossyroad</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="cuttherope.html"><img src="https://play-lh.googleusercontent.com/Yphk2XnpBkSPIlZcbcmeTULeIajjCU-8Iduzq8j7zyp9HPijyZaT5ZeqgbYkOoQKSljs" alt=""><span>Cut the Rope</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="deathrun.html"><img src="https://play-lh.googleusercontent.com/dEu4Lrs5Ke5ZHDMedRkjjtYq1G22gGccxeIU_ZJNqqwLeSYshuUxBU0KCrSG7lEEwBo" alt=""><span>Death Run</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="drivemad.html"><img src="https://play-lh.googleusercontent.com/V_egAxch0phxs10H_Z1QpWRrsH4phd8egT_5ZjYlFbXzXvwpUGpmJMn2h6HgbGkSlZSM" alt=""><span>Drive Mad</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="driftboss.html"><img src="https://m.media-amazon.com/images/I/71Rvyj1gI1L.png" alt=""><span>Drift Boss</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="ducklife.html"><img src="https://play-lh.googleusercontent.com/JQqSn7wuCj0SxBqpBThNI33qCR9gwY0str2TIAnu-m_xrVCgZk3IPxYK2S7zC9WG0ig" alt=""><span>Duck Life</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="fnaf.html"><img src="https://dorukyum.github.io/FNAF-Web/static/media/freddy.a3eb8395.png" alt=""><span>Five Night's at Freddy's</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="footballbros.html"><img src="https://avatars.githubusercontent.com/u/231598366?v=4" alt=""><span>Football Bros.</span></a><span class="star" aria-label="favorite">★</span></li>
+
+          <li><a href="geometrydash.html"><img src="https://assets-prd.ignimgs.com/2021/12/14/geometrydash-1639510868467.jpg" alt=""><span>Geometry Dash</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="getawayshootout.html"><img src="https://play-lh.googleusercontent.com/xbB3QLgeuMh5clpSpMLRAPJ80WV77jifWu1iz-quwQwN7kp5WCzvrLiM-Up6au20OTI" alt=""><span>Get Away Shootout</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="granny.html"><img src="https://play-lh.googleusercontent.com/yT_LBq_tyKeIDohKDsqN_Qt18jGIPUYIxY2C-1-E2YA9Qd60uZW08pua17qBmIiDPA=w240-h480-rw" alt=""><span>Granny</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="gladihopper.html"><img src="https://play-lh.googleusercontent.com/HUuFbIPERNbpW2Q72WIqiJ8bKDzIgT_C4PnYvMBuH0wC3B_KvpKmumm1FXhZj3jmRHw" alt=""><span>Gladihoppers</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="gunspin.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-6RoV0Octq6Jgqg901ASvwAEl0z-nfNjh7oCXp07wvuO7lYDN:https://rocketgames.imgix.net/uploads/games/g/gunspin/gunspin.890e48.jpg%3Fauto%3Dformat,compress%26w%3D1200%26h%3D630%26fit%3Dfill%26fill%3Dblur%26q%3D85%26mark%3D/logo.png%26mark-scale%3D16%26mark-align%3Dmiddle%26mark-x%3D65%26txt-size%3D42%26txt-color%3Dff333333%26txt-line%3D0.25%26txt-line-color%3DFFFFFF%26txt-font%3DFutura%2520Condensed%2520Medium%26txt-pad%3D15%26txt%3DGUNSPIN&s" alt=""><span>Gun Spin</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="hole-io.html"><img src="https://store-images.s-microsoft.com/image/apps.7301.14130340581880418.9c619941-0100-44a9-a3c9-a30a33f4dfb5.793ef2c0-4f01-4652-b472-79300b37dff7?q=90&w=177&h=177" alt=""><span>Hole.io</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="hextris.html"><img src="https://play-lh.googleusercontent.com/nCzeX0WCpn8iLxQV9TgrWr6Xt4JZPT0nExE7iSC48KacKxtx_7c4dAYrlMYgTM_HtHg" alt=""><span>Hextris</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="js.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRXd_syOZzkOzOzQafFGjlmWIECngoa1ENB9_abpCoPbgVxVM2bo0NSyWmLVkCjtCwXEE&usqp=CAU" alt=""><span>JavaScript Roulette</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="la.html"><img src="https://play-lh.googleusercontent.com/3Pr4gCB3uzsYyoFZZiDOuvq_7SeQPjUQnHiUrwug154RnTGJ_YAX5zvZfCH-4r2JKBOX" alt=""><span>Little Alchemy 2</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="learntofly.html"><img src="https://play-lh.googleusercontent.com/WYyWLDBs2bj-KtDBhg7jSqW34nYzyoFTvtKaYBTt2J6SAA05dqEZGI8s1h2LQQV3BHc" alt=""><span>Learn to Fly</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="motox3m.html"><img src="https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=314,height=314,fit=cover,f=auto/2c6d5a46cdbceada277c870ce1c389ee/moto-x3m.jpg" alt=""><span>MotoX3M</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="monkeymart.html"><img src="https://play-lh.googleusercontent.com/rWReIdyvDaYJPeOxn7hbC0b-96ixGpQKM_EndiQa3SUME8TtI_rNUcI4qsw5teK9mqk" alt=""><span>Monkey Mart</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="minecraft-menu.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTex_wtjsXI9BHHjySiqI0OIkr0r-9ITLPYTA&s" alt=""><span>Minecraft</span></a><span class="star" aria-label="favorite">★</span></li>
+
+          <li><a href="ovo.html"><img src="https://play-lh.googleusercontent.com/v7KwGdPjJGjJjRXn46sck4DwDBdKSeRzGN44CjiXUtKV0jjOi51Bt4wcXud0m-SkXg" alt=""><span>OvO</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="pacman.html"><img src="https://rasterweb.net/raster/wp-content/uploads/2024/03/ghosts-02.jpg" alt=""><span>Pacman</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="paper.io2.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4qJVLuHb4EH8h7QU5C4k_Jb44aHgcxgTNKg&s" alt=""><span>Paper.io 2</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="polytrack.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRepbLbXvGqJZA_eGUnd-U_nqXT0OxWAjavkZ8EWyNW_PA0eYo:https://cdn-1.webcatalog.io/catalog/poki-polytrack/poki-polytrack-icon-filled-256.png%3Fv%3D1727914012217&s" alt=""><span>Poly Track</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="ragdollarchers.html"><img src="https://play-lh.googleusercontent.com/XMiWEMPbuq13oVcwYQ6ySLtZnBf7WpJ3rb7v-TM4MdFOvWfo1Z2hzSEAApRXzEcshjY" alt=""><span>Ragdoll Archers</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="ragdollhit.html"><img src="https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=314,height=314,fit=cover,f=auto/3c892779be9dabb3589586c83ad3eeed/ragdoll-hit.png" alt=""><span>Ragdoll Hit</span></a><span class="star" aria-label="favorite">★</span></li>    
+          <li><a href="retrobowl.html"><img src="https://drift-hunters.co/upload/imgs/retrobowl.jpg" alt=""><span>Retro Bowl</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="retrobowlcollege.html"><img src="https://play-lh.googleusercontent.com/-BT8C-1UPYWouyjVvWYgaar_-xV4IQvX4Bvib3koGEGiy6UsHlt0RgYpUrdTDfC2y0ct" alt=""><span>Retro Bowl College</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="subwaysurfers.html"><img src="https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=1200,height=1200,fit=cover,f=png/919c9f04db0404cf69fddf9c01e31d91/subway-surfers.png" alt=""><span>Subway Surfers</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="slope.html"><img src="https://play-lh.googleusercontent.com/uJn2i9h7KxYQarC_c3K4qH6o7gLtflFnhD_dN14MNkzHJ1NeNFzCL69jpB5mT0vCoQs" alt=""><span>Slope</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="stickmanhook.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKclUg-7v0l4KeCYELMzTrsaHvwJ1uubNfkw&s" alt=""><span>Stick Man Hook</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="snowrider3d.html"><img src="https://childrenwithhairloss.org/wp-content/uploads/2025/03/snow-rider-3d-200x199.png" alt=""><span>Snow Rider 3D</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="superhot.html"><img src="https://yt3.googleusercontent.com/ytc/AIdro_lUAU1wbH8KiPz-Q2ppjtFEn_sGvxBE2sySkHo1ELm4PQ=s900-c-k-c0x00ffffff-no-rj" alt=""><span>SUPERHOT</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="wbwwb.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTv-7UyhFch4BXsiaZCOvfmRacKqIX-pDIGvw&s" alt=""><span>We Become What We Behold</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="whackyourboss.html"><img src="https://e.snmc.io/lk/lv/x/123e965239a426aa18c9348609293ced/11817567" alt=""><span>Whack Your Boss</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="wheeliebike.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRc8giRTerjerQtYjy5u3crHHI5XFm9GYG1WA&s" alt=""><span>Wheelie Bike</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="yohoho-io.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQubF63Qipw_s45n_3fqCpncogxSjPzVTK0nw&s" alt=""><span>Yohoho.io</span></a><span class="star" aria-label="favorite">★</span></li>
+        </ul>
+      </div>
+      <div id="randomText" style="font-size:14px; font-family:Arial, sans-serif; color:#ccc; min-height:24px;"></div>
+    </div>
+  </div>
+
+  <div class="settings-modal" id="settingsModal">
+    <label>Site Title (changes tab name):</label>
+    <input type="text" id="titleInput" class="settings-input">
+    <button class="btn" id="saveTitleBtn">Save</button>
+    <span id="saveCheck" class="checkmark">✔</span>
+  </div>
+
+  <!-- Hidden YouTube music player -->
+  <div id="musicPlayer" style="display:none;"></div>
+  <div class="cursor" id="cursor"></div>
+  
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script>
+    // Random text for fun
+    const texts = [
+      "gotta glock in my 'rari",
+      "m&m's, sweet like candy cane",
+      "pst. i see dead people",
+      "not afraid to take a stand",
+      "ay, mustard on the beat, h0",
+      "teacher panic key is q, do 'ctrl+d' to bookmark",
+    ];
+    const randomIndex = Math.floor(Math.random() * texts.length);
+    const chosenText = texts[randomIndex];
+    document.getElementById('randomText').textContent = chosenText;
+
+    // Site title logic
+    document.getElementById('siteTitle').textContent = " ";
+    document.title = localStorage.getItem('siteTitle') || "Canvas";
+
+    if (window.location.pathname.endsWith("menu.html")) {
+      document.getElementById("menuBtn").classList.add("active");
+    }
+
+    const gamesList = document.querySelectorAll("#gamesList li");
+    const stars = document.querySelectorAll(".star");
+    const favBtn = document.getElementById("favBtn");
+    const recentsBtn = document.getElementById("recentsBtn");
+    const searchInput = document.getElementById("searchInput");
+    const filterActions = document.getElementById("filterActions");
+
+    let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+    let recents = JSON.parse(localStorage.getItem("recents") || "[]");
+    let currentFilter = null;
+
+    function updateFavorites() {
+      stars.forEach((star, i) => {
+        star.classList.toggle("favorited", favorites.includes(i));
+        star.onclick = () => {
+          if (favorites.includes(i)) favorites = favorites.filter(f => f !== i);
+          else favorites.push(i);
+          localStorage.setItem("favorites", JSON.stringify(favorites));
+          updateFavorites();
+        };
+      });
+    }
+    updateFavorites();
+
+    function filterGames(mode) {
+      if (currentFilter === mode) {
+        currentFilter = null;
+        gamesList.forEach(li => li.style.display = "");
+        filterActions.style.display = "none";
+        favBtn.classList.remove("active");
+        recentsBtn.classList.remove("active");
+        return;
+      }
+      currentFilter = mode;
+      gamesList.forEach((li, i) => {
+        li.style.display = (mode === "favorites" && !favorites.includes(i)) ? "none" :
+                           (mode === "recents" && !recents.includes(i)) ? "none" : "";
+      });
+      filterActions.style.display = "block";
+      filterActions.innerHTML = `<button class="btn" onclick="clear${mode.charAt(0).toUpperCase()+mode.slice(1)}()">Clear ${mode}</button>`;
+      favBtn.classList.toggle("active", mode === "favorites");
+      recentsBtn.classList.toggle("active", mode === "recents");
+    }
+
+    function clearFavorites() {
+      favorites = [];
+      localStorage.setItem("favorites", "[]");
+      updateFavorites();
+      filterGames("favorites");
+    }
+    function clearRecents() {
+      recents = [];
+      localStorage.setItem("recents", "[]");
+      filterGames("recents");
+    }
+
+    favBtn.onclick = () => filterGames("favorites");
+    recentsBtn.onclick = () => filterGames("recents");
+
+    gamesList.forEach((li, i) => {
+      li.querySelector("a").addEventListener("click", () => {
+        if (!recents.includes(i)) {
+          recents.unshift(i);
+          if (recents.length > 5) recents.pop();
+          localStorage.setItem("recents", JSON.stringify(recents));
+        }
+      });
+    });
+
+    searchInput.addEventListener("input", () => {
+      const query = searchInput.value.toLowerCase();
+      gamesList.forEach(li => {
+        li.style.display = li.textContent.toLowerCase().includes(query) ? "" : "none";
+      });
+    });
+
+    document.addEventListener("click", e => {
+      if (currentFilter && !document.getElementById("gamesContainer").contains(e.target) &&
+          !favBtn.contains(e.target) && !recentsBtn.contains(e.target)) {
+        filterGames(currentFilter);
+      }
+    });
+
+    document.getElementById("randomTopBtn").onclick = () => {
+      const visible = Array.from(gamesList).filter(li => li.style.display !== "none");
+      if (visible.length > 0) window.location.href = visible[Math.floor(Math.random()*visible.length)].querySelector("a").href;
+    };
+
+    fetch("https://api.counterapi.dev/v1/savnaclive.github.io/savnac/up")
+      .then(r => r.json())
+      .then(data => {
+        const visitorDisplay = document.getElementById("visitorDisplay");
+        visitorDisplay.textContent = `Visitors: ${data.count}`;
+        visitorDisplay.style.opacity = 1;
+        visitorDisplay.classList.add("visitor-animate");
+      });
+
+    function updateTime() {
+      document.getElementById("dateTime").textContent = new Date().toLocaleString();
+    }
+    setInterval(updateTime, 1000); updateTime();
+
+    document.addEventListener("keydown", e => { if (e.key==="q") window.location.href="https://canvas.nebo.edu/"; });
+
+    document.getElementById("modeToggle").onclick = () => document.body.classList.toggle("light-mode");
+
+    particlesJS.load('particles-js', 'https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
+
+    const settingsBtn = document.getElementById('settingsBtn');
+    const settingsModal = document.getElementById('settingsModal');
+    const titleInput = document.getElementById('titleInput');
+    const saveTitleBtn = document.getElementById('saveTitleBtn');
+    const saveCheck = document.getElementById('saveCheck');
+
+    settingsBtn.addEventListener('click', () => {
+      titleInput.value = document.title;
+      settingsModal.classList.add('show');
+    });
+
+    saveTitleBtn.addEventListener('click', () => {
+      localStorage.setItem('siteTitle', titleInput.value);
+      document.title = titleInput.value || "Savnac";
+      saveCheck.classList.add('show');
+      setTimeout(()=>saveCheck.classList.remove('show'),1500);
+      settingsModal.classList.remove('show');
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === "Escape") {
+        if (settingsModal.classList.contains('show')) settingsModal.classList.remove('show');
+        else if (currentFilter) filterGames(currentFilter);
+      }
+    });
+
+    // Custom cursor
+    const cursor = document.getElementById("cursor");
+    document.addEventListener("mousemove", e => {
+      cursor.style.left = e.pageX + "px";
+      cursor.style.top = e.pageY + "px";
+    });
+
+    // ---- YOUTUBE MUSIC PLAYER TOGGLE ----
+    // 1. Load YouTube API
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.body.appendChild(tag);
+
+    // 2. Player vars
+    var musicPlayer, musicIsPlaying = false;
+    function onYouTubeIframeAPIReady() {
+      musicPlayer = new YT.Player('musicPlayer', {
+        height: '0',
+        width: '0',
+        videoId: 'Jr55EzQeHf4',
+        playerVars: {
+          'autoplay': 0,
+          'controls': 0,
+          'loop': 1,
+          'playlist': 'Jr55EzQeHf4'
+        },
+        events: {
+          'onReady': function() {
+            document.getElementById('musicToggleBtn').addEventListener('click', function() {
+              if (!musicIsPlaying) {
+                musicPlayer.playVideo();
+                this.textContent = "♬";
+                this.classList.add("active");
+                musicIsPlaying = true;
+              } else {
+                musicPlayer.pauseVideo();
+                this.textContent = "♬";
+                this.classList.remove("active");
+                musicIsPlaying = false;
+              }
+            });
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>a
