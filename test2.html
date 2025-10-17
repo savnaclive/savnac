@@ -373,20 +373,34 @@
         }
       });
     }
-            let bgIsParticles = true;
+<style>
+  #particles-js {
+    transition: background 0.5s ease, opacity 0.5s ease;
+  }
+</style>
+
+<script>
+let bgIsParticles = true;
 const bgToggleBtn = document.getElementById('bgToggleBtn');
 const particlesDiv = document.getElementById('particles-js');
 
 bgToggleBtn.addEventListener('click', () => {
   if (bgIsParticles) {
+    // Show image background, hide particles
     particlesDiv.style.background = "url('images/background/bg1.jpg') center/cover no-repeat";
-    particlesDiv.style.zIndex = "-1";
+    if (window.pJSDom && window.pJSDom.length) {
+      window.pJSDom[0].pJS.canvas.el.style.display = "none"; // hide the particles canvas
+    }
   } else {
+    // Show particles again
     particlesDiv.style.background = "#121212";
-    particlesJS.load('particles-js', 'https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
+    if (window.pJSDom && window.pJSDom.length) {
+      window.pJSDom[0].pJS.canvas.el.style.display = "block"; // show particles canvas
+    }
   }
   bgIsParticles = !bgIsParticles;
 });
+</script>
 
             </script>
 </body>
