@@ -218,30 +218,30 @@ function onYouTubeIframeAPIReady() {
 // PARTICLES INIT
 particlesJS.load('particles-js','https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
 
-// ------------------ BACKGROUND TOGGLE WITH LOCALSTORAGE ------------------
+// ------------------ BACKGROUND WITH LOCALSTORAGE ------------------
 const bgToggleBtn = document.getElementById('bgToggleBtn');
 const particlesDiv = document.getElementById('particles-js');
 
-// List of available backgrounds
+// Define backgrounds
 const backgrounds = [
   { type: 'particles' },
   { type: 'image', url: 'images/background/bg1.jpg' },
-  { type: 'image', url: 'images/background/bg2.jpg' }, // add more images if needed
+  { type: 'image', url: 'images/background/bg2.jpg' } // add more if needed
 ];
 
-// Load last selected background from localStorage
+// Load last background index
 let currentBgIndex = parseInt(localStorage.getItem('bgIndex')) || 0;
 
 function applyBackground(index) {
   const bg = backgrounds[index];
 
-  // Destroy particles if any
+  // Always destroy particles first
   if (window.pJSDom && window.pJSDom.length) {
     window.pJSDom[0].pJS.fn.vendors.destroypJS();
     window.pJSDom = [];
   }
 
-  // Apply the selected background
+  // Apply background
   if (bg.type === 'particles') {
     particlesDiv.style.background = "#121212";
     particlesDiv.innerHTML = "";
@@ -251,13 +251,14 @@ function applyBackground(index) {
     particlesDiv.innerHTML = "";
   }
 
+  // Save to localStorage
   localStorage.setItem('bgIndex', index);
 }
 
 // Apply saved background on page load
 applyBackground(currentBgIndex);
 
-// Cycle to next background on button click
+// Toggle to next background on button click
 bgToggleBtn.addEventListener('click', () => {
   currentBgIndex = (currentBgIndex + 1) % backgrounds.length;
   applyBackground(currentBgIndex);
