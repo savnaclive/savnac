@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -78,9 +79,9 @@
     </div>
     <div class="top-right">
       <a href="ytu.html" class="btn" id="YouTubeUnblockerBtn" style="margin-left:4px;">[ ▶︎ ]</a>
-      <button class="btn" id="bgChangeBtn" style="margin-left:6px;">🎨</button>
       <button class="btn" id="favBtn">⭐</button>
       <button class="btn" id="recentsBtn">↻</button>
+      <button class="btn" id="bgToggleBtn">🎨</button>
       <button class="btn" id="musicToggleBtn" style="margin-left:6px;">♬</button>
       <button class="btn" id="modeToggle">☀︎</button>
     </div>
@@ -372,52 +373,21 @@
         }
       });
     }
-    const bgChangeBtn = document.getElementById("bgChangeBtn");
-const backgrounds = [
-  "/images/background/bg1.jpg",
-  "/images/background/bg2.jpg",
-  "/images/background/bg3.jpg"
-];
+            let bgIsParticles = true;
+const bgToggleBtn = document.getElementById('bgToggleBtn');
+const particlesDiv = document.getElementById('particles-js');
 
-let currentBgIndex = parseInt(localStorage.getItem("bgIndex")) || -1; // -1 = default particles
-const particles = document.getElementById("particles-js");
-
-// Overlay div for static backgrounds
-const bgOverlay = document.createElement("div");
-bgOverlay.style.position = "fixed";
-bgOverlay.style.top = 0;
-bgOverlay.style.left = 0;
-bgOverlay.style.width = "100%";
-bgOverlay.style.height = "100%";
-bgOverlay.style.zIndex = "-2";
-bgOverlay.style.transition = "opacity 0.6s ease";
-bgOverlay.style.backgroundSize = "cover";
-bgOverlay.style.backgroundPosition = "center";
-bgOverlay.style.backgroundRepeat = "no-repeat";
-bgOverlay.style.opacity = 0;
-document.body.appendChild(bgOverlay);
-
-// Function to update background
-function setBackground(index) {
-  if (index === -1) {
-    bgOverlay.style.opacity = 0; // hide overlay → show particles
+bgToggleBtn.addEventListener('click', () => {
+  if (bgIsParticles) {
+    particlesDiv.style.background = "url('images/background/bg1.jpg') center/cover no-repeat";
+    particlesDiv.style.zIndex = "-1";
   } else {
-    bgOverlay.style.background = `url(${backgrounds[index]}) center/cover no-repeat`;
-    bgOverlay.style.opacity = 1; // fade in overlay
+    particlesDiv.style.background = "#121212";
+    particlesJS.load('particles-js', 'https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
   }
-}
-
-// Initialize
-setBackground(currentBgIndex);
-
-// Button click cycles backgrounds
-bgChangeBtn.addEventListener("click", () => {
-  currentBgIndex = (currentBgIndex + 1) % (backgrounds.length + 1); // +1 for default particles
-  if (currentBgIndex === backgrounds.length) currentBgIndex = -1; // default particles
-  setBackground(currentBgIndex);
-  localStorage.setItem("bgIndex", currentBgIndex);
+  bgIsParticles = !bgIsParticles;
 });
-  </script>
 
+            </script>
 </body>
 </html>
