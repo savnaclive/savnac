@@ -1,6 +1,3 @@
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,7 +7,7 @@
   <link rel="icon" href="https://www.wabash.edu/images2/technology/canvas.png" type="image/png" />
   <style>
     html, body {margin:0;padding:0;height:100%;box-sizing:border-box;overflow-x:hidden;font-family:Arial, sans-serif;-webkit-font-smoothing:antialiased;}
-    body {background:#121212;color:#fff;transition:background .28s ease,color .28s ease;min-height:100vh;padding-top:48px;}
+    body {background:#121212;color:#fff;transition:background .28s ease,color .28s ease;min-height:100vh;padding-top:48px;cursor:none;}
     .top-bar{position:fixed;top:0;left:0;right:0;height:48px;display:flex;align-items:center;justify-content:space-between;padding:6px 14px;background:rgba(26,26,26,0.78);backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,0.03);z-index:9999;gap:12px;}
     .top-left,.top-center,.top-right{display:flex;align-items:center;gap:10px;font-size:14px;color:inherit;}
     .top-center{margin:0 auto;gap:12px;}
@@ -19,7 +16,7 @@
     .btn.active{box-shadow:0 8px 26px rgba(0,0,0,0.55);transform:translateY(-1px);}
     body.light-mode .btn.active{background:rgba(0,0,0,0.06);}
     .page-wrap{display:flex;justify-content:center;align-items:flex-start;padding:18px;}
-    .content-wrapper{width:100%;max-width:500px;text-align:center;z-index:2;}
+    .content-wrapper{width:100%;max-width:500px;text-align:center;z-index:2;position:relative;}
     #particles-js{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:#121212;transition:background .3s ease;}
     h1{font-size:34px;margin:6px 0 14px 0;text-shadow:0 0 10px rgba(255,255,255,0.6);color:inherit;}
     #randomAbove{margin-bottom:8px;}
@@ -48,7 +45,6 @@
     .checkmark {display:none;color:limegreen;font-weight:bold;}
     .checkmark.show {display:inline;}
     @media (max-width:600px){.top-center{display:none;}h1{font-size:28px}.top-bar{padding:6px 8px;height:44px}}
-    body { cursor: none; }
     .cursor {
       position: fixed;
       width: 20px;
@@ -57,8 +53,8 @@
       background: rgba(0, 255, 255, 0.8);
       pointer-events: none;
       transform: translate(-50%, -50%);
-      transition: transform 0.1s ease;
-      z-index: 9999;
+      transition: transform 0.05s ease;
+      z-index:9999;
     }
   </style>
 </head>
@@ -75,7 +71,8 @@
     </div>
     <div class="top-center">
       <span id="dateTime" style="margin-left:10px;"></span>
-      <script type="text/javascript" src="https://counter.websiteout.com/js/2/5/1200/0"></script> <h5>Visitors<h5>
+      <script type="text/javascript" src="https://counter.websiteout.com/js/2/5/1200/0"></script> 
+      <h5>Visitors<h5>
     </div>
     <div class="top-right">
       <a href="ytu.html" class="btn" id="YouTubeUnblockerBtn" style="margin-left:4px;">[ ▶︎ ]</a>
@@ -86,18 +83,18 @@
       <button class="btn" id="modeToggle">☀︎</button>
     </div>
   </div>
-  <br>
-<div class="page-wrap">
-  <div class="content-wrapper">
-    <h1 id="siteTitle">S</h1>
-    <img src="images/logo-halloween.png" alt="Site Title" style="height: 80px;" />
-    <div id="randomAbove"></div>
-    <input id="searchInput" type="text" placeholder="Search our 51 games..." />
 
-    <div id="gamesContainer">
-      <div id="filterActions"></div>
-      <ul id="gamesList">
-                  <li><a href="1v1lol.html"><img src="https://img.utdstc.com/icon/983/22a/98322a3b2be892eed31589906ffd949b68bcccc9a21ba562987965b5ec6bc6de:200" alt=""><span>1v1.lol</span></a><span class="star" aria-label="favorite">★</span></li>
+  <div class="page-wrap">
+    <div class="content-wrapper">
+      <h1 id="siteTitle">S</h1>
+      <img src="images/logo-halloween.png" alt="Site Title" style="height: 80px;" />
+      <div id="randomAbove"></div>
+      <input id="searchInput" type="text" placeholder="Search our 51 games..." />
+
+      <div id="gamesContainer">
+        <div id="filterActions"></div>
+        <ul id="gamesList">
+                            <li><a href="1v1lol.html"><img src="https://img.utdstc.com/icon/983/22a/98322a3b2be892eed31589906ffd949b68bcccc9a21ba562987965b5ec6bc6de:200" alt=""><span>1v1.lol</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="2048.html"><img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/95/8e/c3/958ec36e-06b1-0897-53b3-c968234bf47f/AppIcon-0-0-1x_U007emarketing-0-6-85-220.png/512x512bb.jpg" alt=""><span>2048</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="aswc.html"><img src="https://play-lh.googleusercontent.com/R47kNu-wEYMVnoo7rFOXiAHoBvW26KHps65Oi0S6zMF722x0LYqHJUiXRvB_xhsj0CM" alt=""><span>A Small World Cup</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="asrp.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZDCGdZc8f2TLbgcv4aULu8Gf4_D3qwe6eiPo8mDGxn3jL3GpWzsquaflVA800tU2hl5I:https://s.cafebazaar.ir/images/icons/superheroes.herogames.spider.rope.hero.battle.fighting.apps-c8cf8b40-2e0c-4bd5-80cd-007c8ad2f9e5_512x512.png%3Fx-img%3Dv1/resize,h_256,w_256,lossless_false/optimize&usqp=CAU" alt=""><span>Amazing Strange Rope Police</span></a><span class="star" aria-label="favorite">★</span></li>
@@ -109,7 +106,7 @@
 
           <li><a href="bitlife.html"><img src="https://play-lh.googleusercontent.com/fUM-UyywXxjC8soxAZdIlxJrlRRXmql8wkE426SHzft4lJycSKVd2jCYQQX1BEG9Xw" alt=""><span>Bitlife</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="blockblast.html"><img src="https://camo.githubusercontent.com/fed5c30c2eaffc5f8ad4d5198cc3da233226d58502ac973784459ad42bd10af1/68747470733a2f2f626c6f636b626c6173742e6465762f66617669636f6e2e706e67" alt=""><span>Block Blast</span></a><span class="star" aria-label="favorite">★</span></li>
-          <li><a href="bloonstd.html"><img src="https://play-lh.googleusercontent.com/4te8y2It_nyY4yX5jcSEFaTDro98302l9EnSbkJyCobGUo8GWxteV_8kJ8nlXyStxw alt=""><span>Bloons TD</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="bloonstd.html"><img src="https://play-lh.googleusercontent.com/4te8y2It_nyY4yX5jcSEFaTDro98302l9EnSbkJyCobGUo8GWxteV_8kJ8nlXyStxw" alt=""><span>Bloons TD</span></a><span class="star" aria-label="favorite">★</span></li>
 
           <li><a href="clickerhero.html"><img src="https://play-lh.googleusercontent.com/XqysWlDWj5nBr0zZMtB08Bt4pe3MsE8XXOAgqZYiD1s65phAUWUcLIBLxdiAkfjfIsM" alt=""><span>Clicker Hero</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="clusterrush.html"><img src="https://clusterrushonline.github.io/img/cluster-rush.png" alt=""><span>Cluster Rush</span></a><span class="star" aria-label="favorite">★</span></li>
@@ -155,8 +152,8 @@
           <li><a href="wheeliebike.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRc8giRTerjerQtYjy5u3crHHI5XFm9GYG1WA&s" alt=""><span>Wheelie Bike</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="yohoho-io.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQubF63Qipw_s45n_3fqCpncogxSjPzVTK0nw&s" alt=""><span>Yohoho.io</span></a><span class="star" aria-label="favorite">★</span></li>
         </ul>
+        <div id="randomText" style="font-size:14px; font-family:Arial, sans-serif; color:#ccc; min-height:24px;"></div>
       </div>
-      <div id="randomText" style="font-size:14px; font-family:Arial, sans-serif; color:#ccc; min-height:24px;"></div>
     </div>
   </div>
 
@@ -173,7 +170,7 @@
   
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script>
-    // Random text for fun
+    // Random text
     const texts = [
       "gotta glock in my 'rari",
       "m&m's, sweet like candy cane",
@@ -182,11 +179,8 @@
       "ay, mustard on the beat, h0",
       "teacher panic key is q, do 'ctrl+d' to bookmark",
     ];
-    const randomIndex = Math.floor(Math.random() * texts.length);
-    const chosenText = texts[randomIndex];
-    document.getElementById('randomText').textContent = chosenText;
+    document.getElementById('randomText').textContent = texts[Math.floor(Math.random() * texts.length)];
 
-    // Site title logic
     document.getElementById('siteTitle').textContent = " ";
     document.title = localStorage.getItem('siteTitle') || "Canvas";
 
@@ -194,114 +188,21 @@
       document.getElementById("menuBtn").classList.add("active");
     }
 
-    const gamesList = document.querySelectorAll("#gamesList li");
-    const stars = document.querySelectorAll(".star");
-    const favBtn = document.getElementById("favBtn");
-    const recentsBtn = document.getElementById("recentsBtn");
-    const searchInput = document.getElementById("searchInput");
-    const filterActions = document.getElementById("filterActions");
-
-    let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
-    let recents = JSON.parse(localStorage.getItem("recents") || "[]");
-    let currentFilter = null;
-
-    function updateFavorites() {
-      stars.forEach((star, i) => {
-        star.classList.toggle("favorited", favorites.includes(i));
-        star.onclick = () => {
-          if (favorites.includes(i)) favorites = favorites.filter(f => f !== i);
-          else favorites.push(i);
-          localStorage.setItem("favorites", JSON.stringify(favorites));
-          updateFavorites();
-        };
-      });
-    }
-    updateFavorites();
-
-    function filterGames(mode) {
-      if (currentFilter === mode) {
-        currentFilter = null;
-        gamesList.forEach(li => li.style.display = "");
-        filterActions.style.display = "none";
-        favBtn.classList.remove("active");
-        recentsBtn.classList.remove("active");
-        return;
-      }
-      currentFilter = mode;
-      gamesList.forEach((li, i) => {
-        li.style.display = (mode === "favorites" && !favorites.includes(i)) ? "none" :
-                           (mode === "recents" && !recents.includes(i)) ? "none" : "";
-      });
-      filterActions.style.display = "block";
-      filterActions.innerHTML = `<button class="btn" onclick="clear${mode.charAt(0).toUpperCase()+mode.slice(1)}()">Clear ${mode}</button>`;
-      favBtn.classList.toggle("active", mode === "favorites");
-      recentsBtn.classList.toggle("active", mode === "recents");
-    }
-
-    function clearFavorites() {
-      favorites = [];
-      localStorage.setItem("favorites", "[]");
-      updateFavorites();
-      filterGames("favorites");
-    }
-    function clearRecents() {
-      recents = [];
-      localStorage.setItem("recents", "[]");
-      filterGames("recents");
-    }
-
-    favBtn.onclick = () => filterGames("favorites");
-    recentsBtn.onclick = () => filterGames("recents");
-
-    gamesList.forEach((li, i) => {
-      li.querySelector("a").addEventListener("click", () => {
-        if (!recents.includes(i)) {
-          recents.unshift(i);
-          if (recents.length > 5) recents.pop();
-          localStorage.setItem("recents", JSON.stringify(recents));
-        }
-      });
+    // CUSTOM CURSOR
+    const cursor = document.getElementById("cursor");
+    document.addEventListener("mousemove", e => {
+      cursor.style.left = e.clientX + "px";
+      cursor.style.top = e.clientY + "px";
     });
 
-    searchInput.addEventListener("input", () => {
-      const query = searchInput.value.toLowerCase();
-      gamesList.forEach(li => {
-        li.style.display = li.textContent.toLowerCase().includes(query) ? "" : "none";
-      });
-    });
-
-    document.addEventListener("click", e => {
-      if (currentFilter && !document.getElementById("gamesContainer").contains(e.target) &&
-          !favBtn.contains(e.target) && !recentsBtn.contains(e.target)) {
-        filterGames(currentFilter);
-      }
-    });
-
-    document.getElementById("randomTopBtn").onclick = () => {
-      const visible = Array.from(gamesList).filter(li => li.style.display !== "none");
-      if (visible.length > 0) window.location.href = visible[Math.floor(Math.random()*visible.length)].querySelector("a").href;
-    };
-
-    fetch("https://api.counterapi.dev/v1/savnaclive.github.io/savnac/up")
-      .then(r => r.json())
-      .then(data => {
-        const visitorDisplay = document.getElementById("visitorDisplay");
-        visitorDisplay.textContent = `Visitors: ${data.count}`;
-        visitorDisplay.style.opacity = 1;
-        visitorDisplay.classList.add("visitor-animate");
-      });
-
-    function updateTime() {
-      document.getElementById("dateTime").textContent = new Date().toLocaleString();
-    }
+    // TIME
+    function updateTime() { document.getElementById("dateTime").textContent = new Date().toLocaleString(); }
     setInterval(updateTime, 1000); updateTime();
 
-    document.addEventListener("keydown", e => { if (e.key==="q") window.location.href="https://canvas.nebo.edu/"; });
-
+    // LIGHT MODE TOGGLE
     document.getElementById("modeToggle").onclick = () => document.body.classList.toggle("light-mode");
 
-    particlesJS.load('particles-js', 'https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
-
+    // SETTINGS MODAL
     const settingsBtn = document.getElementById('settingsBtn');
     const settingsModal = document.getElementById('settingsModal');
     const titleInput = document.getElementById('titleInput');
@@ -324,84 +225,44 @@
     document.addEventListener('keydown', e => {
       if (e.key === "Escape") {
         if (settingsModal.classList.contains('show')) settingsModal.classList.remove('show');
-        else if (currentFilter) filterGames(currentFilter);
       }
+      if (e.key==="q") window.location.href="https://canvas.nebo.edu/";
     });
 
-    // Custom cursor
-    const cursor = document.getElementById("cursor");
-    document.addEventListener("mousemove", e => {
-      cursor.style.left = e.pageX + "px";
-      cursor.style.top = e.pageY + "px";
-    });
-
-    // ---- YOUTUBE MUSIC PLAYER TOGGLE ----
-    // 1. Load YouTube API
-    var tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    document.body.appendChild(tag);
-
-    // 2. Player vars
+    // YOUTUBE MUSIC PLAYER
+    var tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api"; document.body.appendChild(tag);
     var musicPlayer, musicIsPlaying = false;
     function onYouTubeIframeAPIReady() {
-      musicPlayer = new YT.Player('musicPlayer', {
-        height: '0',
-        width: '0',
-        videoId: 'Jr55EzQeHf4',
-        playerVars: {
-          'autoplay': 0,
-          'controls': 0,
-          'loop': 1,
-          'playlist': 'Jr55EzQeHf4'
-        },
-        events: {
-          'onReady': function() {
-            document.getElementById('musicToggleBtn').addEventListener('click', function() {
-              if (!musicIsPlaying) {
-                musicPlayer.playVideo();
-                this.textContent = "♬";
-                this.classList.add("active");
-                musicIsPlaying = true;
-              } else {
-                musicPlayer.pauseVideo();
-                this.textContent = "♬";
-                this.classList.remove("active");
-                musicIsPlaying = false;
-              }
-            });
-          }
+      musicPlayer = new YT.Player('musicPlayer', {height:'0',width:'0',videoId:'Jr55EzQeHf4',playerVars:{'autoplay':0,'controls':0,'loop':1,'playlist':'Jr55EzQeHf4'},events:{'onReady': function() {
+        document.getElementById('musicToggleBtn').addEventListener('click', function() {
+          if (!musicIsPlaying) { musicPlayer.playVideo(); this.classList.add("active"); musicIsPlaying = true; } 
+          else { musicPlayer.pauseVideo(); this.classList.remove("active"); musicIsPlaying = false; }
+        });
+      }}});
+    }
+
+    // PARTICLES INIT
+    particlesJS.load('particles-js','https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
+
+    // BACKGROUND TOGGLE
+    let bgIsParticles = true;
+    const bgToggleBtn = document.getElementById('bgToggleBtn');
+    const particlesDiv = document.getElementById('particles-js');
+
+    bgToggleBtn.addEventListener('click', () => {
+      if (bgIsParticles) {
+        if (window.pJSDom && window.pJSDom.length) {
+          window.pJSDom[0].pJS.fn.vendors.destroypJS();
+          window.pJSDom = [];
         }
-      });
-    }
-<style>
-  #particles-js {
-    transition: background 0.5s ease, opacity 0.5s ease;
-  }
-</style>
-
-<script>
-let bgIsParticles = true;
-const bgToggleBtn = document.getElementById('bgToggleBtn');
-const particlesDiv = document.getElementById('particles-js');
-
-bgToggleBtn.addEventListener('click', () => {
-  if (bgIsParticles) {
-    // Show image background, hide particles
-    particlesDiv.style.background = "url('images/background/bg1.jpg') center/cover no-repeat";
-    if (window.pJSDom && window.pJSDom.length) {
-      window.pJSDom[0].pJS.canvas.el.style.display = "none"; // hide the particles canvas
-    }
-  } else {
-    // Show particles again
-    particlesDiv.style.background = "#121212";
-    if (window.pJSDom && window.pJSDom.length) {
-      window.pJSDom[0].pJS.canvas.el.style.display = "block"; // show particles canvas
-    }
-  }
-  bgIsParticles = !bgIsParticles;
-});
-</script>
-
-            </script>
+        particlesDiv.style.background = "url('images/background/bg1.jpg') center/cover no-repeat";
+        particlesDiv.innerHTML = "";
+      } else {
+        particlesDiv.style.background = "#121212";
+        particlesJS.load('particles-js','https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
+      }
+      bgIsParticles = !bgIsParticles;
+    });
+  </script>
 </body>
 </html>
