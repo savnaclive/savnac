@@ -373,103 +373,82 @@
       });
     }
   </script>
-<!-- Background change button in the top bar -->
-
-
-<!-- Background modal popup -->
-<div id="backgroundModal" class="bg-modal">
-  <div class="bg-modal-content">
-    <span id="closeBgModal" class="close-btn">✕</span>
+<!-- Background selector modal HTML -->
+<div id="backgroundModal" class="bg-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.7); backdrop-filter:blur(4px); justify-content:center; align-items:center; z-index:10000; font-family:Arial, sans-serif;">
+  <div class="bg-modal-content" style="background:rgba(26,26,26,0.95); padding:20px; border-radius:8px; max-width:400px; width:90%; text-align:center; position:relative; color:#ccc; box-shadow:0 0 12px rgba(0,255,255,0.3);">
+    <span id="closeBgModal" style="position:absolute; right:12px; top:8px; font-size:20px; font-weight:bold; cursor:pointer; color:#aaa;">✕</span>
     <h3>Select a Background</h3>
-    <div class="bg-options">
-      <img src="images/background/bg1.jpg" class="bg-thumb" data-bg="images/backgrounds/bg1.jpg">
-      <img src="images/background/bg2.jpg" class="bg-thumb" data-bg="images/backgrounds/bg2.jpg">
-      <img src="images/background/bg3.jpg" class="bg-thumb" data-bg="images/backgrounds/bg3.jpg">
+    <div style="margin-top:15px; display:flex; gap:12px; flex-wrap:wrap; justify-content:center;">
+      <img src="images/background/bg1.jpg" class="bg-thumb" data-bg="images/backgrounds/bg1.jpg" alt="Background 1" tabindex="0" style="width:80px; height:55px; border-radius:6px; object-fit:cover; border:2px solid rgba(255,255,255,0.3); cursor:pointer; transition:transform 0.15s ease, border-color 0.15s ease;">
+      <img src="images/background/bg2.jpg" class="bg-thumb" data-bg="images/backgrounds/bg2.jpg" alt="Background 2" tabindex="0" style="width:80px; height:55px; border-radius:6px; object-fit:cover; border:2px solid rgba(255,255,255,0.3); cursor:pointer; transition:transform 0.15s ease, border-color 0.15s ease;">
+      <img src="images/background/bg3.jpg" class="bg-thumb" data-bg="images/backgrounds/bg3.jpg" alt="Background 3" tabindex="0" style="width:80px; height:55px; border-radius:6px; object-fit:cover; border:2px solid rgba(255,255,255,0.3); cursor:pointer; transition:transform 0.15s ease, border-color 0.15s ease;">
     </div>
   </div>
 </div>
 
-<style>
-  #backgroundBtn {
-    margin-left: 8px;
-  }
-  .bg-modal {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-color: rgba(0,0,0,0.7);
-    justify-content: center;
-    align-items: center;
-    z-index: 10000;
-  }
-  .bg-modal-content {
-    background: rgba(30,30,30,0.95);
-    padding: 20px;
-    border-radius: 10px;
-    position: relative;
-    text-align: center;
-    max-width: 400px;
-  }
-  .bg-options {
-    margin-top: 10px;
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .bg-thumb {
-    width: 80px;
-    height: 55px;
-    border-radius: 6px;
-    object-fit: cover;
-    border: 2px solid rgba(255,255,255,0.2);
-    cursor: pointer;
-    transition: transform 0.15s, border 0.15s;
-  }
-  .bg-thumb:hover {
-    transform: scale(1.05);
-    border-color: white;
-  }
-  .close-btn {
-    position: absolute;
-    top: 8px;
-    right: 10px;
-    font-size: 18px;
-    cursor: pointer;
-  }
-</style>
-
+<!-- Background selector button insertion and functionality -->
 <script>
-  const bgModal = document.getElementById('backgroundModal');
-  const bgBtn = document.getElementById('backgroundBtn');
-  const closeBgModal = document.getElementById('closeBgModal');
-  const bgThumbs = document.querySelectorAll('.bg-thumb');
-  const savedBg = localStorage.getItem('selectedBackground');
+  document.addEventListener('DOMContentLoaded', () => {
+    // Insert button in top-right bar
+    const topRight = document.querySelector('.top-right');
+    if (topRight) {
+      const bgBtn = document.createElement('button');
+      bgBtn.className = 'btn';
+      bgBtn.id = 'backgroundBtn';
+      bgBtn.title = 'Change background';
+      bgBtn.textContent = '🖼️';
+      topRight.insertBefore(bgBtn, topRight.firstChild);
+    }
 
-  // Restore saved background
-  if (savedBg) {
+    const bgModal = document.getElementById('backgroundModal');
+    const bgBtn = document.getElementById('backgroundBtn');
+    const closeBgModal = document.getElementById('closeBgModal');
+    const bgThumbs = document.querySelectorAll('.bg-thumb');
     const bgContainer = document.getElementById('particles-js');
-    bgContainer.style.backgroundImage = `url('${savedBg}')`;
-    bgContainer.style.backgroundSize = 'cover';
-    bgContainer.style.backgroundPosition = 'center';
-  }
+    const savedBg = localStorage.getItem('selectedBackground');
 
-  // Open/close modal
-  bgBtn.addEventListener('click', () => bgModal.style.display = 'flex');
-  closeBgModal.addEventListener('click', () => bgModal.style.display = 'none');
-  window.addEventListener('click', e => { if (e.target === bgModal) bgModal.style.display = 'none'; });
-
-  // Change background
-  bgThumbs.forEach(thumb => {
-    thumb.addEventListener('click', () => {
-      const bg = thumb.dataset.bg;
-      const bgContainer = document.getElementById('particles-js');
-      bgContainer.style.backgroundImage = `url('${bg}')`;
+    // Apply saved background if any on load
+    if (savedBg) {
+      bgContainer.style.backgroundImage = `url('${savedBg}')`;
+      bgContainer.style.backgroundRepeat = 'no-repeat';
       bgContainer.style.backgroundSize = 'cover';
       bgContainer.style.backgroundPosition = 'center';
-      localStorage.setItem('selectedBackground', bg);
+    }
+
+    // Show modal on button click
+    bgBtn.addEventListener('click', () => {
+      bgModal.style.display = 'flex';
+    });
+
+    // Close modal on close button click
+    closeBgModal.addEventListener('click', () => {
       bgModal.style.display = 'none';
+    });
+
+    // Close modal by clicking outside modal content
+    bgModal.addEventListener('click', e => {
+      if (e.target === bgModal) {
+        bgModal.style.display = 'none';
+      }
+    });
+
+    // Change background on thumbnail click; keyboard accessible via Enter/Space
+    bgThumbs.forEach(thumb => {
+      thumb.addEventListener('click', () => {
+        const bg = thumb.dataset.bg;
+        bgContainer.style.backgroundImage = `url('${bg}')`;
+        bgContainer.style.backgroundRepeat = 'no-repeat';
+        bgContainer.style.backgroundSize = 'cover';
+        bgContainer.style.backgroundPosition = 'center';
+        localStorage.setItem('selectedBackground', bg);
+        bgModal.style.display = 'none';
+      });
+      thumb.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          thumb.click();
+        }
+      });
     });
   });
 </script>
