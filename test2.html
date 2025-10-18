@@ -218,90 +218,44 @@ function onYouTubeIframeAPIReady() {
 // PARTICLES INIT
 particlesJS.load('particles-js','https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
 
-// ------------------ BACKGROUND TOGGLE WITH SLIDE/FADE & LOCALSTORAGE ------------------
-let bgIsParticles = true;
+// BACKGROUND TOGGLE WITH 3 OPTIONS AND LOCAL STORAGE
 const bgToggleBtn = document.getElementById('bgToggleBtn');
 const particlesDiv = document.getElementById('particles-js');
 
-// Wrap particlesDiv in a container for animations
-particlesDiv.style.position = "relative";
-particlesDiv.style.overflow = "hidden";
+// Define your backgrounds in order
+const backgrounds = ["particles", "images/background/bg1.jpg", "images/background/bg2.jpg"];
 
-// Function to create a background layer
-function createBgLayer(type) {
-  const layer = document.createElement('div');
-  layer.style.position = "absolute";
-  layer.style.top = 0;
-  layer.style.left = "100%"; // start off-screen right
-  layer.style.width = "100%";
-  layer.style.height = "100%";
-  layer.style.transition = "all 0.7s ease";
-  layer.style.zIndex = -1;
+// Load saved background or default to particles
+let currentBg = localStorage.getItem('currentBg') || "particles";
+setBackground(currentBg);
 
-  if (type === 'particles') {
-    layer.style.background = "#121212";
-  } else {
-    layer.style.background = `url('${type}') center/cover no-repeat`;
-  }
-
-  particlesDiv.appendChild(layer);
-  requestAnimationFrame(() => {
-    layer.style.left = "0"; // slide in
-  });
-
-  // Remove old layers after transition
-  Array.from(particlesDiv.children).forEach(child => {
-    if (child !== layer) {
-      child.style.left = "-100%"; // slide out left
-      setTimeout(() => child.remove(), 700);
-    }
-  });
-
-  return layer;
-}
-
-// Function to set background
-function setBackground(type) {
-  if (type === 'particles') {
-    // Destroy particles if they exist
+// Helper function to apply background
+function setBackground(bg) {
+  if (bg === "particles") {
+    particlesDiv.style.background = "#121212";
     if (window.pJSDom && window.pJSDom.length) {
       window.pJSDom[0].pJS.fn.vendors.destroypJS();
       window.pJSDom = [];
     }
-    const layer = createBgLayer('particles');
-    // Load particles after slide-in
-    setTimeout(() => {
-      if (!window.pJSDom || !window.pJSDom.length) {
-        particlesJS.load('particles-js','https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
-      }
-    }, 700);
-    bgIsParticles = true;
+    particlesJS.load('particles-js','https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
   } else {
-    // Remove particles if running
     if (window.pJSDom && window.pJSDom.length) {
       window.pJSDom[0].pJS.fn.vendors.destroypJS();
       window.pJSDom = [];
     }
-    createBgLayer(type);
-    bgIsParticles = false;
+    particlesDiv.style.background = `url('${bg}') center/cover no-repeat`;
+    particlesDiv.innerHTML = "";
   }
-  localStorage.setItem('bgType', type);
+  localStorage.setItem('currentBg', bg);
 }
 
-// Load background on page load
-const savedBg = localStorage.getItem('bgType');
-if (savedBg) setBackground(savedBg);
-else setBackground('particles');
-
-// Button click to toggle (example cycle)
+// Button click cycles through backgrounds
 bgToggleBtn.addEventListener('click', () => {
-  let cycle = ['particles','images/background/bg1.jpg','images/background/bg2.jpg'];
-  let currentIndex = cycle.indexOf(localStorage.getItem('bgType')) || 0;
-  let nextIndex = (currentIndex + 1) % cycle.length;
-  setBackground(cycle[nextIndex]);
+  let currentIndex = backgrounds.indexOf(currentBg);
+  currentIndex = (currentIndex + 1) % backgrounds.length;
+  currentBg = backgrounds[currentIndex];
+  setBackground(currentBg);
 });
-
-
 
 
 // ------------------ FAVORITES & RECENTS ------------------
@@ -354,73 +308,6 @@ recentsBtn.addEventListener('click', () => {
   });
   favBtn.classList.remove('active');
 });
-  <script>
-// ------------------ FAVORITES ------------------
-const favBtn = document.getElementById('favBtn');
-let favorites = JSON.parse(localStorage.getItem('favorites') || "[]");
-
-function saveFavorites() { localStorage.setItem('favorites', JSON.stringify(favorites)); }
-function updateFavoriteStars() {
-  document.querySelectorAll('#gamesList li').forEach(li => {
-    const gameId = li.dataset.id;
-    const star = li.querySelector('.star');
-    if (favorites.includes(gameId)) star.classList.add('favorited');
-    else star.classList.remove('favorited');
-  });
-}
-
-// Add stars click
-document.querySelectorAll('#gamesList li').forEach(li => {
-  const star = li.querySelector('.star');
-  star?.addEventListener('click', e => {
-    const gameId = li.dataset.id;
-    if (favorites.includes(gameId)) {
-      favorites = favorites.filter(f => f !== gameId);
-    } else favorites.push(gameId);
-    updateFavoriteStars();
-    saveFavorites();
-    e.stopPropagation();
-  });
-});
-updateFavoriteStars();
-
-// ------------------ RECENTS ------------------
-const recentsBtn = document.getElementById('recentsBtn');
-let recents = JSON.parse(localStorage.getItem('recents') || "[]");
-
-document.querySelectorAll('#gamesList li a').forEach(a => {
-  a.addEventListener('click', () => {
-    const gameId = a.parentElement.dataset.id;
-    recents = recents.filter(r => r !== gameId);
-    recents.unshift(gameId); // most recent first
-    if (recents.length > 20) recents.pop(); // max 20 recents
-    localStorage.setItem('recents', JSON.stringify(recents));
-  });
-});
-
-// ------------------ BUTTON TOGGLE ------------------
-let showing = 'all'; // all, favorites, recents
-favBtn.addEventListener('click', () => {
-  showing = showing === 'favorites' ? 'all' : 'favorites';
-  filterGames();
-});
-recentsBtn.addEventListener('click', () => {
-  showing = showing === 'recents' ? 'all' : 'recents';
-  filterGames();
-});
-
-function filterGames() {
-  document.querySelectorAll('#gamesList li').forEach(li => {
-    const gameId = li.dataset.id;
-    li.style.display = 'none';
-    if (showing === 'all') li.style.display = 'flex';
-    else if (showing === 'favorites' && favorites.includes(gameId)) li.style.display = 'flex';
-    else if (showing === 'recents' && recents.includes(gameId)) li.style.display = 'flex';
-  });
-}
-filterGames();
-</script>
-
 </script>
 </body>
 </html>
