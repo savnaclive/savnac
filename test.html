@@ -71,7 +71,20 @@
   #searchBox input {
     padding:10px; font-size:16px; border-radius:5px; border:2px solid orange; outline:none; width:100%; box-sizing:border-box;
   }
-  #searchResults { display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:15px; margin-top:10px; }
+
+  /* Scrollable search results box */
+  #searchResults {
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap:15px;
+    margin-top:10px;
+    max-height:400px; /* fixed height */
+    overflow-y:auto;   /* scroll if too many games */
+    padding:10px;
+    background:rgba(0,0,0,0.3); /* semi-transparent box */
+    border-radius:8px;
+  }
+
   .search-item { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.2); padding:10px; border-radius:8px; cursor:pointer; }
   .search-item img { width:40px; height:40px; object-fit:cover; border-radius:5px; }
 
