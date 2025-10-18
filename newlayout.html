@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Savnac</title>
+<link id="favicon" rel="icon" href="https://savnaclive.github.io/savnac/images/logo.png" />
+<style>
+  :root{
+    --bg-accent:#f18b2d; /* orange */
+    --bar:#e9e9eb; /* light gray bar base for light-mode */
+    --bar-dark:rgba(20,20,20,0.85); /* dark bar for dark mode */
+    --card-bg: rgba(255,255,255,0.04);
+  }
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,sans-serif;-webkit-font-smoothing:antialiased;}
+  body{
+    background-image: url("https://savnaclive.github.io/savnac/images/background/bg2.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color:#fff;
+    transition: background .28s ease, color .2s ease;
+    min-height:100vh;
+  }
+
+  /* TOP BAR (fixed) */
+  header.topbar{
+    position:fixed; top:12px; left:12px; right:12px;
+    height:120px;
+    border-radius:14px;
+    display:flex; align-items:flex-start; justify-content:space-between;
+    padding:12px 18px;
+    box-sizing:border-box;
+    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+    backdrop-filter: blur(8px);
+    box-shadow: 0 6px 28px rgba(0,0,0,0.45);
+    z-index:9999;
+  }
+
+  /* left buttons box */
+  .buttons-box{
+    display:grid;
+    grid-template-columns: repeat(5, auto);
+    gap:8px;
+    align-content:start;
+  }
+  .top-btn{
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.06);
+    padding:8px 10px;
+    border-radius:10px;
+    color:inherit;
+    font-size:16px;
+    cursor:pointer;
+    transition: transform .12s, box-shadow .12s, background .12s;
+    min-width:44px;
+    display:inline-flex; align-items:center; justify-content:center;
+  }
+  .top-btn:hover{ transform:translateY(-2px); box-shadow:0 8px 18px rgba(0,0,0,0.45); background:rgba(255,255,255,0.09); }
+  .top-btn.active{ box-shadow:0 14px 38px rgba(0,0,0,0.6); transform:translateY(-2px); }
+
+  /* centered logo */
+  .logo-wrap{ position: absolute; left:1; right:0; margin:0 auto; top:25px; display:flex; justify-content:center; pointer-events:none; }
+  .logo-wrap img{ height:82px; pointer-events:auto; }
+
+  /* search bar under header (but visually attached) */
+  .search-row{ position: absolute; left:22px; right:22px; bottom:12px; display:flex; justify-content:center; }
+  .search{
+    width:640px; max-width:calc(100% - 200px);
+    background: rgba(0,0,0,0.45);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding:10px 14px; border-radius:12px; color: #fff;
+    font-size:16px; outline:none;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+  }
+
+  /* GAMES GRID */
+  main { padding: 160px 28px 60px 28px; box-sizing:border-box; } /* leave room for header */
+  .games-grid{
+    width:100%;
+    display:grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 per row */
+    gap:28px; /* big gap like screenshot */
+    align-items:start;
+    max-width:1300px;
+    margin:0 auto;
+  }
+
+  .game-card{
+    border-radius:14px;
+    overflow:hidden;
+    background: var(--card-bg);
+    position:relative;
+    height:210px;
+    display:block;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+    transition: transform .18s, box-shadow .18s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .game-card:hover{ transform: translateY(-6px); box-shadow: 0 18px 40px rgba(0,0,0,0.55); }
+  .game-card img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+  /* name overlay */
+  .game-name{
+    position:absolute;
+    left:0; right:0; bottom:0;
+    padding:8px 10px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.0), rgba(0,0,0,0.72));
+    color:#fff;
+    font-weight:600;
+    font-size:14px;
+    opacity:0;
+    transform:translateY(8px);
+    transition:opacity .18s, transform .18s;
+    text-align:center;
+  }
+  .game-card:hover .game-name{ opacity:1; transform:none; }
+
+  /* favorite star overlay (small) */
+  .fav-star{
+    position:absolute;
+    top:8px; right:8px;
+    font-size:16px;
+    padding:6px;
+    border-radius:999px;
+    background: rgba(0,0,0,0.45);
+    color: #ffdb4d;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; transition:opacity .12s, transform .12s;
+    user-select:none;
+  }
+  .game-card:hover .fav-star{ opacity:1; transform:translateY(-2px); }
+
+  /* small tooltip under each button on hover using title attribute (native) */
+
+  /* SETTINGS MODAL */
+  .modal-backdrop{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:20000; background: rgba(0,0,0,0.6); }
+  .modal{ width:320px; background: #111; color:#fff; border-radius:12px; padding:16px; box-shadow:0 10px 30px rgba(0,0,0,0.6); }
+  .modal input{ width:100%; padding:8px;border-radius:8px;border:1px solid #333;background:#0f0f0f;color:#fff;margin-top:8px; }
+
+  /* custom orange scrollbar for webkit */
+  ::-webkit-scrollbar { width:12px; height:12px; }
+  ::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius:999px; }
+  ::-webkit-scrollbar-thumb { background: linear-gradient(180deg,var(--bg-accent), #e6762a); border-radius:999px; border:3px solid rgba(0,0,0,0.12); }
+
+  /* light mode (reverses some colors) */
+  body.light{
+    color:#111;
+    --card-bg: rgba(0,0,0,0.03);
+    background-color:#fff; /* fallback */
+  }
+  body.light header.topbar{
+    background: linear-gradient(180deg, #f7f7f7, #efefef);
+    color:#111;
+  }
+  body.light .search{ background: rgba(255,255,255,0.95); color:#111; border:1px solid rgba(0,0,0,0.06); }
+  body.light .top-btn{ background: rgba(0,0,0,0.04); color:#111; border:1px solid rgba(0,0,0,0.06); }
+  body.light .game-name{ color:#111; background: linear-gradient(180deg, rgba(255,255,255,0.0), rgba(255,255,255,0.9)); }
+
+  /* responsive */
+  @media (max-width:1200px){ .games-grid{ grid-template-columns: repeat(4,1fr); } .search{ width:520px } }
+  @media (max-width:920px){ .games-grid{ grid-template-columns: repeat(3,1fr); } header.topbar{height:140px;} .logo-wrap img{height:64px} }
+  @media (max-width:600px){ .games-grid{ grid-template-columns: repeat(2,1fr); gap:16px } .search{ width: calc(100% - 48px); } header.topbar{left:8px;right:8px;} }
+</style>
+</head>
+<body>
+
+<header class="topbar" role="banner" aria-label="Top bar">
+  <div class="buttons-box" id="buttonsBox">
+    <!-- Buttons will be mounted here by JS -->
+  </div>
+
+  <div class="logo-wrap" aria-hidden="false">
+    <img id="mainLogo" src="https://savnaclive.github.io/savnac/images/logo.png" alt="Savnac logo">
+  </div>
+
+  <!-- search placed visually inside header bottom -->
+  <div class="search-row">
+    <input id="searchInput" class="search" type="search" placeholder="Search games..." aria-label="Search games">
+  </div>
+</header>
+
+<main>
+  <div class="games-grid" id="gamesGrid" aria-live="polite"></div>
+</main>
+
+<!-- settings modal -->
+<div class="modal-backdrop" id="settingsModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <h3 id="settingsTitle">Settings</h3>
+    <label>Tab title</label>
+    <input id="tabTitleInput" placeholder="Canvas" />
+    <label style="margin-top:10px;">Favicon URL</label>
+    <input id="faviconInput" placeholder="https://example.com/favicon.png" />
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+      <button id="saveSettings" class="top-btn" style="padding:8px 12px">Save</button>
+      <button id="closeSettings" class="top-btn" style="padding:8px 12px">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- YouTube player placeholder -->
+<div id="musicPlayer" style="display:none;"></div>
+
+<script>
+/* -------------------------
+   DATA: your exact games
+   ------------------------- */
+const gamesList = [
+  {name:"1v1.lol", url:"1v1lol.html", img:"https://img.utdstc.com/icon/983/22a/98322a3b2be892eed31589906ffd949b68bcccc9a21ba562987965b5ec6bc6de:200"},
+  {name:"2048", url:"2048.html", img:"https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/95/8e/c3/958ec36e-06b1-0897-53b3-c968234bf47f/AppIcon-0-0-1x_U007emarketing-0-6-85-220.png/512x512bb.jpg"},
+  {name:"A Small World Cup", url:"aswc.html", img:"https://play-lh.googleusercontent.com/R47kNu-wEYMVnoo7rFOXiAHoBvW26KHps65Oi0S6zMF722x0LYqHJUiXRvB_xhsj0CM"},
+  {name:"Amazing Strange Rope Police", url:"asrp.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZDCGdZc8f2TLbgcv4aULu8Gf4_D3qwe6eiPo8mDGxn3jL3GpWzsquaflVA800tU2hl5I"},
+  {name:"Among Us", url:"amongus.html", img:"https://images.sftcdn.net/images/t_app-icon-m/p/d10217b5-1ae1-44dd-a82c-6e2d60d086d6/3969265935/among-us-Download-Among-Us.jpg"},
+  {name:"Bacon May Die", url:"baconmaydie.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlgNyBQroC5JSJh1gOrStxprpzi0u95828vA&s"},
+  {name:"Basket Random", url:"basketrandom.html", img:"https://geometrydash2.com/data/image/basket-random.jpg"},
+  {name:"Bit Planes", url:"bitplanes.html", img:"https://images.rocketgames.io/uploads/games/b/bit-planes/bit-planes.16800f.jpg"},
+  {name:"Bitlife", url:"bitlife.html", img:"https://play-lh.googleusercontent.com/fUM-UyywXxjC8soxAZdIlxJrlRRXmql8wkE426SHzft4lJycSKVd2jCYQQX1BEG9Xw"},
+  {name:"Block Blast", url:"blockblast.html", img:"https://camo.githubusercontent.com/fed5c30c2eaffc5f8ad4d5198cc3da233226d58502ac973784459ad42bd10af1/68747470733a2f2f626c6f636b626c6173742e6465762f66617669636f6e2e706e67"},
+  {name:"Bloons TD", url:"bloonstd.html", img:"https://play-lh.googleusercontent.com/4te8y2It_nyY4yX5jcSEFaTDro98302l9EnSbkJyCobGUo8GWxteV_8kJ8nlXyStxw"},
+  {name:"Clicker Hero", url:"clickerhero.html", img:"https://play-lh.googleusercontent.com/XqysWlDWj5nBr0zZMtB08Bt4pe3MsE8XXOAgqZYiD1s65phAUWUcLIBLxdiAkfjfIsM"},
+  {name:"Cluster Rush", url:"clusterrush.html", img:"https://clusterrushonline.github.io/img/cluster-rush.png"},
+  {name:"Cookie Clicker", url:"cookieclicker.html", img:"https://super142.wordpress.com/wp-content/uploads/2022/07/cookie-clicker.jpg?w=640"},
+  {name:"Crossyroad", url:"crossyroad.html", img:"https://downloadr2.apkmirror.com/wp-content/uploads/2025/06/65/683f96bad3438_com.yodo1.crossyroad.png"},
+  {name:"Cut the Rope", url:"cuttherope.html", img:"https://play-lh.googleusercontent.com/Yphk2XnpBkSPIlZcbcmeTULeIajjCU-8Iduzq8j7zyp9HPijyZaT5ZeqgbYkOoQKSljs"},
+  {name:"Death Run", url:"deathrun.html", img:"https://play-lh.googleusercontent.com/dEu4Lrs5Ke5ZHDMedRkjjtYq1G22gGccxeIU_ZJNqqwLeSYshuUxBU0KCrSG7lEEwBo"},
+  {name:"Drive Mad", url:"drivemad.html", img:"https://play-lh.googleusercontent.com/V_egAxch0phxs10H_Z1QpWRrsH4phd8egT_5ZjYlFbXzXvwpUGpmJMn2h6HgbGkSlZSM"},
+  {name:"Drift Boss", url:"driftboss.html", img:"https://m.media-amazon.com/images/I/71Rvyj1gI1L.png"},
+  {name:"Duck Life", url:"ducklife.html", img:"https://play-lh.googleusercontent.com/JQqSn7wuCj0SxBqpBThNI33qCR9gwY0str2TIAnu-m_xrVCgZk3IPxYK2S7zC9WG0ig"},
+  {name:"Five Night's at Freddy's", url:"fnaf.html", img:"https://dorukyum.github.io/FNAF-Web/static/media/freddy.a3eb8395.png"},
+  {name:"Football Bros.", url:"footballbros.html", img:"https://avatars.githubusercontent.com/u/231598366?v=4"},
+  {name:"Geometry Dash", url:"geometrydash.html", img:"https://assets-prd.ignimgs.com/2021/12/14/geometrydash-1639510868467.jpg"},
+  {name:"Get Away Shootout", url:"getawayshootout.html", img:"https://play-lh.googleusercontent.com/xbB3QLgeuMh5clpSpMLRAPJ80WV77jifWu1iz-quwQwN7kp5WCzvrLiM-Up6au20OTI"},
+  {name:"Granny", url:"granny.html", img:"https://play-lh.googleusercontent.com/yT_LBq_tyKeIDohKDsqN_Qt18jGIPUYIxY2C-1-E2YA9Qd60uZW08pua17qBmIiDPA=w240-h480-rw"},
+  {name:"Gladihoppers", url:"gladihopper.html", img:"https://play-lh.googleusercontent.com/HUuFbIPERNbpW2Q72WIqiJ8bKDzIgT_C4PnYvMBuH0wC3B_KvpKmumm1FXhZj3jmRHw"},
+  {name:"Gun Spin", url:"gunspin.html", img:"https://static.keygames.com/4/113974/98896/1024x1024/gunspin.webp"},
+  {name:"Hole.io", url:"hole-io.html", img:"https://store-images.s-microsoft.com/image/apps.7301.14130340581880418.9c619941-0100-44a9-a3c9-a30a33f4dfb5.793ef2c0-4f01-4652-b472-79300b37dff7?q=90&w=177&h=177"},
+  {name:"Hextris", url:"hextris.html", img:"https://play-lh.googleusercontent.com/nCzeX0WCpn8iLxQV9TgrWr6Xt4JZPT0nExE7iSC48KacKxtx_7c4dAYrlMYgTM_HtHg"},
+  {name:"JavaScript Roulette", url:"js.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRXd_syOZzkOzOzQafFGjlmWIECngoa1ENB9_abpCoPbgVxVM2bo0NSyWmLVkCjtCwXEE&usqp=CAU"},
+  {name:"Little Alchemy 2", url:"la.html", img:"https://play-lh.googleusercontent.com/3Pr4gCB3uzsYyoFZZiDOuvq_7SeQPjUQnHiUrwug154RnTGJ_YAX5zvZfCH-4r2JKBOX"},
+  {name:"Learn to Fly", url:"learntofly.html", img:"https://play-lh.googleusercontent.com/WYyWLDBs2bj-KtDBhg7jSqW34nYzyoFTvtKaYBTt2J6SAA05dqEZGI8s1h2LQQV3BHc"},
+  {name:"MotoX3M", url:"motox3m.html", img:"https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=314,height=314,fit=cover,f=auto/2c6d5a46cdbceada277c870ce1c389ee/moto-x3m.jpg"},
+  {name:"Monkey Mart", url:"monkeymart.html", img:"https://play-lh.googleusercontent.com/rWReIdyvDaYJPeOxn7hbC0b-96ixGpQKM_EndiQa3SUME8TtI_rNUcI4qsw5teK9mqk"},
+  {name:"Minecraft", url:"minecraft-menu.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTex_wtjsXI9BHHjySiqI0OIkr0r-9ITLPYTA&s"},
+  {name:"OvO", url:"ovo.html", img:"https://play-lh.googleusercontent.com/v7KwGdPjJGjJjRXn46sck4DwDBdKSeRzGN44CjiXUtKV0jjOi51Bt4wcXud0m-SkXg"},
+  {name:"Pacman", url:"pacman.html", img:"https://rasterweb.net/raster/wp-content/uploads/2024/03/ghosts-02.jpg"},
+  {name:"Paper.io 2", url:"paper.io2.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4qJVLuHb4EH8h7QU5C4k_Jb44aHgcxgTNKg&s"},
+  {name:"Poly Track", url:"polytrack.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRepbLbXvGqJZA_eGUnd-U_nqXT0OxWAjavkZ8EWyNW_PA0eYo"},
+  {name:"Ragdoll Archers", url:"ragdollarchers.html", img:"https://play-lh.googleusercontent.com/XMiWEMPbuq13oVcwYQ6ySLtZnBf7WpJ3rb7v-TM4MdFOvWfo1Z2hzSEAApRXzEcshjY"},
+  {name:"Ragdoll Hit", url:"ragdollhit.html", img:"https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=314,height=314,fit=cover,f=auto/3c892779be9dabb3589586c83ad3eeed/ragdoll-hit.png"},
+  {name:"Retro Bowl", url:"retrobowl.html", img:"https://drift-hunters.co/upload/imgs/retrobowl.jpg"},
+  {name:"Retro Bowl College", url:"retrobowlcollege.html", img:"https://play-lh.googleusercontent.com/-BT8C-1UPYWouyjVvWYgaar_-xV4IQvX4Bvib3koGEGiy6UsHlt0RgYpUrdTDfC2y0ct"},
+  {name:"Subway Surfers", url:"subwaysurfers.html", img:"https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=1200,height=1200,fit=cover,f=png/919c9f04db0404cf69fddf9c01e31d91/subway-surfers.png"},
+  {name:"Slope", url:"slope.html", img:"https://play-lh.googleusercontent.com/uJn2i9h7KxYQarC_c3K4qH6o7gLtflFnhD_dN14MNkzHJ1NeNFzCL69jpB5mT0vCoQs"},
+  {name:"Stick Man Hook", url:"stickmanhook.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKclUg-7v0l4KeCYELMzTrsaHvwJ1uubNfkw&s"},
+  {name:"Snow Rider 3D", url:"snowrider3d.html", img:"https://childrenwithhairloss.org/wp-content/uploads/2025/03/snow-rider-3d-200x199.png"},
+  {name:"SUPERHOT", url:"superhot.html", img:"https://yt3.googleusercontent.com/ytc/AIdro_lUAU1wbH8KiPz-Q2ppjtFEn_sGvxBE2sySkHo1ELm4PQ=s900-c-k-c0x00ffffff-no-rj"},
+  {name:"We Become What We Behold", url:"wbwwb.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTv-7UyhFch4BXsiaZCOvfmRacKqIX-pDIGvw&s"},
+  {name:"Whack Your Boss", url:"whackyourboss.html", img:"https://e.snmc.io/lk/lv/x/123e965239a426aa18c9348609293ced/11817567"},
+  {name:"Wheelie Bike", url:"wheeliebike.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRc8giRTerjerQtYjy5u3crHHI5XFm9GYG1WA&s"},
+  {name:"Yohoho.io", url:"yohoho-io.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQubF63Qipw_s45n_3fqCpncogxSjPzVTK0nw&s"}
+];
+
+/* -------------------------
+   STORAGE & state
+   ------------------------- */
+let favorites = JSON.parse(localStorage.getItem('savnac_favorites')||'[]'); // store array of names
+let recents = JSON.parse(localStorage.getItem('savnac_recents')||'[]');     // array of names
+let currentView = 'all'; // 'all' | 'favorites' | 'recents'
+let ytPlayer = null, ytReady=false, musicPlaying=false;
+
+/* -------------------------
+   UI helpers + mount buttons
+   ------------------------- */
+const buttonsData = [
+  { id:'menuBtn', label:'𓃑', title:'Menu', href:'menu.html' },
+  { id:'settingsBtn', label:'⚙', title:'Settings', action:openSettings },
+  { id:'chatBtn', label:'🗫', title:'Chat', href:'chat.html' },
+  { id:'adminBtn', label:'🔒', title:'Admin', href:'admin.html' },
+  { id:'YouTubeUnblockerBtn', label:'[ ▶︎ ]', title:'YouTube', href:'ytu.html' },
+  { id:'favBtn', label:'⭐', title:'Favorites', action:toggleFavoritesView },
+  { id:'recentsBtn', label:'↻', title:'Recents', action:toggleRecentsView },
+  { id:'bgToggleBtn', label:'🎨', title:'Background', action:cycleBackground },
+  { id:'musicToggleBtn', label:'♬', title:'Music', action:toggleMusic },
+  { id:'modeToggle', label:'☀︎', title:'Light / Dark', action:toggleLightDark }
+];
+
+const buttonsBox = document.getElementById('buttonsBox');
+
+buttonsData.forEach(b=>{
+  const btn = document.createElement('button');
+  btn.className = 'top-btn';
+  btn.id = b.id;
+  btn.title = b.title;
+  btn.innerText = b.label;
+  if(b.href) btn.addEventListener('click', ()=> location.href = b.href);
+  if(b.action) btn.addEventListener('click', b.action);
+  buttonsBox.appendChild(btn);
+});
+
+/* -------------------------
+   Settings modal
+   ------------------------- */
+const settingsModal = document.getElementById('settingsModal');
+const tabTitleInput = document.getElementById('tabTitleInput');
+const faviconInput = document.getElementById('faviconInput');
+document.getElementById('closeSettings').addEventListener('click', ()=> settingsModal.style.display='none');
+document.getElementById('saveSettings').addEventListener('click', ()=>{
+  const title = tabTitleInput.value.trim();
+  const icon = faviconInput.value.trim();
+  if(title.length) { document.title = title; localStorage.setItem('savnac_tabTitle', title); }
+  if(icon.length){
+    const link = document.getElementById('favicon') || document.createElement('link');
+    link.id = 'favicon';
+    link.rel = 'icon';
+    link.href = icon;
+    document.head.appendChild(link);
+    localStorage.setItem('savnac_favicon', icon);
+  }
+  settingsModal.style.display='none';
+});
+function openSettings(){ 
+  tabTitleInput.value = localStorage.getItem('savnac_tabTitle') || document.title || '';
+  faviconInput.value = localStorage.getItem('savnac_favicon') || document.getElementById('favicon').href || '';
+  settingsModal.style.display='flex';
+}
+
+/* -------------------------
+   Background management
+   ------------------------- */
+const backgrounds = [
+  '/images/background/bg1.jpg',
+  '/images/background/bg2.jpg'
+];
+// initial bg: prefer saved, else bg2 (per request)
+let savedBg = localStorage.getItem('savnac_bg') || backgrounds[1];
+document.body.style.backgroundImage = `url("${savedBg}")`;
+function cycleBackground(){
+  const idx = backgrounds.indexOf(savedBg);
+  const next = backgrounds[(idx+1) % backgrounds.length];
+  savedBg = next;
+  document.body.style.backgroundImage = `url("${savedBg}")`;
+  localStorage.setItem('savnac_bg', savedBg);
+}
+
+/* -------------------------
+   Render games
+   ------------------------- */
+const gamesGrid = document.getElementById('gamesGrid');
+
+function isFavorited(name){ return favorites.includes(name); }
+function toggleFavoriteByName(name){
+  if(isFavorited(name)) favorites = favorites.filter(n=>n!==name);
+  else favorites.push(name);
+  localStorage.setItem('savnac_favorites', JSON.stringify(favorites));
+}
+
+function addRecent(name){
+  // keep most recent first, unique, limit 20
+  recents = recents.filter(n=>n!==name);
+  recents.unshift(name);
+  if(recents.length>20) recents.length = 20;
+  localStorage.setItem('savnac_recents', JSON.stringify(recents));
+}
+
+function getCurrentGameArray(){
+  if(currentView === 'favorites') return gamesList.filter(g=> favorites.includes(g.name));
+  if(currentView === 'recents') return gamesList.filter(g=> recents.includes(g.name)).sort((a,b)=> recents.indexOf(a.name) - recents.indexOf(b.name));
+  return gamesList;
+}
+
+function renderGames(filterText=''){
+  const lower = (filterText||'').toLowerCase();
+  const arr = getCurrentGameArray().filter(g => g.name.toLowerCase().includes(lower));
+  gamesGrid.innerHTML = '';
+  arr.forEach(game=>{
+    const a = document.createElement('a');
+    a.href = game.url;
+    a.className = 'game-card';
+    a.setAttribute('aria-label', game.name);
+    a.innerHTML = `
+      <img src="${game.img}" alt="${escapeHtml(game.name)}" loading="lazy">
+      <div class="game-name">${escapeHtml(game.name)}</div>
+      <div class="fav-star">${ isFavorited(game.name) ? '★' : '☆' }</div>
+    `;
+    // clicking game -> save recents (before navigation)
+    a.addEventListener('click', (ev)=>{
+      addRecent(game.name);
+      // allow default navigation after storing
+    });
+
+    // favorite star click
+    const star = a.querySelector('.fav-star');
+    star.addEventListener('click', (ev)=>{
+      ev.preventDefault(); ev.stopPropagation();
+      toggleFavoriteByName(game.name);
+      // update star UI immediately
+      star.textContent = isFavorited(game.name) ? '★' : '☆';
+      // if we are in favorites view and unfavorited, remove tile
+      if(currentView === 'favorites' && !isFavorited(game.name)){
+        a.remove();
+      }
+    });
+
+    gamesGrid.appendChild(a);
+  });
+}
+
+/* helper */
+function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c])); }
+
+/* initial render */
+renderGames();
+
+/* -------------------------
+   Search realtime (applies to current view)
+   ------------------------- */
+const searchInput = document.getElementById('searchInput');
+searchInput.addEventListener('input', ()=> renderGames(searchInput.value));
+
+/* -------------------------
+   View toggles: favorites/recents
+   ------------------------- */
+function toggleFavoritesView(){
+  const btn = document.getElementById('favBtn');
+  if(currentView === 'favorites'){ currentView = 'all'; btn.classList.remove('active'); }
+  else { currentView = 'favorites'; btn.classList.add('active'); document.getElementById('recentsBtn').classList.remove('active'); }
+  renderGames(searchInput.value);
+}
+function toggleRecentsView(){
+  const btn = document.getElementById('recentsBtn');
+  if(currentView === 'recents'){ currentView = 'all'; btn.classList.remove('active'); }
+  else { currentView = 'recents'; btn.classList.add('active'); document.getElementById('favBtn').classList.remove('active'); }
+  renderGames(searchInput.value);
+}
+
+/* -------------------------
+   Light / Dark mode
+   ------------------------- */
+function toggleLightDark(){
+  if(document.body.classList.contains('light')){
+    document.body.classList.remove('light');
+    localStorage.setItem('savnac_light', 'false');
+  } else {
+    document.body.classList.add('light');
+    localStorage.setItem('savnac_light', 'true');
+  }
+}
+// apply saved mode
+if(localStorage.getItem('savnac_light') === 'true') document.body.classList.add('light');
+
+/* -------------------------
+   YouTube music (play/pause)
+   ------------------------- */
+function onYouTubeIframeAPIReady(){
+  ytPlayer = new YT.Player('musicPlayer', {
+    height:'0', width:'0', videoId:'Jr55EzQeHf4',
+    playerVars:{ autoplay:0, controls:0, loop:1, playlist:'Jr55EzQeHf4' },
+    events: { onReady: ()=> { /* ready */ } }
+  });
+}
+// toggle music button behavior
+function toggleMusic(){
+  const btn = document.getElementById('musicToggleBtn');
+  if(!ytPlayer || typeof ytPlayer.playVideo !== 'function'){ 
+    // sometimes YT API loads slightly later
+    console.warn('YouTube player not ready yet.');
+    return;
+  }
+  if(!musicPlaying){ ytPlayer.playVideo(); musicPlaying=true; btn.classList.add('active'); }
+  else { ytPlayer.pauseVideo(); musicPlaying=false; btn.classList.remove('active'); }
+}
+
+/* -------------------------
+   Helpers: open favorites/recents by button already wired above
+   ------------------------- */
+
+/* -------------------------
+   Load saved state for favorites and recents on init
+   ------------------------- */
+(function initFromStorage(){
+  const sFavs = JSON.parse(localStorage.getItem('savnac_favorites')||'[]');
+  const sRec = JSON.parse(localStorage.getItem('savnac_recents')||'[]');
+  if(Array.isArray(sFavs)) favorites = sFavs;
+  if(Array.isArray(sRec)) recents = sRec;
+
+  // load saved tab title / favicon
+  const savedTitle = localStorage.getItem('savnac_tabTitle');
+  if(savedTitle) document.title = savedTitle;
+  const savedIcon = localStorage.getItem('savnac_favicon');
+  if(savedIcon){
+    let link = document.getElementById('favicon') || document.createElement('link');
+    link.id = 'favicon'; link.rel = 'icon'; link.href = savedIcon;
+    document.head.appendChild(link);
+  }
+
+  // mark favorite stars visually in existing cards (after first render)
+  renderGames();
+})();
+
+/* -------------------------
+   Utility: keyboard quick open settings (optional)
+   ------------------------- */
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape') settingsModal.style.display = 'none';
+  if(e.key === 's' && e.ctrlKey){ openSettings(); e.preventDefault(); }
+});
+  // ----- MUSIC -----
+  let musicPlayer, musicIsPlaying=false;
+  function onYouTubeIframeAPIReady(){
+    musicPlayer = new YT.Player('musicPlayer',{height:'0',width:'0',videoId:'Jr55EzQeHf4',playerVars:{autoplay:0,controls:0,loop:1,playlist:'Jr55EzQeHf4'}});
+  }
+  function toggleMusic(){
+    if(!musicPlayer) return;
+    if(!musicIsPlaying){ musicPlayer.playVideo(); musicIsPlaying=true; }
+    else { musicPlayer.pauseVideo(); musicIsPlaying=false; }
+  }
+</script>
+
+
+</body>
+</html>
