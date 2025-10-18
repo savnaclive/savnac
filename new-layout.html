@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Savnac Live</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: url('/images/background/bg1.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+    transition: background 0.3s, color 0.3s;
+  }
+  body.dark {
+    background: #111;
+    color: #eee;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: rgba(0,0,0,0.5);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .top-left {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .top-left .btn {
+    padding: 6px 10px;
+    font-size: 18px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: 0.2s;
+  }
+
+  .top-left .btn:hover { background: rgba(255,255,255,0.3); }
+
+  .logo {
+    max-height: 80px;
+  }
+
+  .search-bar {
+    margin-top: 10px;
+    padding: 5px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: none;
+    width: 250px;
+  }
+
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .game-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    background: rgba(255,255,255,0.05);
+  }
+  .game-card img {
+    width: 100%;
+    display: block;
+    border-radius: 12px;
+  }
+  .game-card .game-name {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    padding: 4px 0;
+    opacity: 0;
+    transition: 0.2s;
+  }
+  .game-card:hover .game-name {
+    opacity: 1;
+  }
+
+  .favorite-star {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 18px;
+    color: gold;
+    background: rgba(0,0,0,0.5);
+    border-radius: 50%;
+    padding: 2px 5px;
+    opacity: 0;
+    transition: 0.2s;
+    cursor: pointer;
+  }
+  .game-card:hover .favorite-star { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="top-left" id="buttonsContainer">
+    <!-- Buttons inserted by JS -->
+  </div>
+
+  <img src="https://savnaclive.github.io/savnac/images/logo-halloween.png" class="logo">
+
+  <input type="text" id="searchBar" class="search-bar" placeholder="Search games...">
+</header>
+
+<div class="games-grid" id="gamesGrid"></div>
+
+<div id="musicPlayer"></div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+  // ----- DATA -----
+  const gamesList = [
+  {name:"1v1.lol", url:"1v1lol.html", img:"https://img.utdstc.com/icon/983/22a/98322a3b2be892eed31589906ffd949b68bcccc9a21ba562987965b5ec6bc6de:200"},
+  {name:"2048", url:"2048.html", img:"https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/95/8e/c3/958ec36e-06b1-0897-53b3-c968234bf47f/AppIcon-0-0-1x_U007emarketing-0-6-85-220.png/512x512bb.jpg"},
+  {name:"A Small World Cup", url:"aswc.html", img:"https://play-lh.googleusercontent.com/R47kNu-wEYMVnoo7rFOXiAHoBvW26KHps65Oi0S6zMF722x0LYqHJUiXRvB_xhsj0CM"},
+  {name:"Amazing Strange Rope Police", url:"asrp.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZDCGdZc8f2TLbgcv4aULu8Gf4_D3qwe6eiPo8mDGxn3jL3GpWzsquaflVA800tU2hl5I"},
+  {name:"Among Us", url:"amongus.html", img:"https://images.sftcdn.net/images/t_app-icon-m/p/d10217b5-1ae1-44dd-a82c-6e2d60d086d6/3969265935/among-us-Download-Among-Us.jpg"},
+  {name:"Bacon May Die", url:"baconmaydie.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlgNyBQroC5JSJh1gOrStxprpzi0u95828vA&s"},
+  {name:"Basket Random", url:"basketrandom.html", img:"https://geometrydash2.com/data/image/basket-random.jpg"},
+  {name:"Bit Planes", url:"bitplanes.html", img:"https://images.rocketgames.io/uploads/games/b/bit-planes/bit-planes.16800f.jpg"},
+  {name:"Bitlife", url:"bitlife.html", img:"https://play-lh.googleusercontent.com/fUM-UyywXxjC8soxAZdIlxJrlRRXmql8wkE426SHzft4lJycSKVd2jCYQQX1BEG9Xw"},
+  {name:"Block Blast", url:"blockblast.html", img:"https://camo.githubusercontent.com/fed5c30c2eaffc5f8ad4d5198cc3da233226d58502ac973784459ad42bd10af1/68747470733a2f2f626c6f636b626c6173742e6465762f66617669636f6e2e706e67"},
+  {name:"Bloons TD", url:"bloonstd.html", img:"https://play-lh.googleusercontent.com/4te8y2It_nyY4yX5jcSEFaTDro98302l9EnSbkJyCobGUo8GWxteV_8kJ8nlXyStxw"},
+  {name:"Clicker Hero", url:"clickerhero.html", img:"https://play-lh.googleusercontent.com/XqysWlDWj5nBr0zZMtB08Bt4pe3MsE8XXOAgqZYiD1s65phAUWUcLIBLxdiAkfjfIsM"},
+  {name:"Cluster Rush", url:"clusterrush.html", img:"https://clusterrushonline.github.io/img/cluster-rush.png"},
+  {name:"Cookie Clicker", url:"cookieclicker.html", img:"https://super142.wordpress.com/wp-content/uploads/2022/07/cookie-clicker.jpg?w=640"},
+  {name:"Crossyroad", url:"crossyroad.html", img:"https://downloadr2.apkmirror.com/wp-content/uploads/2025/06/65/683f96bad3438_com.yodo1.crossyroad.png"},
+  {name:"Cut the Rope", url:"cuttherope.html", img:"https://play-lh.googleusercontent.com/Yphk2XnpBkSPIlZcbcmeTULeIajjCU-8Iduzq8j7zyp9HPijyZaT5ZeqgbYkOoQKSljs"},
+  {name:"Death Run", url:"deathrun.html", img:"https://play-lh.googleusercontent.com/dEu4Lrs5Ke5ZHDMedRkjjtYq1G22gGccxeIU_ZJNqqwLeSYshuUxBU0KCrSG7lEEwBo"},
+  {name:"Drive Mad", url:"drivemad.html", img:"https://play-lh.googleusercontent.com/V_egAxch0phxs10H_Z1QpWRrsH4phd8egT_5ZjYlFbXzXvwpUGpmJMn2h6HgbGkSlZSM"},
+  {name:"Drift Boss", url:"driftboss.html", img:"https://m.media-amazon.com/images/I/71Rvyj1gI1L.png"},
+  {name:"Duck Life", url:"ducklife.html", img:"https://play-lh.googleusercontent.com/JQqSn7wuCj0SxBqpBThNI33qCR9gwY0str2TIAnu-m_xrVCgZk3IPxYK2S7zC9WG0ig"},
+  {name:"Five Night's at Freddy's", url:"fnaf.html", img:"https://dorukyum.github.io/FNAF-Web/static/media/freddy.a3eb8395.png"},
+  {name:"Football Bros.", url:"footballbros.html", img:"https://avatars.githubusercontent.com/u/231598366?v=4"},
+  {name:"Geometry Dash", url:"geometrydash.html", img:"https://assets-prd.ignimgs.com/2021/12/14/geometrydash-1639510868467.jpg"},
+  {name:"Get Away Shootout", url:"getawayshootout.html", img:"https://play-lh.googleusercontent.com/xbB3QLgeuMh5clpSpMLRAPJ80WV77jifWu1iz-quwQwN7kp5WCzvrLiM-Up6au20OTI"},
+  {name:"Granny", url:"granny.html", img:"https://play-lh.googleusercontent.com/yT_LBq_tyKeIDohKDsqN_Qt18jGIPUYIxY2C-1-E2YA9Qd60uZW08pua17qBmIiDPA=w240-h480-rw"},
+  {name:"Gladihoppers", url:"gladihopper.html", img:"https://play-lh.googleusercontent.com/HUuFbIPERNbpW2Q72WIqiJ8bKDzIgT_C4PnYvMBuH0wC3B_KvpKmumm1FXhZj3jmRHw"},
+  {name:"Gun Spin", url:"gunspin.html", img:"https://static.keygames.com/4/113974/98896/1024x1024/gunspin.webp"},
+  {name:"Hole.io", url:"hole-io.html", img:"https://store-images.s-microsoft.com/image/apps.7301.14130340581880418.9c619941-0100-44a9-a3c9-a30a33f4dfb5.793ef2c0-4f01-4652-b472-79300b37dff7?q=90&w=177&h=177"},
+  {name:"Hextris", url:"hextris.html", img:"https://play-lh.googleusercontent.com/nCzeX0WCpn8iLxQV9TgrWr6Xt4JZPT0nExE7iSC48KacKxtx_7c4dAYrlMYgTM_HtHg"},
+  {name:"JavaScript Roulette", url:"js.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRXd_syOZzkOzOzQafFGjlmWIECngoa1ENB9_abpCoPbgVxVM2bo0NSyWmLVkCjtCwXEE&usqp=CAU"},
+  {name:"Little Alchemy 2", url:"la.html", img:"https://play-lh.googleusercontent.com/3Pr4gCB3uzsYyoFZZiDOuvq_7SeQPjUQnHiUrwug154RnTGJ_YAX5zvZfCH-4r2JKBOX"},
+  {name:"Learn to Fly", url:"learntofly.html", img:"https://play-lh.googleusercontent.com/WYyWLDBs2bj-KtDBhg7jSqW34nYzyoFTvtKaYBTt2J6SAA05dqEZGI8s1h2LQQV3BHc"},
+  {name:"MotoX3M", url:"motox3m.html", img:"https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=314,height=314,fit=cover,f=auto/2c6d5a46cdbceada277c870ce1c389ee/moto-x3m.jpg"},
+  {name:"Monkey Mart", url:"monkeymart.html", img:"https://play-lh.googleusercontent.com/rWReIdyvDaYJPeOxn7hbC0b-96ixGpQKM_EndiQa3SUME8TtI_rNUcI4qsw5teK9mqk"},
+  {name:"Minecraft", url:"minecraft-menu.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTex_wtjsXI9BHHjySiqI0OIkr0r-9ITLPYTA&s"},
+  {name:"OvO", url:"ovo.html", img:"https://play-lh.googleusercontent.com/v7KwGdPjJGjJjRXn46sck4DwDBdKSeRzGN44CjiXUtKV0jjOi51Bt4wcXud0m-SkXg"},
+  {name:"Pacman", url:"pacman.html", img:"https://rasterweb.net/raster/wp-content/uploads/2024/03/ghosts-02.jpg"},
+  {name:"Paper.io 2", url:"paper.io2.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4qJVLuHb4EH8h7QU5C4k_Jb44aHgcxgTNKg&s"},
+  {name:"Poly Track", url:"polytrack.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRepbLbXvGqJZA_eGUnd-U_nqXT0OxWAjavkZ8EWyNW_PA0eYo"},
+  {name:"Ragdoll Archers", url:"ragdollarchers.html", img:"https://play-lh.googleusercontent.com/XMiWEMPbuq13oVcwYQ6ySLtZnBf7WpJ3rb7v-TM4MdFOvWfo1Z2hzSEAApRXzEcshjY"},
+  {name:"Ragdoll Hit", url:"ragdollhit.html", img:"https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=314,height=314,fit=cover,f=auto/3c892779be9dabb3589586c83ad3eeed/ragdoll-hit.png"},
+  {name:"Retro Bowl", url:"retrobowl.html", img:"https://drift-hunters.co/upload/imgs/retrobowl.jpg"},
+  {name:"Retro Bowl College", url:"retrobowlcollege.html", img:"https://play-lh.googleusercontent.com/-BT8C-1UPYWouyjVvWYgaar_-xV4IQvX4Bvib3koGEGiy6UsHlt0RgYpUrdTDfC2y0ct"},
+  {name:"Subway Surfers", url:"subwaysurfers.html", img:"https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=1200,height=1200,fit=cover,f=png/919c9f04db0404cf69fddf9c01e31d91/subway-surfers.png"},
+  {name:"Slope", url:"slope.html", img:"https://play-lh.googleusercontent.com/uJn2i9h7KxYQarC_c3K4qH6o7gLtflFnhD_dN14MNkzHJ1NeNFzCL69jpB5mT0vCoQs"},
+  {name:"Stick Man Hook", url:"stickmanhook.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKclUg-7v0l4KeCYELMzTrsaHvwJ1uubNfkw&s"},
+  {name:"Snow Rider 3D", url:"snowrider3d.html", img:"https://childrenwithhairloss.org/wp-content/uploads/2025/03/snow-rider-3d-200x199.png"},
+  {name:"SUPERHOT", url:"superhot.html", img:"https://yt3.googleusercontent.com/ytc/AIdro_lUAU1wbH8KiPz-Q2ppjtFEn_sGvxBE2sySkHo1ELm4PQ=s900-c-k-c0x00ffffff-no-rj"},
+  {name:"We Become What We Behold", url:"wbwwb.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTv-7UyhFch4BXsiaZCOvfmRacKqIX-pDIGvw&s"},
+  {name:"Whack Your Boss", url:"whackyourboss.html", img:"https://e.snmc.io/lk/lv/x/123e965239a426aa18c9348609293ced/11817567"},
+  {name:"Wheelie Bike", url:"wheeliebike.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRc8giRTerjerQtYjy5u3crHHI5XFm9GYG1WA&s"},
+  {name:"Yohoho.io", url:"yohoho-io.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQubF63Qipw_s45n_3fqCpncogxSjPzVTK0nw&s"}
+];
+
+
+  // ----- STORAGE -----
+  let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+  let recents = JSON.parse(localStorage.getItem('recents')) || [];
+  let currentBackground = localStorage.getItem('bg') || 1;
+  document.body.style.background = `url('/images/background/bg${currentBackground}.jpg') no-repeat center center fixed`;
+  document.body.style.backgroundSize = 'cover';
+
+  // ----- BUTTONS -----
+  const buttonsData = [
+    {id:'menuBtn', icon:'𓃑', action:()=>window.location.href='menu.html'},
+    {id:'settingsBtn', icon:'⚙', action:()=>alert('Settings: change tab name and icon.')},
+    {id:'chatBtn', icon:'🗫', action:()=>window.location.href='chat.html'},
+    {id:'adminBtn', icon:'🔒', action:()=>window.location.href='admin.html'},
+    {id:'YouTubeUnblockerBtn', icon:'[ ▶︎ ]', action:()=>window.location.href='ytu.html'},
+    
+    {id:'favBtn', icon:'⭐', action:showFavorites},
+    {id:'recentsBtn', icon:'↻', action:showRecents},
+    {id:'bgToggleBtn', icon:'🎨', action:toggleBackground},
+    {id:'musicToggleBtn', icon:'♬', action:toggleMusic},
+  ];
+
+  const buttonsContainer = document.getElementById('buttonsContainer');
+  buttonsData.forEach(btn=>{
+    let b = document.createElement('button');
+    b.className='btn';
+    b.id = btn.id;
+    b.innerText = btn.icon;
+    b.addEventListener('click', btn.action);
+    buttonsContainer.appendChild(b);
+  });
+
+  // ----- GAMES -----
+  const gamesGrid = document.getElementById('gamesGrid');
+
+  function renderGames(list){
+    gamesGrid.innerHTML = '';
+    list.forEach(game=>{
+      let card = document.createElement('div');
+      card.className='game-card';
+      card.innerHTML = `
+        <a href="${game.url}">
+          <img src="${game.img}" alt="${game.name}">
+          <div class="game-name">${game.name}</div>
+        </a>
+        <div class="favorite-star">${favorites.some(f=>f.name===game.name) ? "★" : "☆"}</div>
+      `;
+      // add recents
+      card.querySelector('a').addEventListener('click', ()=>{
+        recents.unshift(game);
+        recents = recents.slice(0,20);
+        localStorage.setItem('recents', JSON.stringify(recents));
+      });
+
+      // favorite
+      card.querySelector('.favorite-star').addEventListener('click', (e)=>{
+        e.preventDefault(); e.stopPropagation();
+        if(favorites.some(f=>f.name===game.name)){
+          favorites = favorites.filter(f=>f.name!==game.name);
+        } else {
+          favorites.push(game);
+        }
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+        renderGames(currentList);
+      });
+
+      gamesGrid.appendChild(card);
+    });
+  }
+
+  let currentList = gamesList;
+  renderGames(currentList);
+
+  // ----- SEARCH -----
+  const searchBar = document.getElementById('searchBar');
+  searchBar.addEventListener('input', ()=>{
+    const q = searchBar.value.toLowerCase();
+    renderGames(gamesList.filter(g=>g.name.toLowerCase().includes(q)));
+  });
+
+  // ----- FAVORITES / RECENTS -----
+  function showFavorites(){
+    if(currentList === favorites) currentList = gamesList;
+    else currentList = favorites;
+    renderGames(currentList);
+  }
+  function showRecents(){
+    if(currentList === recents) currentList = gamesList;
+    else currentList = recents;
+    renderGames(currentList);
+  }
+
+  // ----- BACKGROUND -----
+  function toggleBackground(){
+    currentBackground = currentBackground===1?2:1;
+    localStorage.setItem('bg', currentBackground);
+    document.body.style.background = `url('/images/background/bg${currentBackground}.jpg') no-repeat center center fixed`;
+    document.body.style.backgroundSize = 'cover';
+  }
+
+  // ----- LIGHT/DARK MODE -----
+  function toggleMode(){
+    document.body.classList.toggle('dark');
+  }
+
+  // ----- MUSIC -----
+  let musicPlayer, musicIsPlaying=false;
+  function onYouTubeIframeAPIReady(){
+    musicPlayer = new YT.Player('musicPlayer',{height:'0',width:'0',videoId:'Jr55EzQeHf4',playerVars:{autoplay:0,controls:0,loop:1,playlist:'Jr55EzQeHf4'}});
+  }
+  function toggleMusic(){
+    if(!musicPlayer) return;
+    if(!musicIsPlaying){ musicPlayer.playVideo(); musicIsPlaying=true; }
+    else { musicPlayer.pauseVideo(); musicIsPlaying=false; }
+  }
+</script>
+
+</body>
+</html>
