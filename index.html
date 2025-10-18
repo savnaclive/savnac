@@ -218,25 +218,45 @@ function onYouTubeIframeAPIReady() {
 // PARTICLES INIT
 particlesJS.load('particles-js','https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
 
-// BACKGROUND TOGGLE
-let bgIsParticles = true;
+// BACKGROUND TOGGLE WITH 3 OPTIONS AND LOCAL STORAGE
 const bgToggleBtn = document.getElementById('bgToggleBtn');
 const particlesDiv = document.getElementById('particles-js');
 
-bgToggleBtn.addEventListener('click', () => {
-  if (bgIsParticles) {
+// Define your backgrounds in order
+const backgrounds = ["particles", "images/background/bg1.jpg", "images/background/bg2.jpg"];
+
+// Load saved background or default to particles
+let currentBg = localStorage.getItem('currentBg') || "particles";
+setBackground(currentBg);
+
+// Helper function to apply background
+function setBackground(bg) {
+  if (bg === "particles") {
+    particlesDiv.style.background = "#121212";
     if (window.pJSDom && window.pJSDom.length) {
       window.pJSDom[0].pJS.fn.vendors.destroypJS();
       window.pJSDom = [];
     }
-    particlesDiv.style.background = "url('images/background/bg1.jpg') center/cover no-repeat";
-    particlesDiv.innerHTML = "";
-  } else {
-    particlesDiv.style.background = "#121212";
     particlesJS.load('particles-js','https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
+  } else {
+    if (window.pJSDom && window.pJSDom.length) {
+      window.pJSDom[0].pJS.fn.vendors.destroypJS();
+      window.pJSDom = [];
+    }
+    particlesDiv.style.background = `url('${bg}') center/cover no-repeat`;
+    particlesDiv.innerHTML = "";
   }
-  bgIsParticles = !bgIsParticles;
+  localStorage.setItem('currentBg', bg);
+}
+
+// Button click cycles through backgrounds
+bgToggleBtn.addEventListener('click', () => {
+  let currentIndex = backgrounds.indexOf(currentBg);
+  currentIndex = (currentIndex + 1) % backgrounds.length;
+  currentBg = backgrounds[currentIndex];
+  setBackground(currentBg);
 });
+
 
 // ------------------ FAVORITES & RECENTS ------------------
 const stars = document.querySelectorAll('.star');
