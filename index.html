@@ -6,7 +6,7 @@
 <title>Canvas</title>
 <link rel="icon" href="https://www.wabash.edu/images2/technology/canvas.png" type="image/png" />
 <style>
-html, body {margin:0;padding:0;height:100%;box-sizing:border-box;overflow-x:hidden;font-family:Arial,sans-serif;-webkit-font-smoothing:antialiased;}
+html, body {margin:0;padding:0;height:100%;box-sizing:border-box;overflow-x:hidden;font-family:Arial, sans-serif;-webkit-font-smoothing:antialiased;}
 body {background:#121212;color:#fff;transition:background .28s ease,color .28s ease;min-height:100vh;padding-top:48px;cursor:none;}
 .top-bar{position:fixed;top:0;left:0;right:0;height:48px;display:flex;align-items:center;justify-content:space-between;padding:6px 14px;background:rgba(26,26,26,0.78);backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,0.03);z-index:9999;gap:12px;}
 .top-left,.top-center,.top-right{display:flex;align-items:center;gap:10px;font-size:14px;color:inherit;}
@@ -50,7 +50,6 @@ body.light-mode .top-bar{background:rgba(255,255,255,0.9);color:#000;border-bott
 </head>
 <body>
 <div id="particles-js"></div>
-
 <div class="top-bar">
   <div class="top-left">
     <a href="menu.html" class="btn" id="menuBtn">𓃑</a>
@@ -63,7 +62,7 @@ body.light-mode .top-bar{background:rgba(255,255,255,0.9);color:#000;border-bott
   <div class="top-center">
     <span id="dateTime" style="margin-left:10px;"></span>
     <script type="text/javascript" src="https://counter.websiteout.com/js/2/5/1200/0"></script> 
-    <h5>Visitors</h5>
+    <h5>Visitors<h5>
   </div>
   <div class="top-right">
     <button class="btn" id="favBtn">⭐</button>
@@ -76,15 +75,14 @@ body.light-mode .top-bar{background:rgba(255,255,255,0.9);color:#000;border-bott
 
 <div class="page-wrap">
   <div class="content-wrapper">
-    <h1 id="siteTitle"></h1>
-    <img src="images/logo-halloween.png" alt="Site Logo" style="height:80px;">
+    <h1 id="siteTitle"> </h1>
+    <img src="images/logo-halloween.png" alt="Site Title" style="height: 80px;" />
     <div id="randomAbove"></div>
     <input id="searchInput" type="text" placeholder="Search our 51 games..." />
     <div id="gamesContainer">
       <div id="filterActions"></div>
       <ul id="gamesList">
-        <!-- Add all your game list items here -->
-                  <li><a href="1v1lol.html"><img src="https://img.utdstc.com/icon/983/22a/98322a3b2be892eed31589906ffd949b68bcccc9a21ba562987965b5ec6bc6de:200" alt=""><span>1v1.lol</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="1v1lol.html"><img src="https://img.utdstc.com/icon/983/22a/98322a3b2be892eed31589906ffd949b68bcccc9a21ba562987965b5ec6bc6de:200" alt=""><span>1v1.lol</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="2048.html"><img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/95/8e/c3/958ec36e-06b1-0897-53b3-c968234bf47f/AppIcon-0-0-1x_U007emarketing-0-6-85-220.png/512x512bb.jpg" alt=""><span>2048</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="aswc.html"><img src="https://play-lh.googleusercontent.com/R47kNu-wEYMVnoo7rFOXiAHoBvW26KHps65Oi0S6zMF722x0LYqHJUiXRvB_xhsj0CM" alt=""><span>A Small World Cup</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="asrp.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZDCGdZc8f2TLbgcv4aULu8Gf4_D3qwe6eiPo8mDGxn3jL3GpWzsquaflVA800tU2hl5I:https://s.cafebazaar.ir/images/icons/superheroes.herogames.spider.rope.hero.battle.fighting.apps-c8cf8b40-2e0c-4bd5-80cd-007c8ad2f9e5_512x512.png%3Fx-img%3Dv1/resize,h_256,w_256,lossless_false/optimize&usqp=CAU" alt=""><span>Amazing Strange Rope Police</span></a><span class="star" aria-label="favorite">★</span></li>
@@ -137,7 +135,7 @@ body.light-mode .top-bar{background:rgba(255,255,255,0.9);color:#000;border-bott
           <li><a href="wheeliebike.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRc8giRTerjerQtYjy5u3crHHI5XFm9GYG1WA&s" alt=""><span>Wheelie Bike</span></a><span class="star" aria-label="favorite">★</span></li>
           <li><a href="yohoho-io.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQubF63Qipw_s45n_3fqCpncogxSjPzVTK0nw&s" alt=""><span>Yohoho.io</span></a><span class="star" aria-label="favorite">★</span></li>
       </ul>
-      <div id="randomText" style="font-size:14px;color:#ccc;min-height:24px;"></div>
+      <div id="randomText" style="font-size:14px; font-family:Arial, sans-serif; color:#ccc; min-height:24px;"></div>
     </div>
   </div>
 </div>
@@ -162,6 +160,11 @@ const texts = [
   "teacher panic key is q, do 'ctrl+d' to bookmark",
 ];
 document.getElementById('randomText').textContent = texts[Math.floor(Math.random() * texts.length)];
+
+document.getElementById('siteTitle').textContent = " ";
+document.title = localStorage.getItem('siteTitle') || "Canvas";
+
+if (window.location.pathname.endsWith("menu.html")) document.getElementById("menuBtn").classList.add("active");
 
 // CUSTOM CURSOR
 const cursor = document.getElementById("cursor");
@@ -215,35 +218,27 @@ function onYouTubeIframeAPIReady() {
 // PARTICLES INIT
 particlesJS.load('particles-js','https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
 
-// BACKGROUND TOGGLE (cycle between particles, bg1, bg2)
-let bgState = 0; // 0 = particles, 1 = bg1, 2 = bg2
+// BACKGROUND TOGGLE
+let bgIsParticles = true;
 const bgToggleBtn = document.getElementById('bgToggleBtn');
 const particlesDiv = document.getElementById('particles-js');
 
 bgToggleBtn.addEventListener('click', () => {
-  bgState = (bgState + 1) % 3; // cycle 0 -> 1 -> 2 -> 0
-  if (bgState === 0) { // particles
+  if (bgIsParticles) {
+    if (window.pJSDom && window.pJSDom.length) {
+      window.pJSDom[0].pJS.fn.vendors.destroypJS();
+      window.pJSDom = [];
+    }
+    particlesDiv.style.background = "url('images/background/bg1.jpg') center/cover no-repeat";
+    particlesDiv.innerHTML = "";
+  } else {
     particlesDiv.style.background = "#121212";
-    particlesDiv.innerHTML = "";
     particlesJS.load('particles-js','https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
-  } else if (bgState === 1) { // bg1
-    if (window.pJSDom && window.pJSDom.length) {
-      window.pJSDom[0].pJS.fn.vendors.destroypJS();
-      window.pJSDom = [];
-    }
-    particlesDiv.style.background = "url('savnaclive.github.io/savnac/images/background/bg1.jpg') center/cover no-repeat";
-    particlesDiv.innerHTML = "";
-  } else { // bg2
-    if (window.pJSDom && window.pJSDom.length) {
-      window.pJSDom[0].pJS.fn.vendors.destroypJS();
-      window.pJSDom = [];
-    }
-    particlesDiv.style.background = "url('savnaclive.github.io/savnac/images/background/bg2.jpg') center/cover no-repeat";
-    particlesDiv.innerHTML = "";
   }
+  bgIsParticles = !bgIsParticles;
 });
 
-// FAVORITES & RECENTS
+// ------------------ FAVORITES & RECENTS ------------------
 const stars = document.querySelectorAll('.star');
 const favBtn = document.getElementById('favBtn');
 const recentsBtn = document.getElementById('recentsBtn');
