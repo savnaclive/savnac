@@ -8,7 +8,7 @@
   * {margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
   html, body {height:100%; overflow:hidden;}
   #bgContainer {min-height:100vh; background-size:cover; background-position:center; transition: background 0.5s;}
-  
+
   /* Top Bar */
   #topbar {
     display:flex; justify-content:space-between; align-items:center;
@@ -28,15 +28,11 @@
   .page.active { display:block; }
 
   /* Scrollable containers */
-  .game-container, .search-container { padding-top:180px; max-height:calc(100vh - 10px); overflow-y:auto; width:100%; }
-
-  /* Sections */
-  .section { padding:15px 20px; }
-  .section h2 { color:orange; margin-bottom:10px; }
+  .game-container, .search-container { padding-top:120px; max-height:calc(100vh - 10px); overflow-y:auto; width:100%; }
 
   /* Game Grid */
   .game-grid {
-    display:grid; grid-template-columns:repeat(5,1fr); gap:40px; padding:20px 0;
+    display:grid; grid-template-columns:repeat(5,1fr); gap:40px; padding:20px;
   }
   @media (max-width:1200px){.game-grid{grid-template-columns:repeat(4,1fr);}}
   @media (max-width:900px){.game-grid{grid-template-columns:repeat(3,1fr);}}
@@ -55,19 +51,62 @@
   .game-overlay .name { font-weight:bold; }
   .game-overlay .star { font-size:24px; cursor:pointer; }
 
-  /* Home Page Buttons */
+  /* Home Page Buttons (4 per row) */
   #homePage .home-grid {
-    display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:15px; padding:20px;
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 140px 20px 20px; /* adds space under top bar */
+    justify-items: center;
+    align-items: start;
   }
-  .home-button { display:flex; justify-content:center; align-items:center; flex-direction:column; background:rgba(255,255,255,0.2); padding:20px; border-radius:10px; cursor:pointer; transition: transform 0.2s, background 0.3s; }
+  @media (max-width: 900px) { #homePage .home-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 500px) { #homePage .home-grid { grid-template-columns: 1fr; } }
+  .home-button {
+    display:flex; justify-content:center; align-items:center;
+    flex-direction:column; background:rgba(255,255,255,0.2);
+    padding:20px; border-radius:10px; cursor:pointer;
+    transition: transform 0.2s, background 0.3s;
+    text-align:center;
+    width:100%;
+    max-width:180px;
+  }
   .home-button:hover { transform: scale(1.05); background:rgba(255,255,255,0.4); }
   .home-button img { width:50px; height:50px; margin-bottom:5px; }
 
   /* Search Page */
-  #searchPage .search-container { max-width:900px; margin:0 auto; }
-  #searchInput { padding:10px; font-size:16px; border-radius:5px; border:2px solid orange; outline:none; width:100%; box-sizing:border-box; margin-bottom:15px; }
-  #searchResults { display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:15px; margin-top:10px; max-height:400px; overflow-y:auto; padding:10px; background:rgba(0,0,0,0.3); border-radius:8px; }
+  #searchBox { display:flex; flex-direction:column; max-width:500px; margin: 80px auto 20px auto; text-align:center; }
+  #searchBox input { padding:10px; font-size:16px; border-radius:5px; border:2px solid orange; outline:none; width:100%; box-sizing:border-box; }
+  #searchResults {
+    display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:15px; margin-top:10px; max-height:400px; overflow-y:auto; padding:10px; background:rgba(0,0,0,0.3); border-radius:8px;
+  }
 
+  /* Recent and Favorite Game Grids (smaller, 5 per row max, squares) */
+  #recentGames, #favoriteGames {
+    display:grid; 
+    grid-template-columns: repeat(5, 1fr); 
+    gap:10px; 
+    margin-top:10px; 
+    padding:10px; 
+    background:rgba(0,0,0,0.3); 
+    border-radius:8px; 
+    max-height:300px; 
+    overflow-x:auto; 
+    overflow-y:hidden;
+    grid-auto-flow: column; /* horizontal scroll if more than 5 */
+  }
+  #recentGames .game-card, #favoriteGames .game-card {
+    aspect-ratio: 1 / 1;   /* ensures perfect square */
+    width: 100%;
+    max-width:120px;        /* still limits size */
+    padding-top:0;           /* remove previous padding-top */
+  }
+  @media (max-width:1200px){ #recentGames, #favoriteGames { grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width:900px){ #recentGames, #favoriteGames { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width:600px){ #recentGames, #favoriteGames { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width:400px){ #recentGames, #favoriteGames { grid-template-columns: 1fr; } }
+
+  #recentGamesTitle, #favoriteGamesTitle { margin:20px 0 5px 0; color:#fff; font-weight:bold; font-size:18px; text-align:center; }
 </style>
 </head>
 <body>
@@ -88,10 +127,7 @@
   <!-- Game Page -->
   <div class="page active" id="gamePage">
     <div class="game-container">
-      <div class="section">
-        <h2>All Games</h2>
-        <div class="game-grid" id="gameGrid"></div>
-      </div>
+      <div class="game-grid" id="gameGrid"></div>
     </div>
   </div>
 
@@ -102,29 +138,40 @@
         <img src="https://via.placeholder.com/50?text=☀️/🌙" alt="Theme">
         <span>Toggle Light/Dark</span>
       </div>
+      <div class="home-button">
+        <img src="https://via.placeholder.com/50" alt="Placeholder">
+        <span>Button 2</span>
+      </div>
+      <div class="home-button">
+        <img src="https://via.placeholder.com/50" alt="Placeholder">
+        <span>Button 3</span>
+      </div>
+      <div class="home-button">
+        <img src="https://via.placeholder.com/50" alt="Placeholder">
+        <span>Button 4</span>
+      </div>
+      <div class="home-button">
+        <img src="https://via.placeholder.com/50" alt="Placeholder">
+        <span>Button 5</span>
+      </div>
+      <div class="home-button">
+        <img src="https://via.placeholder.com/50" alt="Placeholder">
+        <span>Button 6</span>
+      </div>
     </div>
   </div>
 
   <!-- Search Page -->
   <div class="page" id="searchPage">
     <div class="search-container">
-      
-      <!-- Recents & Favorites above search -->
-      <div class="section">
-        <h2>Recents</h2>
-        <div class="game-grid" id="recentsGrid"></div>
+      <div id="searchBox">
+        <input type="text" id="searchInput" placeholder="Search games...">
+        <div id="searchResults"></div>
       </div>
-      <div class="section">
-        <h2>Favorites</h2>
-        <div class="game-grid" id="favoritesGrid"></div>
-      </div>
-
-      <!-- Search Input -->
-      <input type="text" id="searchInput" placeholder="Search games...">
-
-      <!-- Search Results -->
-      <div id="searchResults"></div>
-
+      <div id="recentGamesTitle">🕘 Recent Games</div>
+      <div id="recentGames"></div>
+      <div id="favoriteGamesTitle">⭐ Favorite Games</div>
+      <div id="favoriteGames"></div>
     </div>
   </div>
 
@@ -161,7 +208,7 @@ document.getElementById('homeBtn').addEventListener('click',()=>showPage('home')
 document.getElementById('searchBtn').addEventListener('click',()=>showPage('search'));
 function showPage(page){ for(let p in pages){ pages[p].classList.remove('active'); } pages[page].classList.add('active'); }
 
-// Games Data (demo)
+// Games Data
 const games = [
   {name:"1v1.lol", url:"1v1lol.html", img:"https://img.utdstc.com/icon/983/22a/98322a3b2be892eed31589906ffd949b68bcccc9a21ba562987965b5ec6bc6de:200"},
   {name:"2048", url:"2048.html", img:"https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/95/8e/c3/958ec36e-06b1-0897-53b3-c968234bf47f/AppIcon-0-0-1x_U007emarketing-0-6-85-220.png/512x512bb.jpg"},
@@ -215,71 +262,75 @@ const games = [
   {name:"Whack Your Boss", url:"whackyourboss.html", img:"https://e.snmc.io/lk/lv/x/123e965239a426aa18c9348609293ced/11817567"},
   {name:"Wheelie Bike", url:"wheeliebike.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRc8giRTerjerQtYjy5u3crHHI5XFm9GYG1WA&s"},
   {name:"Yohoho.io", url:"yohoho-io.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQubF63Qipw_s45n_3fqCpncogxSjPzVTK0nw&s"}
-
 ];
 
-// Storage
-let favorites = JSON.parse(localStorage.getItem('favorites')||"[]");
-let recents = JSON.parse(localStorage.getItem('recents')||"[]");
+// LocalStorage helpers
+function getFavorites(){ return JSON.parse(localStorage.getItem('favorites')||'[]'); }
+function setFavorites(favs){ localStorage.setItem('favorites', JSON.stringify(favs)); }
+function getRecents(){ return JSON.parse(localStorage.getItem('recents')||'[]'); }
+function setRecents(rec){ localStorage.setItem('recents', JSON.stringify(rec)); }
 
-// Containers
-const gameGrid = document.getElementById('gameGrid');
-const favoritesGrid = document.getElementById('favoritesGrid');
-const recentsGrid = document.getElementById('recentsGrid');
-
-// Render
-function renderGames() {
-  gameGrid.innerHTML=''; favoritesGrid.innerHTML=''; recentsGrid.innerHTML='';
-  games.forEach(g=>gameGrid.appendChild(createCard(g)));
-  favorites.forEach(gName=>{
-    const g = games.find(x=>x.name===gName); if(g) favoritesGrid.appendChild(createCard(g));
-  });
-  recents.forEach(gName=>{
-    const g = games.find(x=>x.name===gName); if(g) recentsGrid.appendChild(createCard(g));
-  });
-}
-
-function createCard(game){
+// Generate game card
+function createGameCard(g){
   const card = document.createElement('div'); card.className='game-card';
-  card.innerHTML = `<a href="${game.url}" target="_blank">
-    <img src="${game.img}" alt="${game.name}">
-    <div class="game-overlay">
-      <div class="name">${game.name}</div>
-      <div class="star">${favorites.includes(game.name)?"★":"☆"}</div>
-    </div>
-  </a>`;
+  card.innerHTML = `<a href="${g.url}"><img src="${g.img}" alt="${g.name}"><div class="game-overlay"><div class="name">${g.name}</div><div class="star">☆</div></div></a>`;
+  // Favorite toggle
   const star = card.querySelector('.star');
+  function updateStar(){ star.textContent = getFavorites().includes(g.name) ? '★' : '☆'; }
+  updateStar();
   star.addEventListener('click', e=>{
     e.preventDefault(); e.stopPropagation();
-    if(favorites.includes(game.name)) favorites = favorites.filter(x=>x!==game.name);
-    else favorites.push(game.name);
-    localStorage.setItem('favorites',JSON.stringify(favorites));
-    renderGames();
+    let favs = getFavorites();
+    if(favs.includes(g.name)){ favs = favs.filter(x=>x!==g.name); } else { favs.push(g.name); }
+    setFavorites(favs); updateStar(); renderFavorites();
   });
-  card.querySelector('a').addEventListener('click',()=>{
-    recents = recents.filter(x=>x!==game.name);
-    recents.unshift(game.name);
-    if(recents.length>5) recents.pop();
-    localStorage.setItem('recents',JSON.stringify(recents));
-    renderGames();
+  // Click game adds to recents
+  const link = card.querySelector('a');
+  link.addEventListener('click', ()=>{
+    let rec = getRecents().filter(x=>x!==g.name);
+    rec.unshift(g.name); if(rec.length>20) rec.pop();
+    setRecents(rec); renderRecents();
   });
   return card;
 }
 
-// Initial render
-renderGames();
+// Generate main game grid
+const gameGrid = document.getElementById('gameGrid');
+games.forEach(g=> gameGrid.appendChild(createGameCard(g)));
 
-// Search
+// Render functions
+const recentGamesDiv = document.getElementById('recentGames');
+const favoriteGamesDiv = document.getElementById('favoriteGames');
+
+function renderRecents(){
+  recentGamesDiv.innerHTML='';
+  getRecents().forEach(name=>{
+    const g = games.find(x=>x.name===name); if(!g) return;
+    recentGamesDiv.appendChild(createGameCard(g));
+  });
+}
+function renderFavorites(){
+  favoriteGamesDiv.innerHTML='';
+  getFavorites().forEach(name=>{
+    const g = games.find(x=>x.name===name); if(!g) return;
+    favoriteGamesDiv.appendChild(createGameCard(g));
+  });
+}
+
+// Simple search
 const searchInput = document.getElementById('searchInput');
 const searchResults = document.getElementById('searchResults');
 searchInput.addEventListener('input',()=>{
   const query = searchInput.value.toLowerCase();
   searchResults.innerHTML='';
   games.filter(g=>g.name.toLowerCase().includes(query)).forEach(g=>{
-    const div = createCard(g);
-    searchResults.appendChild(div);
+    searchResults.appendChild(createGameCard(g));
   });
 });
+
+// Initial render
+renderRecents();
+renderFavorites();
 </script>
 </body>
 </html>
