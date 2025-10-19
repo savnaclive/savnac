@@ -6,69 +6,45 @@
 <title>Canvas</title>
 <style>
   * {margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
-  html, body {height:100%; transition: color 0.5s;}
-  #bgContainer {min-height:100vh; transition: background 0.5s;}
-
+  html, body {height:100%; overflow:hidden;}
+  #bgContainer {min-height:100vh; background-size:cover; background-position:center; transition: background 0.5s;}
+  
   /* Top Bar */
   #topbar {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:10px 20px;
-    position:fixed;
-    top:0; left:0;
-    width:100%;
-    z-index:1000;
-    background:transparent; /* rest of bar is transparent */
+    display:flex; justify-content:space-between; align-items:center;
+    padding:10px 20px; position:fixed; top:0; left:0; width:100%;
+    z-index:1000; background:transparent;
   }
-
-  /* Gray box for buttons only (rounded on right side) */
   #topbar .buttons-gray {
-    background: #888; /* solid gray */
-    padding:10px;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    border-top-left-radius:0;   /* flush with top-left corner */
-    border-bottom-left-radius:0; 
-    border-top-right-radius:25px;
-    border-bottom-right-radius:25px;
+    background: #888; padding:10px; display:flex; align-items:center; gap:10px;
+    border-radius:0 25px 25px 0;
   }
-
-  #topbar .buttons img {
-    width:50px;
-    height:50px;
-    cursor:pointer;
-    transition: transform 0.2s;
-  }
-
+  #topbar .buttons img { width:50px; height:50px; cursor:pointer; transition: transform 0.2s; }
   #topbar .buttons img:hover { transform: scale(1.1); }
-
-  /* Logo bigger */
-  #topbar .logo img {
-    height:100px;
-  }
+  #topbar .logo img { height:100px; }
 
   /* Pages */
-  .page { display:none; padding-top:120px; min-height:100vh; }
+  .page { display:none; }
   .page.active { display:block; }
 
-  /* Game Grid: 5 per row */
-  #gamePage .game-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 15px;
-    padding: 20px;
-  }
-  @media (max-width:1200px){#gamePage .game-grid{grid-template-columns: repeat(4, 1fr);}}
-  @media (max-width:900px){#gamePage .game-grid{grid-template-columns: repeat(3, 1fr);}}
-  @media (max-width:600px){#gamePage .game-grid{grid-template-columns: repeat(2, 1fr);}}
-  @media (max-width:400px){#gamePage .game-grid{grid-template-columns: 1fr;}}
+  /* Scrollable containers */
+  .game-container, .search-container { padding-top:180px; max-height:calc(100vh - 10px); overflow-y:auto; width:100%; }
 
+  /* Sections */
+  .section { padding:15px 20px; }
+  .section h2 { color:orange; margin-bottom:10px; }
+
+  /* Game Grid */
+  .game-grid {
+    display:grid; grid-template-columns:repeat(5,1fr); gap:40px; padding:20px 0;
+  }
+  @media (max-width:1200px){.game-grid{grid-template-columns:repeat(4,1fr);}}
+  @media (max-width:900px){.game-grid{grid-template-columns:repeat(3,1fr);}}
+  @media (max-width:600px){.game-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:400px){.game-grid{grid-template-columns:1fr;}}
   .game-card { position:relative; width:100%; padding-top:100%; overflow:hidden; cursor:pointer; border-radius:10px; }
   .game-card img { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; transition: transform 0.3s; }
   .game-card:hover img { transform: scale(1.05); }
-
   .game-overlay {
     position:absolute; top:0; left:0; width:100%; height:100%;
     background:rgba(0,0,0,0.5); color:#fff;
@@ -83,45 +59,15 @@
   #homePage .home-grid {
     display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:15px; padding:20px;
   }
-  .home-button {
-    display:flex; justify-content:center; align-items:center; flex-direction:column;
-    background:rgba(255,255,255,0.2); padding:20px; border-radius:10px;
-    cursor:pointer; transition: transform 0.2s, background 0.3s;
-  }
+  .home-button { display:flex; justify-content:center; align-items:center; flex-direction:column; background:rgba(255,255,255,0.2); padding:20px; border-radius:10px; cursor:pointer; transition: transform 0.2s, background 0.3s; }
   .home-button:hover { transform: scale(1.05); background:rgba(255,255,255,0.4); }
   .home-button img { width:50px; height:50px; margin-bottom:5px; }
 
   /* Search Page */
-  #searchPage { padding:20px; }
-  #searchBox {
-    display:flex; flex-direction:column; max-width:500px;
-    margin: 120px auto 20px auto; text-align:center;
-  }
-  #searchBox input {
-    padding:10px; font-size:16px; border-radius:5px; border:2px solid orange; outline:none; width:100%; box-sizing:border-box;
-  }
+  #searchPage .search-container { max-width:900px; margin:0 auto; }
+  #searchInput { padding:10px; font-size:16px; border-radius:5px; border:2px solid orange; outline:none; width:100%; box-sizing:border-box; margin-bottom:15px; }
+  #searchResults { display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:15px; margin-top:10px; max-height:400px; overflow-y:auto; padding:10px; background:rgba(0,0,0,0.3); border-radius:8px; }
 
-  /* Scrollable search results box */
-  #searchResults {
-    display:grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap:15px;
-    margin-top:10px;
-    max-height:400px;
-    overflow-y:auto;
-    padding:10px;
-    background:rgba(0,0,0,0.3);
-    border-radius:8px;
-  }
-
-  .search-item { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.2); padding:10px; border-radius:8px; cursor:pointer; }
-  .search-item img { width:40px; height:40px; object-fit:cover; border-radius:5px; }
-
-  #recentFavorites { margin-top:30px; }
-  #recentFavorites h3 { margin-bottom:10px; }
-  .favorites-list, .recent-list { display:flex; gap:10px; flex-wrap:wrap; }
-  .fav-card { width:80px; height:80px; position:relative; cursor:pointer; }
-  .fav-card img { width:100%; height:100%; object-fit:cover; border-radius:5px; }
 </style>
 </head>
 <body>
@@ -136,14 +82,17 @@
         <img src="https://savnaclive.github.io/savnac/images/search.png" alt="Search" id="searchBtn">
       </div>
     </div>
-    <div class="logo">
-      <img src="https://savnaclive.github.io/savnac/images/logo.png" alt="Logo">
-    </div>
+    <div class="logo"><img src="https://savnaclive.github.io/savnac/images/logo.png" alt="Logo"></div>
   </div>
 
   <!-- Game Page -->
   <div class="page active" id="gamePage">
-    <div class="game-grid" id="gameGrid"></div>
+    <div class="game-container">
+      <div class="section">
+        <h2>All Games</h2>
+        <div class="game-grid" id="gameGrid"></div>
+      </div>
+    </div>
   </div>
 
   <!-- Home Page -->
@@ -153,29 +102,66 @@
         <img src="https://via.placeholder.com/50?text=☀️/🌙" alt="Theme">
         <span>Toggle Light/Dark</span>
       </div>
-      <div class="home-button"><img src="https://via.placeholder.com/50" alt="Button"><span>Example 1</span></div>
-      <div class="home-button"><img src="https://via.placeholder.com/50" alt="Button"><span>Example 2</span></div>
     </div>
   </div>
 
   <!-- Search Page -->
   <div class="page" id="searchPage">
-    <div id="searchBox">
+    <div class="search-container">
+      
+      <!-- Recents & Favorites above search -->
+      <div class="section">
+        <h2>Recents</h2>
+        <div class="game-grid" id="recentsGrid"></div>
+      </div>
+      <div class="section">
+        <h2>Favorites</h2>
+        <div class="game-grid" id="favoritesGrid"></div>
+      </div>
+
+      <!-- Search Input -->
       <input type="text" id="searchInput" placeholder="Search games...">
+
+      <!-- Search Results -->
       <div id="searchResults"></div>
-    </div>
-    <div id="recentFavorites">
-      <h3>Recently Played</h3>
-      <div class="recent-list" id="recentList"></div>
-      <h3>Favorites</h3>
-      <div class="favorites-list" id="favoritesList"></div>
+
     </div>
   </div>
 
 </div>
 
 <script>
-  // ================== Data ==================
+// Theme
+const body = document.body;
+const bgContainer = document.getElementById('bgContainer');
+function setBackground(theme){
+  if(theme==='light'){
+    bgContainer.style.background="url('https://savnaclive.github.io/savnac/images/background/bg2.jpg') center/cover no-repeat";
+    body.style.color="#000";
+  } else {
+    bgContainer.style.background="url('https://savnaclive.github.io/savnac/images/background/bg1.jpg') center/cover no-repeat";
+    body.style.color="#fff";
+  }
+}
+function toggleTheme(){
+  if(body.classList.contains('light')){
+    body.classList.replace('light','dark'); setBackground('dark'); localStorage.setItem('theme','dark');
+  } else {
+    body.classList.replace('dark','light'); setBackground('light'); localStorage.setItem('theme','light');
+  }
+}
+const storedTheme = localStorage.getItem('theme') || 'light';
+body.classList.add(storedTheme); setBackground(storedTheme);
+document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+// Pages
+const pages = { game: document.getElementById('gamePage'), home: document.getElementById('homePage'), search: document.getElementById('searchPage') };
+document.getElementById('gameBtn').addEventListener('click',()=>showPage('game'));
+document.getElementById('homeBtn').addEventListener('click',()=>showPage('home'));
+document.getElementById('searchBtn').addEventListener('click',()=>showPage('search'));
+function showPage(page){ for(let p in pages){ pages[p].classList.remove('active'); } pages[page].classList.add('active'); }
+
+// Games Data (demo)
 const games = [
   {name:"1v1.lol", url:"1v1lol.html", img:"https://img.utdstc.com/icon/983/22a/98322a3b2be892eed31589906ffd949b68bcccc9a21ba562987965b5ec6bc6de:200"},
   {name:"2048", url:"2048.html", img:"https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/95/8e/c3/958ec36e-06b1-0897-53b3-c968234bf47f/AppIcon-0-0-1x_U007emarketing-0-6-85-220.png/512x512bb.jpg"},
@@ -229,139 +215,71 @@ const games = [
   {name:"Whack Your Boss", url:"whackyourboss.html", img:"https://e.snmc.io/lk/lv/x/123e965239a426aa18c9348609293ced/11817567"},
   {name:"Wheelie Bike", url:"wheeliebike.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRc8giRTerjerQtYjy5u3crHHI5XFm9GYG1WA&s"},
   {name:"Yohoho.io", url:"yohoho-io.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQubF63Qipw_s45n_3fqCpncogxSjPzVTK0nw&s"}
+
 ];
 
+// Storage
+let favorites = JSON.parse(localStorage.getItem('favorites')||"[]");
+let recents = JSON.parse(localStorage.getItem('recents')||"[]");
 
+// Containers
+const gameGrid = document.getElementById('gameGrid');
+const favoritesGrid = document.getElementById('favoritesGrid');
+const recentsGrid = document.getElementById('recentsGrid');
 
-  
- 
-  // ================== Theme ==================
-  const body = document.body;
-  const bgContainer = document.getElementById('bgContainer');
-
-  function setBackground(theme){
-    if(theme==='light'){
-      bgContainer.style.background="url('https://savnaclive.github.io/savnac/images/background/bg2.jpg') center/cover no-repeat";
-      bgContainer.style.backgroundSize="cover";
-      body.style.color="#000";
-    } else {
-      bgContainer.style.background="url('https://savnaclive.github.io/savnac/images/background/bg1.jpg') center/cover no-repeat";
-      bgContainer.style.backgroundSize="cover";
-      body.style.color="#fff";
-    }
-  }
-
-  function toggleTheme(){
-    if(body.classList.contains('light')){
-      body.classList.replace('light','dark');
-      setBackground('dark');
-      localStorage.setItem('theme','dark');
-    } else {
-      body.classList.replace('dark','light');
-      setBackground('light');
-      localStorage.setItem('theme','light');
-    }
-  }
-
-  const storedTheme = localStorage.getItem('theme') || 'light';
-  body.classList.add(storedTheme);
-  setBackground(storedTheme);
-  document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-
-  // ================== Page Switching ==================
-  const pages = {game:document.getElementById('gamePage'), home:document.getElementById('homePage'), search:document.getElementById('searchPage')};
-  document.getElementById('gameBtn').addEventListener('click',()=>showPage('game'));
-  document.getElementById('homeBtn').addEventListener('click',()=>showPage('home'));
-  document.getElementById('searchBtn').addEventListener('click',()=>showPage('search'));
-
-  function showPage(page){
-    for(let p in pages){ pages[p].classList.remove('active'); }
-    pages[page].classList.add('active');
-  }
-
-  // ================== Game Grid & Favorites ==================
-  const gameGrid = document.getElementById('gameGrid');
-  const favoritesList = document.getElementById('favoritesList');
-  const recentList = document.getElementById('recentList');
-  const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-  const recentPlayed = JSON.parse(localStorage.getItem('recentPlayed')) || [];
-
-  function renderGames(){
-    gameGrid.innerHTML = '';
-    games.forEach(game=>{
-      const card = document.createElement('div'); card.className='game-card';
-      const img = document.createElement('img'); img.src=game.img; card.appendChild(img);
-
-      const overlay = document.createElement('div'); overlay.className='game-overlay';
-      const name = document.createElement('div'); name.className='name'; name.textContent=game.name;
-      const star = document.createElement('div'); star.className='star'; star.innerHTML=favorites.includes(game.name)?'★':'☆';
-      star.addEventListener('click',(e)=>{e.stopPropagation(); toggleFavorite(game.name, star);});
-
-      overlay.appendChild(name); overlay.appendChild(star); card.appendChild(overlay);
-
-      card.addEventListener('click',()=>{ window.location.href=game.url; addRecent(game.name); });
-
-      gameGrid.appendChild(card);
-    });
-  }
-
-  function toggleFavorite(name, starEl){
-    const idx = favorites.indexOf(name);
-    if(idx===-1){ favorites.push(name); starEl.innerHTML='★'; }
-    else { favorites.splice(idx,1); starEl.innerHTML='☆'; }
-    localStorage.setItem('favorites',JSON.stringify(favorites));
-    renderFavorites();
-  }
-
-  function addRecent(name){
-    if(recentPlayed.includes(name)){ recentPlayed.splice(recentPlayed.indexOf(name),1); }
-    recentPlayed.unshift(name); if(recentPlayed.length>10) recentPlayed.pop();
-    localStorage.setItem('recentPlayed',JSON.stringify(recentPlayed));
-    renderFavorites();
-  }
-
-  function renderFavorites(){
-    favoritesList.innerHTML=''; recentList.innerHTML='';
-    favorites.forEach(name=>{
-      const game = games.find(g=>g.name===name);
-      if(game){
-        const div=document.createElement('div'); div.className='fav-card';
-        const img=document.createElement('img'); img.src=game.img; div.appendChild(img);
-        div.addEventListener('click',()=>{ window.location.href=game.url; addRecent(game.name); });
-        favoritesList.appendChild(div);
-      }
-    });
-    recentPlayed.forEach(name=>{
-      const game = games.find(g=>g.name===name);
-      if(game){
-        const div=document.createElement('div'); div.className='fav-card';
-        const img=document.createElement('img'); img.src=game.img; div.appendChild(img);
-        div.addEventListener('click',()=>{ window.location.href=game.url; addRecent(game.name); });
-        recentList.appendChild(div);
-      }
-    });
-  }
-
-  renderGames();
-  renderFavorites();
-
-  // ================== Search ==================
-  const searchInput = document.getElementById('searchInput');
-  const searchResults = document.getElementById('searchResults');
-
-  searchInput.addEventListener('input',()=>{
-    const query = searchInput.value.toLowerCase();
-    searchResults.innerHTML='';
-    const filtered = games.filter(g=>g.name.toLowerCase().includes(query));
-    filtered.forEach(game=>{
-      const div = document.createElement('div'); div.className='search-item';
-      const img=document.createElement('img'); img.src=game.img;
-      const span=document.createElement('span'); span.textContent=game.name;
-      div.appendChild(img); div.appendChild(span);
-      div.addEventListener('click',()=>{ window.location.href=game.url; addRecent(game.name); });
-      searchResults.appendChild(div);
-    });
+// Render
+function renderGames() {
+  gameGrid.innerHTML=''; favoritesGrid.innerHTML=''; recentsGrid.innerHTML='';
+  games.forEach(g=>gameGrid.appendChild(createCard(g)));
+  favorites.forEach(gName=>{
+    const g = games.find(x=>x.name===gName); if(g) favoritesGrid.appendChild(createCard(g));
   });
+  recents.forEach(gName=>{
+    const g = games.find(x=>x.name===gName); if(g) recentsGrid.appendChild(createCard(g));
+  });
+}
+
+function createCard(game){
+  const card = document.createElement('div'); card.className='game-card';
+  card.innerHTML = `<a href="${game.url}" target="_blank">
+    <img src="${game.img}" alt="${game.name}">
+    <div class="game-overlay">
+      <div class="name">${game.name}</div>
+      <div class="star">${favorites.includes(game.name)?"★":"☆"}</div>
+    </div>
+  </a>`;
+  const star = card.querySelector('.star');
+  star.addEventListener('click', e=>{
+    e.preventDefault(); e.stopPropagation();
+    if(favorites.includes(game.name)) favorites = favorites.filter(x=>x!==game.name);
+    else favorites.push(game.name);
+    localStorage.setItem('favorites',JSON.stringify(favorites));
+    renderGames();
+  });
+  card.querySelector('a').addEventListener('click',()=>{
+    recents = recents.filter(x=>x!==game.name);
+    recents.unshift(game.name);
+    if(recents.length>5) recents.pop();
+    localStorage.setItem('recents',JSON.stringify(recents));
+    renderGames();
+  });
+  return card;
+}
+
+// Initial render
+renderGames();
+
+// Search
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+searchInput.addEventListener('input',()=>{
+  const query = searchInput.value.toLowerCase();
+  searchResults.innerHTML='';
+  games.filter(g=>g.name.toLowerCase().includes(query)).forEach(g=>{
+    const div = createCard(g);
+    searchResults.appendChild(div);
+  });
+});
 </script>
 </body>
 </html>
