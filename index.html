@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -307,6 +308,35 @@ recentsBtn.addEventListener('click', () => {
     li.style.display = showingRecents ? (recents.includes(name) ? 'flex' : 'none') : 'flex';
   });
   favBtn.classList.remove('active');
+});
+  // ------------------ GAME SEARCH ------------------
+const searchInput = document.getElementById('searchInput');
+const gameListItems = gamesList.querySelectorAll('li'); // Get all <li> elements once
+
+searchInput.addEventListener('keyup', (e) => {
+    // Get the current search term and convert it to lower case for case-insensitive search
+    const searchTerm = e.target.value.toLowerCase();
+
+    // Iterate over each game list item
+    gameListItems.forEach(li => {
+        // Get the game name from the <span> tag inside the <a> tag
+        const gameName = li.querySelector('span').textContent.toLowerCase();
+
+        // Check if the game name includes the search term
+        if (gameName.includes(searchTerm)) {
+            // If it matches, show the list item
+            li.style.display = 'flex'; 
+        } else {
+            // If it doesn't match, hide the list item
+            li.style.display = 'none';
+        }
+    });
+
+    // When searching, make sure the Favorites and Recents filters are off
+    if (searchTerm.length > 0) {
+        favBtn.classList.remove('active');
+        recentsBtn.classList.remove('active');
+    }
 });
 </script>
 </body>
