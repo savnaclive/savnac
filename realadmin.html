@@ -13,7 +13,7 @@
             background-color: #121212; /* Very dark grey/black background */
             margin: 0;
             padding: 20px; 
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', Arial, sans-serif;
             color: #E0E0E0; /* Light text color for contrast */
             min-height: 100vh;
             width: 100vw;
@@ -62,7 +62,7 @@
         a {
             color: #ADD8E6; /* Light blue/cyan for links */
             text-decoration: none;
-            margin-bottom: 8px;
+            margin-bottom: 8px; /* Default vertical spacing for non-grid links */
             transition: color 0.3s;
         }
         a:hover {
@@ -70,6 +70,22 @@
             text-decoration: underline;
         }
         
+        /* --- NEW GRID STYLES FOR GAME LINKS --- */
+        .link-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Two equal columns */
+            gap: 10px 20px; /* Space between rows (10px) and columns (20px) */
+            width: 100%; /* Important to span the width of the container */
+            margin-top: 15px;
+        }
+
+        /* Override the general 'a' margin for links inside the grid */
+        .link-grid a {
+            margin-bottom: 0;
+            display: block; /* Ensure it occupies its full grid cell */
+        }
+        /* ------------------------------------- */
+
         /* 4. Partials/Separators */
         .separator {
             width: 100%;
@@ -105,6 +121,11 @@
                 padding: 15px;
                 gap: 15px;
             }
+            
+            /* Change the game links to 1 column on mobile */
+            .link-grid {
+                grid-template-columns: 1fr;
+            }
         }
         
     </style>
@@ -115,21 +136,22 @@
         <div class="title">Links For Games</div>
         <div class="separator"></div>
         <p class="subtitle">You can steal some games from these links.</p>
-        <a href="index.html" class="home-btn">Go Home</a> 
-        <a href="https://monkeygg2.github.io/">MonkeyGG2</a>
-        <a href="https://nintendoboi22.github.io/">Nintendoboi22</a>
-        <a href="https://incrediblewebsite.github.io/">Chromebooks Are Racist</a>
-        <a href="https://ballbangonline.github.io/">BallBangOnline</a>
-        <a href="https://io-games-2025.github.io/">Io Games Unblocked 2025</a>
-        <a href="https://moto-x3m-10x.github.io/">moto-x3m-10x</a>
-        <a href="https://retro-bowl-76-77.github.io/">retro-bowl-76-77</a>
-        <a href="https://sz-games.github.io/">Sz Games</a>
-        <a href="https://monstertracks.github.io/">Monster Tracks</a>
-        <a href="https://gameunblocked-2025.github.io/">All Games</a>
-        <a href="https://ug17.github.io/Games.html">LN Games</a>
-        <a href="https://games-site.github.io/">All Games</a>
-        <a href="https://only-games.github.io/">Only Games</a>
-        <a href="https://geography-lessons.github.io/">geography-lessons</a>
+        <a href="index.html" class="home-btn" style="margin-bottom: 10px;">Go Home</a> 
+
+        <!-- Game links are now wrapped in a grid container -->
+        <div class="link-grid">
+            <a href="https://monkeygg2.github.io/">MonkeyGG2</a>
+            <a href="https://nintendoboi22.github.io/">Nintendoboi22</a>
+            <a href="https://incrediblewebsite.github.io/">Chromebooks Are Racist</a>
+            <a href="https://ballbangonline.github.io/">BallBangOnline</a>
+            <a href="https://io-games-2025.github.io/">Io Games Unblocked 2025</a>
+            <a href="https://moto-x3m-10x.github.io/">moto-x3m-10x</a>
+            <a href="https://retro-bowl-76-77.github.io/">retro-bowl-76-77</a>
+            <a href="https://sz-games.github.io/">Sz Games</a>
+            <a href="https://monstertracks.github.io/">Monster Tracks</a>
+            <a href="https://gameunblocked-2025.github.io/">All Games</a>
+            <a href="https://geography-lessons.github.io/">geography-lessons</a>
+        </div>
     </div>
 
     <div class="box">
@@ -150,15 +172,12 @@
         <p>here's one to see how much people go on it in total (this includes it if you refresh, and it's the one on the home page)</p>
         <script type="text/javascript" src="https://counter.websiteout.com/js/2/5/1473/0"></script>
     </div>
-  
+ 
     <div class="box">
         <div class="title">This is how to add a game to savnac.</div>
         <div class="separator"></div>
         <p class="subtitle">Follow these steps.</p>
         <p>First, make a github account. I'll give you permission to edit things if you talk to me. After you get permission, go to a random game file (games like 1v1.lol, granny or anygame where you can move it a 360 angle need some extra code so let me add those games, and don't use these files cuz they have the extra code.) So after you copy a game file, create a new file (name it like _____.html, put the game name where the blanks are) then paste the code in the file and change the URL to the game you want. BOOM! youre done, and tell me you added the game so i can add it to the search bar.</p>
     </div>
-
-    
-
 </body>
 </html>
