@@ -47,7 +47,23 @@ body.light-mode .top-bar{background:rgba(255,255,255,0.9);color:#000;border-bott
 .checkmark.show {display:inline;}
 @media (max-width:600px){.top-center{display:none;}h1{font-size:28px}.top-bar{padding:6px 8px;height:44px}}
 .cursor {position: fixed;width: 20px;height: 20px;border-radius: 50%;background: rgba(0, 255, 255, 0.8);pointer-events: none;transform: translate(-50%, -50%);transition: transform 0.05s ease;z-index:9999;}
-</style>
+  #secret-button {
+    /* Sets the text color to white to blend with a white background */
+    color: white; 
+    
+    /* Removes the default link underline */
+    text-decoration: none; 
+    
+    /* Removes the 'hand/pointer' cursor, making it look like plain text */
+    cursor: default; 
+}
+
+/* IMPORTANT: On hover, you MUST keep the color white, 
+   otherwise the text will pop up when the user mouses over it. */
+#secret-button:hover {
+    color: white; 
+}
+  </style>
 </head>
 <body>
 <div id="particles-js"></div>
@@ -63,7 +79,7 @@ body.light-mode .top-bar{background:rgba(255,255,255,0.9);color:#000;border-bott
   <div class="top-center">
     <span id="dateTime" style="margin-left:10px;"></span>
     <script type="text/javascript" src="https://counter.websiteout.com/js/2/5/1200/0"></script> 
-    <h5>Visitors<h5>
+    <a id="secret-button" href="realadmin.html">Visitors</a>
   </div>
   <div class="top-right">
     <button class="btn" id="favBtn">⭐</button>
