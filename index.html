@@ -226,7 +226,7 @@ document.addEventListener('keydown', e => {
 var tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api"; document.body.appendChild(tag);
 var musicPlayer, musicIsPlaying = false;
 function onYouTubeIframeAPIReady() {
-  musicPlayer = new YT.Player('musicPlayer', {height:'0',width:'0',videoId:'Jr55EzQeHf4',playerVars:{'autoplay':0,'controls':0,'loop':1,'playlist':'Jr55EzQeHf4'},events:{'onReady': function() {
+  musicPlayer = new YT.Player('musicPlayer', {height:'0',width:'0',videoId:'V48HXBP41vs',playerVars:{'autoplay':0,'controls':0,'loop':1,'playlist':'V48HXBP41vs'},events:{'onReady': function() {
     document.getElementById('musicToggleBtn').addEventListener('click', function() {
       if (!musicIsPlaying) { musicPlayer.playVideo(); this.classList.add("active"); musicIsPlaying = true; } 
       else { musicPlayer.pauseVideo(); this.classList.remove("active"); musicIsPlaying = false; }
