@@ -1,465 +1,361 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Canvas</title>
-<link id="favicon" rel="icon" href="https://savnaclive.github.io/savnac/images/logo.png" type="image/png">
+<link rel="icon" href="https://www.wabash.edu/images2/technology/canvas.png" type="image/png" />
 <style>
-  * {margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
-  html, body {height:100%; overflow:hidden;}
-  #bgContainer {min-height:100vh; background-size:cover; background-position:center; transition: background 0.5s;}
+html, body {margin:0;padding:0;height:100%;box-sizing:border-box;overflow-x:hidden;font-family:Arial, sans-serif;-webkit-font-smoothing:antialiased;}
+body {background:#121212;color:#fff;transition:background .28s ease,color .28s ease;min-height:100vh;padding-top:48px;cursor:none;}
+.top-bar{position:fixed;top:0;left:0;right:0;height:48px;display:flex;align-items:center;justify-content:space-between;padding:6px 14px;background:rgba(26,26,26,0.78);backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,0.03);z-index:9999;gap:12px;}
+.top-left,.top-center,.top-right{display:flex;align-items:center;gap:10px;font-size:14px;color:inherit;}
+.top-center{margin:0 auto;gap:12px;}
+.btn{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);color:inherit;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:13px;transition:transform .12s,box-shadow .12s,background .12s;}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(0,0,0,0.4);background:rgba(255,255,255,0.06);}
+.btn.active{box-shadow:0 8px 26px rgba(0,0,0,0.55);transform:translateY(-1px);}
+body.light-mode .btn.active{background:rgba(0,0,0,0.06);}
+.page-wrap{display:flex;justify-content:center;align-items:flex-start;padding:18px;}
+.content-wrapper{width:100%;max-width:500px;text-align:center;z-index:2;position:relative;}
+#particles-js{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:#121212;transition:background .3s ease;}
+h1{font-size:34px;margin:6px 0 14px 0;text-shadow:0 0 10px rgba(255,255,255,0.6);color:inherit;}
+#randomAbove{margin-bottom:8px;}
+#searchInput{width:100%;box-sizing:border-box;padding:10px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:rgba(31,31,31,0.9);color:inherit;font-size:16px;outline:none;transition:background .2s,color .2s;}
+#gamesContainer{width:100%;max-height:400px;overflow-y:auto;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:rgba(26,26,26,0.85);backdrop-filter:blur(6px);margin-top:10px;position:relative;}
+#filterActions{padding:6px;display:none;}
+#gamesList{list-style:none;margin:0;padding:0;}
+#gamesList li{border-bottom:1px solid rgba(255,255,255,0.03);display:flex;justify-content:space-between;align-items:center;}
+#gamesList li a{display:flex;align-items:center;gap:10px;padding:10px;color:inherit;text-decoration:none;flex:1;}
+#gamesList li a:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,0.6);text-shadow:0 0 10px currentColor;}
+#gamesList img{width:40px;height:40px;object-fit:cover;border-radius:4px;}
+.star{cursor:pointer;font-size:18px;padding:0 8px;color:#fff;transition:color .2s;user-select:none;}
+.star.favorited{color:gold;}
+body.light-mode .star{color:#888;}
+.panic-text{margin-top:18px;font-size:20px;color:inherit;}
+.visitor-highlight{transition:opacity .6s, text-shadow .45s;}
+.visitor-animate{ text-shadow:0 0 16px rgba(0,255,200,0.25); }
+body.light-mode{background:#fff;color:#000;}
+body.light-mode #particles-js{background:#fff;}
+body.light-mode #searchInput{background:#f7f7f7;color:#000;border:1px solid #ddd;}
+body.light-mode #gamesContainer{background:rgba(250,250,250,0.9);border:1px solid #e6e6e6;}
+body.light-mode .top-bar{background:rgba(255,255,255,0.9);color:#000;border-bottom:1px solid rgba(0,0,0,0.06);}
+.settings-modal {position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.95);background:rgba(26,26,26,0.95);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:20px;z-index:10000;display:none;flex-direction:column;gap:12px;min-width:260px;backdrop-filter:blur(6px);transition:transform .2s ease,opacity .2s ease;}
+.settings-modal.show {display:flex;opacity:1;transform:translate(-50%,-50%) scale(1);}
+.settings-input {padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:inherit;}
+.checkmark {display:none;color:limegreen;font-weight:bold;}
+.checkmark.show {display:inline;}
+@media (max-width:600px){.top-center{display:none;}h1{font-size:28px}.top-bar{padding:6px 8px;height:44px}}
+.cursor {position: fixed;width: 20px;height: 20px;border-radius: 50%;background: rgba(0, 255, 255, 0.8);pointer-events: none;transform: translate(-50%, -50%);transition: transform 0.05s ease;z-index:9999;}
+  #secret-button {
+    /* Sets the text color to white to blend with a white background */
+    color: white; 
+    
+    /* Removes the default link underline */
+    text-decoration: none; 
+    
+    /* Removes the 'hand/pointer' cursor, making it look like plain text */
+    cursor: default; 
+}
 
-  /* Top Bar */
-  #topbar {
-    display:flex; justify-content:space-between; align-items:center;
-    padding:10px 20px; position:fixed; top:0; left:0; width:100%;
-    z-index:1000; background:transparent;
-  }
-  #topbar .buttons-gray {
-    background: #888; padding:10px; display:flex; align-items:center; gap:10px;
-    border-radius:0 25px 25px 0;
-  }
-  #topbar .buttons img { width:50px; height:50px; cursor:pointer; transition: transform 0.2s; }
-  #topbar .buttons img:hover { transform: scale(1.1); }
-  #topbar .logo img { height:100px; }
-
-  /* Pages */
-  .page { display:none; }
-  .page.active { display:block; }
-
-  /* Scrollable containers */
-  .game-container, .search-container { padding-top:120px; max-height:calc(100vh - 10px); overflow-y:auto; width:100%; }
-
-  /* Game Grid */
-  .game-grid {
-    display:grid; grid-template-columns:repeat(5,1fr); gap:40px; padding:20px;
-  }
-  @media (max-width:1200px){.game-grid{grid-template-columns:repeat(4,1fr);}}
-  @media (max-width:900px){.game-grid{grid-template-columns:repeat(3,1fr);}}
-  @media (max-width:600px){.game-grid{grid-template-columns:repeat(2,1fr);}}
-  @media (max-width:400px){.game-grid{grid-template-columns:1fr;}}
-  .game-card { position:relative; width:100%; padding-top:100%; overflow:hidden; cursor:pointer; border-radius:10px; }
-  .game-card img { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; transition: transform 0.3s; }
-  .game-card:hover img { transform: scale(1.05); }
-  .game-overlay {
-    position:absolute; top:0; left:0; width:100%; height:100%;
-    background:rgba(0,0,0,0.5); color:#fff;
-    display:flex; justify-content:space-between; align-items:flex-start; flex-direction:column; padding:10px;
-    opacity:0; transition: opacity 0.3s;
-  }
-  .game-card:hover .game-overlay { opacity:1; }
-  .game-overlay .name { font-weight:bold; }
-  .game-overlay .star { font-size:24px; cursor:pointer; }
-
-  /* Home Page Buttons (4 per row) */
-  #homePage .home-grid {
-    display:grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    padding: 140px 20px 20px; /* adds space under top bar */
-    justify-items: center;
-    align-items: start;
-  }
-  @media (max-width: 900px) { #homePage .home-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 500px) { #homePage .home-grid { grid-template-columns: 1fr; } }
-  .home-button {
-    display:flex; justify-content:center; align-items:center;
-    flex-direction:column; background:rgba(255,255,255,0.2);
-    padding:20px; border-radius:10px; cursor:pointer;
-    transition: transform 0.2s, background 0.3s;
-    text-align:center;
-    width:100%;
-    max-width:180px;
-  }
-  .home-button:hover { transform: scale(1.05); background:rgba(255,255,255,0.4); }
-  .home-button img { width:50px; height:50px; margin-bottom:5px; }
-
-  /* Search Page */
-  #searchBox { display:flex; flex-direction:column; max-width:500px; margin: 80px auto 20px auto; text-align:center; }
-  #searchBox input { padding:10px; font-size:16px; border-radius:5px; border:2px solid orange; outline:none; width:100%; box-sizing:border-box; }
-  #searchResults {
-    display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:15px; margin-top:10px; max-height:400px; overflow-y:auto; padding:10px; background:rgba(0,0,0,0.3); border-radius:8px;
-  }
-
-  /* Recent and Favorite Game Grids (smaller, 5 per row max, squares) */
-  #recentGames, #favoriteGames {
-    display:grid; 
-    grid-template-columns: repeat(5, 1fr); 
-    gap:10px; 
-    margin-top:10px; 
-    padding:10px; 
-    background:rgba(0,0,0,0.3); 
-    border-radius:8px; 
-    max-height:300px; 
-    overflow-x:auto; 
-    overflow-y:hidden;
-    grid-auto-flow: column; /* horizontal scroll if more than 5 */
-  }
-  #recentGames .game-card, #favoriteGames .game-card {
-    aspect-ratio: 1 / 1;   /* ensures perfect square */
-    width: 100%;
-    max-width:120px;        /* still limits size */
-    padding-top:0;           /* remove previous padding-top */
-  }
-  @media (max-width:1200px){ #recentGames, #favoriteGames { grid-template-columns: repeat(4, 1fr); } }
-  @media (max-width:900px){ #recentGames, #favoriteGames { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width:600px){ #recentGames, #favoriteGames { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width:400px){ #recentGames, #favoriteGames { grid-template-columns: 1fr; } }
-
-  #recentGamesTitle, #favoriteGamesTitle { margin:20px 0 5px 0; color:#fff; font-weight:bold; font-size:18px; text-align:center; }
-
-  /* Modal for Tab Cloak */
-  .modal {
-    position:fixed; top:0; left:0; width:100%; height:100%;
-    background:rgba(0,0,0,0.6); z-index:2000;
-    display:none; justify-content:center; align-items:center;
-  }
-  .modal-content {
-    background:#222; padding:20px; border-radius:10px;
-    display:flex; flex-direction:column; gap:10px;
-    color:#fff; max-width:300px; width:90%;
-  }
-  .modal-content input { padding:8px; border-radius:5px; border:1px solid #555; background:#333; color:#fff; }
-  .modal-content button { padding:10px; background:orange; border:none; border-radius:5px; cursor:pointer; }
-</style>
+/* IMPORTANT: On hover, you MUST keep the color white, 
+   otherwise the text will pop up when the user mouses over it. */
+#secret-button:hover {
+    color: white; 
+}
+  </style>
 </head>
 <body>
-<div id="bgContainer">
-
-    <div id="topbar">
-    <div class="buttons-gray">
-      <div class="buttons">
-        <img src="https://savnaclive.github.io/savnac/images/game.png" alt="Game" id="gameBtn">
-        <img src="https://savnaclive.github.io/savnac/images/home.png" alt="Home" id="homeBtn">
-        <img src="https://savnaclive.github.io/savnac/images/search.png" alt="Search" id="searchBtn">
-      </div>
-    </div>
-    <div class="logo"><img src="https://savnaclive.github.io/savnac/images/logo.png" alt="Logo"></div>
-  </div>
-
-    <div class="page active" id="gamePage">
-    <div class="game-container">
-      <div class="game-grid" id="gameGrid"></div>
-    </div>
-  </div>
-
-    <div class="page" id="homePage">
-    <div class="home-grid" id="homeGrid">
-      <div class="home-button" id="themeToggle">
-        <img src="https://via.placeholder.com/50?text=☀️/🌙" alt="Theme">
-        <span>Toggle Light/Dark</span>
-      </div>
-      
-            <div class="home-button" id="cloakBtn">
-        <img src="https://savnaclive.github.io/savnac/images/cloak.png" alt="">
-        <span>Tab Cloak</span>
-      </div>
-      <a href="chat.html" class="home-button">
-        <img src="https://savnaclive.github.io/savnac/images/chat.png" alt="Chat">
-        <span>Chat</span>
-      </a>
-      <a href="menu.html" class="home-button">
-        <img src="https://savnaclive.github.io/savnac/images/menu.png" alt="Menu">
-        <span>Menu</span>
-      </a>
-      <a href="ytu.html" class="home-button">
-        <img src="https://savnaclive.github.io/savnac/images/yt.png" alt="YouTube Unblocker">
-        <span>YT Unblocker</span>
-      </a>
-      <a href="admin.html" class="home-button">
-        <img src="https://savnaclive.github.io/savnac/images/admin.png" alt="Admin">
-        <span>Admin</span>
-      </a>
-      <div class="home-button" id="musicToggleBtn">
-        <img src="https://savnaclive.github.io/savnac/images/music.png" alt="Music">
-        <span>Toggle Music</span>
-      </div>
-            
-    </div>
-  </div>
-
-    <div class="page" id="searchPage">
-    <div class="search-container">
-      <div id="searchBox">
-        <input type="text" id="searchInput" placeholder="Search games...">
-        <div id="searchResults"></div>
-      </div>
-      <div id="recentGamesTitle">🕘 Recent Games</div>
-      <div id="recentGames"></div>
-      <div id="favoriteGamesTitle">⭐ Favorite Games</div>
-      <div id="favoriteGames"></div>
-    </div>
-  </div>
-  
-    <div id="musicPlayer"></div>
+<div id="particles-js"></div>
+<div class="top-bar">
+  <div class="top-left">
+    <a href="menu.html" class="btn" id="menuBtn">𓃑</a>
+    <span id="welcomeMessage" style="font-weight:600;"></span>
+    <button class="btn" id="settingsBtn">⚙</button>
+    <a href="chat.html" class="btn" id="chatBtn" style="margin-left:4px;">🗫</a>
+    <a href="admin.html" class="btn" id="adminBtn">🔒</a>
+    <a href="ytu.html" class="btn" id="YouTubeUnblockerBtn" style="margin-left:4px;">[ ▶︎ ]</a>
+  </div>
+  <div class="top-center">
+    <span id="dateTime" style="margin-left:10px;"></span>
+    <script type="text/javascript" src="https://counter.websiteout.com/js/2/5/1200/0"></script> 
+    <a id="secret-button" href="realadmin.html">Visitors</a>
+  </div>
+  <div class="top-right">
+    <button class="btn" id="favBtn">⭐</button>
+    <button class="btn" id="recentsBtn">↻</button>
+    <button class="btn" id="bgToggleBtn">🎨</button>
+    <button class="btn" id="musicToggleBtn" style="margin-left:6px;">♬</button>
+    <button class="btn" id="modeToggle">☀︎</button>
+  </div>
 </div>
 
-<div id="cloakModal" class="modal">
-  <div class="modal-content">
-    <h3>Tab Cloak Settings</h3>
-    <label for="titleInput">Tab Title:</label>
-    <input type="text" id="titleInput" placeholder="Enter new tab title">
-    <label for="iconInput">Icon URL (e.g., https://...):</label>
-    <input type="text" id="iconInput" placeholder="Paste new favicon URL">
-    <button id="saveCloakBtn">Apply Cloak</button>
-    <button id="resetCloakBtn">Reset</button>
-  </div>
+<div class="page-wrap">
+  <div class="content-wrapper">
+    <h1 id="siteTitle"> </h1>
+    <img src="images/logo-halloween.png" alt="Site Title" style="height: 80px;" />
+    <div id="randomAbove"></div>
+    <input id="searchInput" type="text" placeholder="Search our 51 games..." />
+    <div id="gamesContainer">
+      <div id="filterActions"></div>
+      <ul id="gamesList">
+          <li><a href="1v1lol.html"><img src="https://img.utdstc.com/icon/983/22a/98322a3b2be892eed31589906ffd949b68bcccc9a21ba562987965b5ec6bc6de:200" alt=""><span>1v1.lol</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="2048.html"><img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/95/8e/c3/958ec36e-06b1-0897-53b3-c968234bf47f/AppIcon-0-0-1x_U007emarketing-0-6-85-220.png/512x512bb.jpg" alt=""><span>2048</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="aswc.html"><img src="https://play-lh.googleusercontent.com/R47kNu-wEYMVnoo7rFOXiAHoBvW26KHps65Oi0S6zMF722x0LYqHJUiXRvB_xhsj0CM" alt=""><span>A Small World Cup</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="asrp.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZDCGdZc8f2TLbgcv4aULu8Gf4_D3qwe6eiPo8mDGxn3jL3GpWzsquaflVA800tU2hl5I:https://s.cafebazaar.ir/images/icons/superheroes.herogames.spider.rope.hero.battle.fighting.apps-c8cf8b40-2e0c-4bd5-80cd-007c8ad2f9e5_512x512.png%3Fx-img%3Dv1/resize,h_256,w_256,lossless_false/optimize&usqp=CAU" alt=""><span>Amazing Strange Rope Police</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="amongus.html"><img src="https://images.sftcdn.net/images/t_app-icon-m/p/d10217b5-1ae1-44dd-a82c-6e2d60d086d6/3969265935/among-us-Download-Among-Us.jpg" alt=""><span>Among Us</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="baconmaydie.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlgNyBQroC5JSJh1gOrStxprpzi0u95828vA&s" alt=""><span>Bacon May Die</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="basketrandom.html"><img src="https://geometrydash2.com/data/image/basket-random.jpg" alt=""><span>Basket Random</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="bitplanes.html"><img src="https://images.rocketgames.io/uploads/games/b/bit-planes/bit-planes.16800f.jpg" alt=""><span>Bit Planes</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="bitlife.html"><img src="https://play-lh.googleusercontent.com/fUM-UyywXxjC8soxAZdIlxJrlRRXmql8wkE426SHzft4lJycSKVd2jCYQQX1BEG9Xw" alt=""><span>Bitlife</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="blockblast.html"><img src="https://camo.githubusercontent.com/fed5c30c2eaffc5f8ad4d5198cc3da233226d58502ac973784459ad42bd10af1/68747470733a2f2f626c6f636b626c6173742e6465762f66617669636f6e2e706e67" alt=""><span>Block Blast</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="bloonstd.html"><img src="https://play-lh.googleusercontent.com/4te8y2It_nyY4yX5jcSEFaTDro98302l9EnSbkJyCobGUo8GWxteV_8kJ8nlXyStxw" alt=""><span>Bloons TD</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="clickerhero.html"><img src="https://play-lh.googleusercontent.com/XqysWlDWj5nBr0zZMtB08Bt4pe3MsE8XXOAgqZYiD1s65phAUWUcLIBLxdiAkfjfIsM" alt=""><span>Clicker Hero</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="clusterrush.html"><img src="https://clusterrushonline.github.io/img/cluster-rush.png" alt=""><span>Cluster Rush</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="cookieclicker.html"><img src="https://super142.wordpress.com/wp-content/uploads/2022/07/cookie-clicker.jpg?w=640" alt=""><span>Cookie Clicker</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="crossyroad.html"><img src="https://downloadr2.apkmirror.com/wp-content/uploads/2025/06/65/683f96bad3438_com.yodo1.crossyroad.png" alt=""><span>Crossyroad</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="cuttherope.html"><img src="https://play-lh.googleusercontent.com/Yphk2XnpBkSPIlZcbcmeTULeIajjCU-8Iduzq8j7zyp9HPijyZaT5ZeqgbYkOoQKSljs" alt=""><span>Cut the Rope</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="deathrun.html"><img src="https://play-lh.googleusercontent.com/dEu4Lrs5Ke5ZHDMedRkjjtYq1G22gGccxeIU_ZJNqqwLeSYshuUxBU0KCrSG7lEEwBo" alt=""><span>Death Run</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="drivemad.html"><img src="https://play-lh.googleusercontent.com/V_egAxch0phxs10H_Z1QpWRrsH4phd8egT_5ZjYlFbXzXvwpUGpmJMn2h6HgbGkSlZSM" alt=""><span>Drive Mad</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="driftboss.html"><img src="https://m.media-amazon.com/images/I/71Rvyj1gI1L.png" alt=""><span>Drift Boss</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="ducklife.html"><img src="https://play-lh.googleusercontent.com/JQqSn7wuCj0SxBqpBThNI33qCR9gwY0str2TIAnu-m_xrVCgZk3IPxYK2S7zC9WG0ig" alt=""><span>Duck Life</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="fnaf.html"><img src="https://dorukyum.github.io/FNAF-Web/static/media/freddy.a3eb8395.png" alt=""><span>Five Night's at Freddy's</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="funnyshooter2.html"><img src="https://cdn-1.webcatalog.io/catalog/poki-funny-shooter-2/poki-funny-shooter-2-social-preview.png?v=1714779994858" alt=""><span>Funny Shooter 2</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="footballbros.html"><img src="https://avatars.githubusercontent.com/u/231598366?v=4" alt=""><span>Football Bros.</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="geometrydash.html"><img src="https://assets-prd.ignimgs.com/2021/12/14/geometrydash-1639510868467.jpg" alt=""><span>Geometry Dash</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="getawayshootout.html"><img src="https://play-lh.googleusercontent.com/xbB3QLgeuMh5clpSpMLRAPJ80WV77jifWu1iz-quwQwN7kp5WCzvrLiM-Up6au20OTI" alt=""><span>Get Away Shootout</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="granny.html"><img src="https://play-lh.googleusercontent.com/yT_LBq_tyKeIDohKDsqN_Qt18jGIPUYIxY2C-1-E2YA9Qd60uZW08pua17qBmIiDPA=w240-h480-rw" alt=""><span>Granny</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="gladihopper.html"><img src="https://play-lh.googleusercontent.com/HUuFbIPERNbpW2Q72WIqiJ8bKDzIgT_C4PnYvMBuH0wC3B_KvpKmumm1FXhZj3jmRHw" alt=""><span>Gladihoppers</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="gunspin.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-6RoV0Octq6Jgqg901ASvwAEl0z-nfNjh7oCXp07wvuO7lYDN:https://rocketgames.imgix.net/uploads/games/g/gunspin/gunspin.890e48.jpg%3Fauto%3Dformat,compress%26w%3D1200%26h%3D630%26fit%3Dfill%26fill%3Dblur%26q%3D85%26mark%3D/logo.png%26mark-scale%3D16%26mark-align%3Dmiddle%26mark-x%3D65%26txt-size%3D42%26txt-color%3Dff333333%26txt-line%3D0.25%26txt-line-color%3DFFFFFF%26txt-font%3DFutura%2520Condensed%2520Medium%26txt-pad%3D15%26txt%3DGUNSPIN&s" alt=""><span>Gun Spin</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="hole-io.html"><img src="https://store-images.s-microsoft.com/image/apps.7301.14130340581880418.9c619941-0100-44a9-a3c9-a30a33f4dfb5.793ef2c0-4f01-4652-b472-79300b37dff7?q=90&w=177&h=177" alt=""><span>Hole.io</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="hextris.html"><img src="https://play-lh.googleusercontent.com/nCzeX0WCpn8iLxQV9TgrWr6Xt4JZPT0nExE7iSC48KacKxtx_7c4dAYrlMYgTM_HtHg" alt=""><span>Hextris</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="js.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRXd_syOZzkOzOzQafFGjlmWIECngoa1ENB9_abpCoPbgVxVM2bo0NSyWmLVkCjtCwXEE&usqp=CAU" alt=""><span>JavaScript Roulette</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="la.html"><img src="https://play-lh.googleusercontent.com/3Pr4gCB3uzsYyoFZZiDOuvq_7SeQPjUQnHiUrwug154RnTGJ_YAX5zvZfCH-4r2JKBOX" alt=""><span>Little Alchemy 2</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="learntofly.html"><img src="https://play-lh.googleusercontent.com/WYyWLDBs2bj-KtDBhg7jSqW34nYzyoFTvtKaYBTt2J6SAA05dqEZGI8s1h2LQQV3BHc" alt=""><span>Learn to Fly</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="motox3m.html"><img src="https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=314,height=314,fit=cover,f=auto/2c6d5a46cdbceada277c870ce1c389ee/moto-x3m.jpg" alt=""><span>MotoX3M</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="monkeymart.html"><img src="https://play-lh.googleusercontent.com/rWReIdyvDaYJPeOxn7hbC0b-96ixGpQKM_EndiQa3SUME8TtI_rNUcI4qsw5teK9mqk" alt=""><span>Monkey Mart</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="minecraft-menu.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTex_wtjsXI9BHHjySiqI0OIkr0r-9ITLPYTA&s" alt=""><span>Minecraft</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="ovo.html"><img src="https://play-lh.googleusercontent.com/v7KwGdPjJGjJjRXn46sck4DwDBdKSeRzGN44CjiXUtKV0jjOi51Bt4wcXud0m-SkXg" alt=""><span>OvO</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="pacman.html"><img src="https://rasterweb.net/raster/wp-content/uploads/2024/03/ghosts-02.jpg" alt=""><span>Pacman</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="paper.io2.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4qJVLuHb4EH8h7QU5C4k_Jb44aHgcxgTNKg&s" alt=""><span>Paper.io 2</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="polytrack.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRepbLbXvGqJZA_eGUnd-U_nqXT0OxWAjavkZ8EWyNW_PA0eYo:https://cdn-1.webcatalog.io/catalog/poki-polytrack/poki-polytrack-icon-filled-256.png%3Fv%3D1727914012217&s" alt=""><span>Poly Track</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="ragdollarchers.html"><img src="https://play-lh.googleusercontent.com/XMiWEMPbuq13oVcwYQ6ySLtZnBf7WpJ3rb7v-TM4MdFOvWfo1Z2hzSEAApRXzEcshjY" alt=""><span>Ragdoll Archers</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="ragdollhit.html"><img src="https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=314,height=314,fit=cover,f=auto/3c892779be9dabb3589586c83ad3eeed/ragdoll-hit.png" alt=""><span>Ragdoll Hit</span></a><span class="star" aria-label="favorite">★</span></li>    
+          <li><a href="retrobowl.html"><img src="https://drift-hunters.co/upload/imgs/retrobowl.jpg" alt=""><span>Retro Bowl</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="retrobowlcollege.html"><img src="https://play-lh.googleusercontent.com/-BT8C-1UPYWouyjVvWYgaar_-xV4IQvX4Bvib3koGEGiy6UsHlt0RgYpUrdTDfC2y0ct" alt=""><span>Retro Bowl College</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="rooftopsnipers.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSU9wgKl7fq2fQOnotjol-S5tJ_xNtIHrBaAslrdjYvVHQp3tDVVUiDY7mcp2j-OPSe78o:https://red-ball4.com/data/image/rooftop-snipers.jpg&usqp=CAU" alt=""><span>Roof Top Snipers</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="subwaysurfers.html"><img src="https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=1200,height=1200,fit=cover,f=png/919c9f04db0404cf69fddf9c01e31d91/subway-surfers.png" alt=""><span>Subway Surfers</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="slope.html"><img src="https://play-lh.googleusercontent.com/uJn2i9h7KxYQarC_c3K4qH6o7gLtflFnhD_dN14MNkzHJ1NeNFzCL69jpB5mT0vCoQs" alt=""><span>Slope</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="stickmanhook.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKclUg-7v0l4KeCYELMzTrsaHvwJ1uubNfkw&s" alt=""><span>Stick Man Hook</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="snowrider3d.html"><img src="https://childrenwithhairloss.org/wp-content/uploads/2025/03/snow-rider-3d-200x199.png" alt=""><span>Snow Rider 3D</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="superhot.html"><img src="https://yt3.googleusercontent.com/ytc/AIdro_lUAU1wbH8KiPz-Q2ppjtFEn_sGvxBE2sySkHo1ELm4PQ=s900-c-k-c0x00ffffff-no-rj" alt=""><span>SUPERHOT</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="wbwwb.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTv-7UyhFch4BXsiaZCOvfmRacKqIX-pDIGvw&s" alt=""><span>We Become What We Behold</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="whackyourboss.html"><img src="https://e.snmc.io/lk/lv/x/123e965239a426aa18c9348609293ced/11817567" alt=""><span>Whack Your Boss</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="wheeliebike.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRc8giRTerjerQtYjy5u3crHHI5XFm9GYG1WA&s" alt=""><span>Wheelie Bike</span></a><span class="star" aria-label="favorite">★</span></li>
+          <li><a href="yohoho-io.html"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQubF63Qipw_s45n_3fqCpncogxSjPzVTK0nw&s" alt=""><span>Yohoho.io</span></a><span class="star" aria-label="favorite">★</span></li>
+      </ul>
+      <div id="randomText" style="font-size:14px; font-family:Arial, sans-serif; color:#ccc; min-height:24px;"></div>
+    </div>
+  </div>
 </div>
 
-<script src="https://www.youtube.com/iframe_api"></script>
+<div class="settings-modal" id="settingsModal">
+  <label>Site Title (changes tab name):</label>
+  <input type="text" id="titleInput" class="settings-input">
+  <button class="btn" id="saveTitleBtn">Save</button>
+  <span id="saveCheck" class="checkmark">✔</span>
+</div>
+
+<div id="musicPlayer" style="display:none;"></div>
+<div class="cursor" id="cursor"></div>
+
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script>
-// --- Initialization & Setup ---
-
-// Theme
-const body = document.body;
-const bgContainer = document.getElementById('bgContainer');
-function setBackground(theme){
-  if(theme==='light'){
-    bgContainer.style.background="url('https://savnaclive.github.io/savnac/images/background/bg2.jpg') center/cover no-repeat";
-    body.style.color="#000";
-    // Optionally update light/dark mode styles for buttons/elements here
-  } else {
-    bgContainer.style.background="url('https://savnaclive.github.io/savnac/images/background/bg1.jpg') center/cover no-repeat";
-    body.style.color="#fff";
-  }
-}
-function toggleTheme(){
-  if(body.classList.contains('light')){
-    body.classList.replace('light','dark'); setBackground('dark'); localStorage.setItem('theme','dark');
-  } else {
-    body.classList.replace('dark','light'); setBackground('light'); localStorage.setItem('theme','light');
-  }
-}
-const storedTheme = localStorage.getItem('theme') || 'dark'; // Changed default to 'dark' for your style
-body.classList.add(storedTheme); setBackground(storedTheme);
-document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-
-// Pages
-const pages = { game: document.getElementById('gamePage'), home: document.getElementById('homePage'), search: document.getElementById('searchPage') };
-document.getElementById('gameBtn').addEventListener('click',()=>showPage('game'));
-document.getElementById('homeBtn').addEventListener('click',()=>showPage('home'));
-document.getElementById('searchBtn').addEventListener('click',()=>showPage('search'));
-function showPage(page){ for(let p in pages){ pages[p].classList.remove('active'); } pages[page].classList.add('active'); }
-
-// --- Tab Cloak (New Feature) ---
-const defaultTitle = "Canvas";
-const defaultIcon = "https://savnaclive.github.io/savnac/images/logo.png";
-const favicon = document.getElementById('favicon');
-const cloakModal = document.getElementById('cloakModal');
-const titleInput = document.getElementById('titleInput');
-const iconInput = document.getElementById('iconInput');
-const cloakBtn = document.getElementById('cloakBtn');
-const saveCloakBtn = document.getElementById('saveCloakBtn');
-const resetCloakBtn = document.getElementById('resetCloakBtn');
-
-function applyCloak(title, icon) {
-  document.title = title;
-  favicon.href = icon;
-  localStorage.setItem('cloakTitle', title);
-  localStorage.setItem('cloakIcon', icon);
-}
-
-function loadCloak() {
-  const savedTitle = localStorage.getItem('cloakTitle');
-  const savedIcon = localStorage.getItem('cloakIcon');
-  if (savedTitle) { document.title = savedTitle; }
-  if (savedIcon) { favicon.href = savedIcon; }
-}
-
-cloakBtn.addEventListener('click', () => {
-  titleInput.value = document.title;
-  iconInput.value = favicon.href;
-  cloakModal.style.display = 'flex';
-});
-
-saveCloakBtn.addEventListener('click', () => {
-  const newTitle = titleInput.value || defaultTitle;
-  const newIcon = iconInput.value || defaultIcon;
-  applyCloak(newTitle, newIcon);
-  cloakModal.style.display = 'none';
-});
-
-resetCloakBtn.addEventListener('click', () => {
-  applyCloak(defaultTitle, defaultIcon);
-  localStorage.removeItem('cloakTitle');
-  localStorage.removeItem('cloakIcon');
-  cloakModal.style.display = 'none';
-});
-
-document.addEventListener('keydown', (e) => {
-  if (e.key === "Escape" && cloakModal.style.display === 'flex') {
-    cloakModal.style.display = 'none';
-  }
-});
-
-loadCloak(); // Apply cloak on page load
-
-// --- YouTube Music Player (New Feature) ---
-const musicToggleBtn = document.getElementById('musicToggleBtn');
-const musicContainer = document.getElementById('musicPlayer');
-let musicPlayer;
-let musicIsPlaying = false;
-const youtubeVideoId = 'k1SIiKs0zNU'; // ID for "https://www.youtube.com/watch?v=k1SIiKs0zNU&t"
-
-// Called when the YouTube API is ready
-function onYouTubeIframeAPIReady() {
-  musicPlayer = new YT.Player(musicContainer, {
-    height: '0',
-    width: '0',
-    videoId: youtubeVideoId,
-    playerVars: {
-      'autoplay': 0, // Starts off
-      'controls': 0,
-      'loop': 1,
-      'playlist': youtubeVideoId // Required for loop to work
-    },
-    events: {
-      'onReady': function() {
-        musicToggleBtn.addEventListener('click', function() {
-          if (!musicIsPlaying) {
-            musicPlayer.playVideo();
-            musicIsPlaying = true;
-            this.style.backgroundColor = 'rgba(255,165,0,0.5)'; // Visual feedback
-          } else {
-            musicPlayer.pauseVideo();
-            musicIsPlaying = false;
-            this.style.backgroundColor = 'rgba(255,255,255,0.2)'; // Visual feedback
-          }
-        });
-      }
-    }
-  });
-}
-
-// Set initial music button style to reflect 'off'
-musicToggleBtn.style.backgroundColor = 'rgba(255,255,255,0.2)';
-
-// --- Existing Games Data & Logic Below ---
-
-// Games Data
-const games = [
-  {name:"1v1.lol", url:"1v1lol.html", img:"https://img.utdstc.com/icon/983/22a/98322a3b2be892eed31589906ffd949b68bcccc9a21ba562987965b5ec6bc6de:200"},
-  {name:"2048", url:"2048.html", img:"https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/95/8e/c3/958ec36e-06b1-0897-53b3-c968234bf47f/AppIcon-0-0-1x_U007emarketing-0-6-85-220.png/512x512bb.jpg"},
-  {name:"A Small World Cup", url:"aswc.html", img:"https://play-lh.googleusercontent.com/R47kNu-wEYMVnoo7rFOXiAHoBvW26KHps65Oi0S6zMF722x0LYqHJUiXRvB_xhsj0CM"},
-  {name:"Amazing Strange Rope Police", url:"asrp.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZDCGdZc8f2TLbgcv4aULu8Gf4_D3qwe6eiPo8mDGxn3jL3GpWzsquaflVA800tU2hl5I"},
-  {name:"Among Us", url:"amongus.html", img:"https://images.sftcdn.net/images/t_app-icon-m/p/d10217b5-1ae1-44dd-a82c-6e2d60d086d6/3969265935/among-us-Download-Among-Us.jpg"},
-  {name:"Bacon May Die", url:"baconmaydie.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlgNyBQroC5JSJh1gOrStxprpzi0u95828vA&s"},
-  {name:"Basket Random", url:"basketrandom.html", img:"https://geometrydash2.com/data/image/basket-random.jpg"},
-  {name:"Bit Planes", url:"bitplanes.html", img:"https://images.rocketgames.io/uploads/games/b/bit-planes/bit-planes.16800f.jpg"},
-  {name:"Bitlife", url:"bitlife.html", img:"https://play-lh.googleusercontent.com/fUM-UyywXxjC8soxAZdIlxJrlRRXmql8wkE426SHzft4lJycSKVd2jCYQQX1BEG9Xw"},
-  {name:"Block Blast", url:"blockblast.html", img:"https://camo.githubusercontent.com/fed5c30c2eaffc5f8ad4d5198cc3da233226d58502ac973784459ad42bd10af1/68747470733a2f2f626c6f636b626c6173742e6465762f66617669636f6e2e706e67"},
-  {name:"Bloons TD", url:"bloonstd.html", img:"https://play-lh.googleusercontent.com/4te8y2It_nyY4yX5jcSEFaTDro98302l9EnSbkJyCobGUo8GWxteV_8kJ8nlXyStxw"},
-  {name:"Clicker Hero", url:"clickerhero.html", img:"https://play-lh.googleusercontent.com/XqysWlDWj5nBr0zZMtB08Bt4pe3MsE8XXOAgqZYiD1s65phAUWUcLIBLxdiAkfjfIsM"},
-  {name:"Cluster Rush", url:"clusterrush.html", img:"https://clusterrushonline.github.io/img/cluster-rush.png"},
-  {name:"Cookie Clicker", url:"cookieclicker.html", img:"https://super142.wordpress.com/wp-content/uploads/2022/07/cookie-clicker.jpg?w=640"},
-  {name:"Crossyroad", url:"crossyroad.html", img:"https://downloadr2.apkmirror.com/wp-content/uploads/2025/06/65/683f96bad3438_com.yodo1.crossyroad.png"},
-  {name:"Cut the Rope", url:"cuttherope.html", img:"https://play-lh.googleusercontent.com/Yphk2XnpBkSPIlZcbcmeTULeIajjCU-8Iduzq8j7zyp9HPijyZaT5ZeqgbYkOoQKSljs"},
-  {name:"Death Run", url:"deathrun.html", img:"https://play-lh.googleusercontent.com/dEu4Lrs5Ke5ZHDMedRkjjtYq1G22gGccxeIU_ZJNqqwLeSYshuUxBU0KCrSG7lEEwBo"},
-  {name:"Drive Mad", url:"drivemad.html", img:"https://play-lh.googleusercontent.com/V_egAxch0phxs10H_Z1QpWRrsH4phd8egT_5ZjYlFbXzXvwpUGpmJMn2h6HgbGkSlZSM"},
-  {name:"Drift Boss", url:"driftboss.html", img:"https://m.media-amazon.com/images/I/71Rvyj1gI1L.png"},
-  {name:"Duck Life", url:"ducklife.html", img:"https://play-lh.googleusercontent.com/JQqSn7wuCj0SxBqpBThNI33qCR9gwY0str2TIAnu-m_xrVCgZk3IPxYK2S7zC9WG0ig"},
-  {name:"Five Night's at Freddy's", url:"fnaf.html", img:"https://dorukyum.github.io/FNAF-Web/static/media/freddy.a3eb8395.png"},
-  {name:"Football Bros.", url:"footballbros.html", img:"https://avatars.githubusercontent.com/u/231598366?v=4"},
-  {name:"Geometry Dash", url:"geometrydash.html", img:"https://assets-prd.ignimgs.com/2021/12/14/geometrydash-1639510868467.jpg"},
-  {name:"Get Away Shootout", url:"getawayshootout.html", img:"https://play-lh.googleusercontent.com/xbB3QLgeuMh5clpSpMLRAPJ80WV77jifWu1iz-quwQwN7kp5WCzvrLiM-Up6au20OTI"},
-  {name:"Granny", url:"granny.html", img:"https://play-lh.googleusercontent.com/yT_LBq_tyKeIDohKDsqN_Qt18jGIPUYIxY2C-1-E2YA9Qd60uZW08pua17qBmIiDPA=w240-h480-rw"},
-  {name:"Gladihoppers", url:"gladihopper.html", img:"https://play-lh.googleusercontent.com/HUuFbIPERNbpW2Q72WIqiJ8bKDzIgT_C4PnYvMBuH0wC3B_KvpKmumm1FXhZj3jmRHw"},
-  {name:"Gun Spin", url:"gunspin.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-6RoV0Octq6Jgqg901ASvwAEl0z-nfNjh7oCXp07wvuO7lYDN:https://rocketgames.imgix.net/uploads/games/g/gunspin/gunspin.890e48.jpg"},
-  {name:"Hole.io", url:"hole-io.html", img:"https://store-images.s-microsoft.com/image/apps.7301.14130340581880418.9c619941-0100-44a9-a3c9-a30a33f4dfb5.793ef2c0-4f01-4652-b472-79300b37dff7?q=90&w=177&h=177"},
-  {name:"Hextris", url:"hextris.html", img:"https://play-lh.googleusercontent.com/nCzeX0WCpn8iLxQV9TgrWr6Xt4JZPT0nExE7iSC48KacKxtx_7c4dAYrlMYgTM_HtHg"},
-  {name:"JavaScript Roulette", url:"js.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRXd_syOZzkOzOzQafFGjlmWIECngoa1ENB9_abpCoPbgVxVM2bo0NSyWmLVkCjtCwXEE&usqp=CAU"},
-  {name:"Little Alchemy 2", url:"la.html", img:"https://play-lh.googleusercontent.com/3Pr4gCB3uzsYyoFZZiDOuvq_7SeQPjUQnHiUrwug154RnTGJ_YAX5zvZfCH-4r2JKBOX"},
-  {name:"Learn to Fly", url:"learntofly.html", img:"https://play-lh.googleusercontent.com/WYyWLDBs2bj-KtDBhg7jSqW34nYzyoFTvtKaYBTt2J6SAA05dqEZGI8s1h2LQQV3BHc"},
-  {name:"MotoX3M", url:"motox3m.html", img:"https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=314,height=314,fit=cover,f=auto/2c6d5a46cdbceada277c870ce1c389ee/moto-x3m.jpg"},
-  {name:"Monkey Mart", url:"monkeymart.html", img:"https://play-lh.googleusercontent.com/rWReIdyvDaYJPeOxn7hbC0b-96ixGpQKM_EndiQa3SUME8TtI_rNUcI4qsw5teK9mqk"},
-  {name:"Minecraft", url:"minecraft-menu.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTex_wtjsXI9BHHjySiqI0OIkr0r-9ITLPYTA&s"},
-  {name:"OvO", url:"ovo.html", img:"https://play-lh.googleusercontent.com/v7KwGdPjJGjJjRXn46sck4DwDBdKSeRzGN44CjiXUtKV0jjOi51Bt4wcXud0m-SkXg"},
-  {name:"Pacman", url:"pacman.html", img:"https://rasterweb.net/raster/wp-content/uploads/2024/03/ghosts-02.jpg"},
-  {name:"Paper.io 2", url:"paper.io2.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4qJVLuHb4EH8h7QU5C4k_Jb44aHgcxgTNKg&s"},
-  {name:"Poly Track", url:"polytrack.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRepbLbXvGqJZA_eGUnd-U_nqXT0OxWAjavkZ8EWyNW_PA0eYo:https://cdn-1.webcatalog.io/catalog/poki-polytrack/poki-polytrack-icon-filled-256.png%3Fv%3D1727914012217&s"},
-  {name:"Ragdoll Archers", url:"ragdollarchers.html", img:"https://play-lh.googleusercontent.com/XMiWEMPbuq13oVcwYQ6ySLtZnBf7WpJ3rb7v-TM4MdFOvWfo1Z2hzSEAApRXzEcshjY"},
-  {name:"Ragdoll Hit", url:"ragdollhit.html", img:"https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=314,height=314,fit=cover,f=auto/3c892779be9dabb3589586c83ad3eeed/ragdoll-hit.png"},
-  {name:"Retro Bowl", url:"retrobowl.html", img:"https://drift-hunters.co/upload/imgs/retrobowl.jpg"},
-  {name:"Retro Bowl College", url:"retrobowlcollege.html", img:"https://play-lh.googleusercontent.com/-BT8C-1UPYWouyjVvWYgaar_-xV4IQvX4Bvib3koGEGiy6UsHlt0RgYpUrdTDfC2y0ct"},
-  {name:"Subway Surfers", url:"subwaysurfers.html", img:"https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=1200,height=1200,fit=cover,f=png/919c9f04db0404cf69fddf9c01e31d91/subway-surfers.png"},
-  {name:"Slope", url:"slope.html", img:"https://play-lh.googleusercontent.com/uJn2i9h7KxYQarC_c3K4qH6o7gLtflFnhD_dN14MNkzHJ1NeNFzCL69jpB5mT0vCoQs"},
-  {name:"Stick Man Hook", url:"stickmanhook.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKclUg-7v0l4KeCYELMzTrsaHvwJ1uubNfkw&s"},
-  {name:"Snow Rider 3D", url:"snowrider3d.html", img:"https://childrenwithhairloss.org/wp-content/uploads/2025/03/snow-rider-3d-200x199.png"},
-  {name:"SUPERHOT", url:"superhot.html", img:"https://yt3.googleusercontent.com/ytc/AIdro_lUAU1wbH8KiPz-Q2ppjtFEn_sGvxBE2sySkHo1ELm4PQ=s900-c-k-c0x00ffffff-no-rj"},
-  {name:"We Become What We Behold", url:"wbwwb.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTv-7UyhFch4BXsiaZCOvfmRacKqIX-pDIGvw&s"},
-  {name:"Whack Your Boss", url:"whackyourboss.html", img:"https://e.snmc.io/lk/lv/x/123e965239a426aa18c9348609293ced/11817567"},
-  {name:"Wheelie Bike", url:"wheeliebike.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRc8giRTerjerQtYjy5u3crHHI5XFm9GYG1WA&s"},
-  {name:"Yohoho.io", url:"yohoho-io.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQubF63Qipw_s45n_3fqCpncogxSjPzVTK0nw&s"}
+// ------------------ BASIC FUNCTIONS ------------------
+// Random text
+const texts = [
+  "gotta glock in my 'rari","m&m's, sweet like candy cane","pst. i see dead people",
+  "not afraid to take a stand","ay, mustard on the beat, h0",
+  "teacher panic key is q, do 'ctrl+d' to bookmark",
 ];
+document.getElementById('randomText').textContent = texts[Math.floor(Math.random() * texts.length)];
 
-// LocalStorage helpers
-function getFavorites(){ return JSON.parse(localStorage.getItem('favorites')||'[]'); }
-function setFavorites(favs){ localStorage.setItem('favorites', JSON.stringify(favs)); }
-function getRecents(){ return JSON.parse(localStorage.getItem('recents')||'[]'); }
-function setRecents(rec){ localStorage.setItem('recents', JSON.stringify(rec)); }
+document.getElementById('siteTitle').textContent = " ";
+document.title = localStorage.getItem('siteTitle') || "Canvas";
 
-// Generate game card
-function createGameCard(g){
-  const card = document.createElement('div'); card.className='game-card';
-  card.innerHTML = `<a href="${g.url}"><img src="${g.img}" alt="${g.name}"><div class="game-overlay"><div class="name">${g.name}</div><div class="star">☆</div></div></a>`;
-  // Favorite toggle
-  const star = card.querySelector('.star');
-  function updateStar(){ star.textContent = getFavorites().includes(g.name) ? '★' : '☆'; }
-  updateStar();
-  star.addEventListener('click', e=>{
-    e.preventDefault(); e.stopPropagation();
-    let favs = getFavorites();
-    if(favs.includes(g.name)){ favs = favs.filter(x=>x!==g.name); } else { favs.push(g.name); }
-    setFavorites(favs); updateStar(); renderFavorites();
-  });
-  // Click game adds to recents
-  const link = card.querySelector('a');
-  link.addEventListener('click', ()=>{
-    let rec = getRecents().filter(x=>x!==g.name);
-    rec.unshift(g.name); if(rec.length>20) rec.pop();
-    setRecents(rec); renderRecents();
-  });
-  return card;
-}
+if (window.location.pathname.endsWith("menu.html")) document.getElementById("menuBtn").classList.add("active");
 
-// Generate main game grid
-const gameGrid = document.getElementById('gameGrid');
-games.forEach(g=> gameGrid.appendChild(createGameCard(g)));
-
-// Render functions
-const recentGamesDiv = document.getElementById('recentGames');
-const favoriteGamesDiv = document.getElementById('favoriteGames');
-
-function renderRecents(){
-  recentGamesDiv.innerHTML='';
-  getRecents().forEach(name=>{
-    const g = games.find(x=>x.name===name); if(!g) return;
-    recentGamesDiv.appendChild(createGameCard(g));
-  });
-}
-function renderFavorites(){
-  favoriteGamesDiv.innerHTML='';
-  getFavorites().forEach(name=>{
-    const g = games.find(x=>x.name===name); if(!g) return;
-    favoriteGamesDiv.appendChild(createGameCard(g));
-  });
-}
-
-// Simple search
-const searchInput = document.getElementById('searchInput');
-const searchResults = document.getElementById('searchResults');
-searchInput.addEventListener('input',()=>{
-  const query = searchInput.value.toLowerCase();
-  searchResults.innerHTML='';
-  games.filter(g=>g.name.toLowerCase().includes(query)).forEach(g=>{
-    searchResults.appendChild(createGameCard(g));
-  });
+// CUSTOM CURSOR
+const cursor = document.getElementById("cursor");
+document.addEventListener("mousemove", e => {
+  cursor.style.left = e.clientX + "px";
+  cursor.style.top = e.clientY + "px";
 });
 
-// Initial render
-renderRecents();
-renderFavorites();
+// TIME
+function updateTime() { document.getElementById("dateTime").textContent = new Date().toLocaleString(); }
+setInterval(updateTime, 1000); updateTime();
+
+// LIGHT MODE TOGGLE
+document.getElementById("modeToggle").onclick = () => document.body.classList.toggle("light-mode");
+
+// SETTINGS MODAL
+const settingsBtn = document.getElementById('settingsBtn');
+const settingsModal = document.getElementById('settingsModal');
+const titleInput = document.getElementById('titleInput');
+const saveTitleBtn = document.getElementById('saveTitleBtn');
+const saveCheck = document.getElementById('saveCheck');
+
+settingsBtn.addEventListener('click', () => {
+  titleInput.value = document.title;
+  settingsModal.classList.add('show');
+});
+saveTitleBtn.addEventListener('click', () => {
+  localStorage.setItem('siteTitle', titleInput.value);
+  document.title = titleInput.value || "Canvas";
+  saveCheck.classList.add('show');
+  setTimeout(()=>saveCheck.classList.remove('show'),1500);
+  settingsModal.classList.remove('show');
+});
+document.addEventListener('keydown', e => {
+  if (e.key === "Escape" && settingsModal.classList.contains('show')) settingsModal.classList.remove('show');
+  if (e.key==="q") window.location.href="https://canvas.nebo.edu/";
+});
+
+// YOUTUBE MUSIC PLAYER
+var tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api"; document.body.appendChild(tag);
+var musicPlayer, musicIsPlaying = false;
+function onYouTubeIframeAPIReady() {
+  musicPlayer = new YT.Player('musicPlayer', {height:'0',width:'0',videoId:'Jr55EzQeHf4',playerVars:{'autoplay':0,'controls':0,'loop':1,'playlist':'Jr55EzQeHf4'},events:{'onReady': function() {
+    document.getElementById('musicToggleBtn').addEventListener('click', function() {
+      if (!musicIsPlaying) { musicPlayer.playVideo(); this.classList.add("active"); musicIsPlaying = true; } 
+      else { musicPlayer.pauseVideo(); this.classList.remove("active"); musicIsPlaying = false; }
+    });
+  }}});
+}
+
+// PARTICLES INIT
+particlesJS.load('particles-js','https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
+
+// BACKGROUND TOGGLE WITH 3 OPTIONS AND LOCAL STORAGE
+const bgToggleBtn = document.getElementById('bgToggleBtn');
+const particlesDiv = document.getElementById('particles-js');
+
+// Define your backgrounds in order
+const backgrounds = ["particles", "images/background/bg1.jpg", "images/background/bg2.jpg"];
+
+// Load saved background or default to particles
+let currentBg = localStorage.getItem('currentBg') || "particles";
+setBackground(currentBg);
+
+// Helper function to apply background
+function setBackground(bg) {
+  if (bg === "particles") {
+    particlesDiv.style.background = "#121212";
+    if (window.pJSDom && window.pJSDom.length) {
+      window.pJSDom[0].pJS.fn.vendors.destroypJS();
+      window.pJSDom = [];
+    }
+    particlesJS.load('particles-js','https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json');
+  } else {
+    if (window.pJSDom && window.pJSDom.length) {
+      window.pJSDom[0].pJS.fn.vendors.destroypJS();
+      window.pJSDom = [];
+    }
+    particlesDiv.style.background = `url('${bg}') center/cover no-repeat`;
+    particlesDiv.innerHTML = "";
+  }
+  localStorage.setItem('currentBg', bg);
+}
+
+// Button click cycles through backgrounds
+bgToggleBtn.addEventListener('click', () => {
+  let currentIndex = backgrounds.indexOf(currentBg);
+  currentIndex = (currentIndex + 1) % backgrounds.length;
+  currentBg = backgrounds[currentIndex];
+  setBackground(currentBg);
+});
+
+
+// ------------------ FAVORITES & RECENTS ------------------
+const stars = document.querySelectorAll('.star');
+const favBtn = document.getElementById('favBtn');
+const recentsBtn = document.getElementById('recentsBtn');
+const gamesList = document.getElementById('gamesList');
+
+let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+let recents = JSON.parse(localStorage.getItem('recents')) || [];
+
+stars.forEach(star => {
+  const gameName = star.previousElementSibling.querySelector('span').textContent;
+  if (favorites.includes(gameName)) star.classList.add('favorited');
+
+  star.addEventListener('click', e => {
+    e.stopPropagation();
+    if (star.classList.contains('favorited')) {
+      star.classList.remove('favorited');
+      favorites = favorites.filter(f => f !== gameName);
+    } else {
+      star.classList.add('favorited');
+      favorites.push(gameName);
+    }
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+  });
+
+  star.previousElementSibling.addEventListener('click', () => {
+    recents = recents.filter(r => r !== gameName);
+    recents.unshift(gameName);
+    if (recents.length > 20) recents.pop();
+    localStorage.setItem('recents', JSON.stringify(recents));
+  });
+});
+
+favBtn.addEventListener('click', () => {
+  const showingFavs = favBtn.classList.toggle('active');
+  Array.from(gamesList.children).forEach(li => {
+    const name = li.querySelector('span').textContent;
+    li.style.display = showingFavs ? (favorites.includes(name) ? 'flex' : 'none') : 'flex';
+  });
+  recentsBtn.classList.remove('active');
+});
+
+recentsBtn.addEventListener('click', () => {
+  const showingRecents = recentsBtn.classList.toggle('active');
+  Array.from(gamesList.children).forEach(li => {
+    const name = li.querySelector('span').textContent;
+    li.style.display = showingRecents ? (recents.includes(name) ? 'flex' : 'none') : 'flex';
+  });
+  favBtn.classList.remove('active');
+});
+  // ------------------ GAME SEARCH ------------------
+const searchInput = document.getElementById('searchInput');
+const gameListItems = gamesList.querySelectorAll('li'); // Get all <li> elements once
+
+searchInput.addEventListener('keyup', (e) => {
+    // Get the current search term and convert it to lower case for case-insensitive search
+    const searchTerm = e.target.value.toLowerCase();
+
+    // Iterate over each game list item
+    gameListItems.forEach(li => {
+        // Get the game name from the <span> tag inside the <a> tag
+        const gameName = li.querySelector('span').textContent.toLowerCase();
+
+        // Check if the game name includes the search term
+        if (gameName.includes(searchTerm)) {
+            // If it matches, show the list item
+            li.style.display = 'flex'; 
+        } else {
+            // If it doesn't match, hide the list item
+            li.style.display = 'none';
+        }
+    });
+
+    // When searching, make sure the Favorites and Recents filters are off
+    if (searchTerm.length > 0) {
+        favBtn.classList.remove('active');
+        recentsBtn.classList.remove('active');
+    }
+});
 </script>
 </body>
 </html>
