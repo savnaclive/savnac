@@ -3,43 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Savnac Chat</title>
-<link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
+<title>Canvas</title>
+<link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --primary: #1976d2;
-  --primary-dark: #115293;
-  --bg: #181b20;
-  --bg-card: #23272e;
-  --bg-input: #22262c;
-  --border: #32363d;
-  --text: #f8f8ff;
-  --muted: #b0b8c1;
-  --radius: 13px;
-  --shadow: 0 8px 24px 0 rgba(20,24,31,0.20);
-  --badword-color: #ff4d4d;
-  --danger: #e53935;
-  --danger-dark: #b71c1c;
+  /* New Colors */
+  --primary: #4CAF50; /* Green */
+  --primary-dark: #388E3C; /* Darker Green */
+  --bg: #f5f7fa; /* Light Background */
+  --bg-card: #ffffff; /* White Card Background */
+  --bg-input: #e8e8e8; /* Light Input */
+  --border: #dddddd; /* Light Border */
+  --text: #333333; /* Dark Text */
+  --muted: #757575; /* Gray Muted Text */
+  --radius: 10px;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --danger: #FF5252;
+  --danger-dark: #D32F2F;
 }
-html, body {height:100%;margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'Inter',Arial,sans-serif;}
+html, body {height:100%;margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'Poppins', Arial, sans-serif;}
 body {display:flex;flex-direction:column;align-items:center;min-height:100vh;}
-h1 {margin:35px 0 15px 0;font-weight:600;letter-spacing:2px;font-size:2.3rem;color:var(--primary);}
-.container {display:flex;gap:32px;flex-wrap:wrap;justify-content:center;width:100%;max-width:950px;margin-bottom:30px;}
-.form-container, .list-container {background:var(--bg-card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);padding:26px;min-width:325px;flex:1 1 325px;}
-.form-container input, .form-container textarea {background:var(--bg-input);color:var(--text);border:1px solid var(--border);border-radius:7px;font-size:1rem;margin-bottom:13px;padding:11px 14px;width:100%;}
-.button-row {display:flex;gap:12px;margin-bottom:12px;}
-.button-row button {flex:1;padding:10px;border-radius:7px;font-weight:600;border:none;cursor:pointer;transition:all 0.2s;}
-#privateBtn {background:linear-gradient(90deg,#8e24aa,#6a1b9a);color:#fff;}
-#sendBtn {background:linear-gradient(90deg,var(--primary),var(--primary-dark));color:#fff;}
+h1 {margin:30px 0 20px 0;font-weight:600;letter-spacing:1px;font-size:2rem;color:var(--primary-dark);}
+.container {display:flex;gap:24px;flex-wrap:wrap;justify-content:center;width:100%;max-width:1000px;margin-bottom:30px;padding: 0 20px;}
+.form-container, .list-container {background:var(--bg-card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);padding:24px;min-width:300px;flex:1 1 350px;}
+.form-container input, .form-container textarea {background:var(--bg-input);color:var(--text);border:1px solid var(--border);border-radius:5px;font-size:1rem;margin-bottom:12px;padding:12px 15px;width:100%;box-sizing: border-box;}
+.form-container textarea {resize: vertical; min-height: 100px;}
+.button-row {display:flex;gap:10px;margin-top:10px;}
+.button-row button {flex:1;padding:12px;border-radius:5px;font-weight:600;border:none;cursor:pointer;transition:background-color 0.2s;}
+#privateBtn {background:var(--primary);color:#fff;}
+#privateBtn:hover {background:var(--primary-dark);}
+#sendBtn {background:var(--primary-dark);color:#fff;}
+#sendBtn:hover {background:#2e7d32;}
 #homeBtn {background:var(--bg-input);color:var(--muted);border:1px solid var(--border);}
-#deleteAllBtn {background:linear-gradient(90deg,var(--danger),var(--danger-dark));color:#fff;}
-.list-container {display:flex;flex-direction:column;height:480px;overflow-y:auto;overflow-x:hidden;padding:0;}
-.list-container h2 {margin:0;font-size:1.2rem;background:var(--primary);color:#fff;padding:15px 0;text-align:center;font-weight:600;letter-spacing:1px;border-radius:var(--radius) var(--radius) 0 0;}
+#homeBtn:hover {background:#dcdcdc;}
+#deleteAllBtn {background:var(--danger);color:#fff;}
+#deleteAllBtn:hover {background:var(--danger-dark);}
+.list-container {display:flex;flex-direction:column;height:450px;overflow-y:auto;overflow-x:hidden;padding:0;}
+.list-container h2 {margin:0;font-size:1.1rem;background:var(--primary);color:#fff;padding:15px 0;text-align:center;font-weight:600;letter-spacing:0.5px;border-radius:var(--radius) var(--radius) 0 0;}
 #feedbackList {flex:1 1 auto;margin:0;padding:0;list-style:none;}
-.list-container li {border-bottom:1px solid var(--border);padding:13px 18px;font-size:1.06rem;width:100%;word-wrap:break-word;overflow-wrap:anywhere;white-space:normal;}
+.list-container li {border-bottom:1px solid var(--border);padding:15px 20px;font-size:1rem;width:100%;word-wrap:break-word;overflow-wrap:anywhere;white-space:normal;}
 .list-container li:last-child {border-bottom:none;}
-.list-container li .name {color:var(--primary);font-weight:600;margin-right:7px;}
-.badword {color: var(--badword-color); font-weight: 600;}
+.list-container li .name {color:var(--primary-dark);font-weight:600;margin-right:8px;}
 </style>
 </head>
 <body>
@@ -51,6 +55,8 @@ h1 {margin:35px 0 15px 0;font-weight:600;letter-spacing:2px;font-size:2.3rem;col
     <div class="button-row">
       <button id="privateBtn">Private Chat</button>
       <button id="sendBtn">Send Message</button>
+    </div>
+    <div class="button-row">
       <button id="homeBtn">Home</button>
       <button id="deleteAllBtn">Delete All</button>
     </div>
@@ -76,12 +82,11 @@ const chatTitle = document.getElementById('chatTitle')
 const deleteAllBtn = document.getElementById('deleteAllBtn')
 
 let privateRoom = false
-// The list of bad words is still defined but is no longer actively used
-const badWords = ['nigga','nigger','dick','shit','ass','cum','fuck','penis','vagina','bitch','slut','whore','niger','niga','ho','cumming','sh!t','sh1t','f*ck','@ss','@$$','a$$','n!gger','n1gger','d!ck','balls','sex','sexy',]
+const badWords = [] // List is empty, but the function remains for compatibility.
 
 function normalize(text){ return text.toLowerCase().replace(/[^a-z0-9]/g,'') }
 
-// MODIFIED: This function now simply returns the original text, disabling the **** masking.
+// Filter disabled: returns original text
 function maskBadWords(text){
   return text
 }
@@ -93,7 +98,6 @@ async function loadFeedback(){
   if(error){ console.error(error); return }
   feedbackList.innerHTML = ''
   data.forEach(f=>{
-    // maskBadWords is still called but now returns the original text
     const li = document.createElement('li')
     li.innerHTML = `<span class="name">${maskBadWords(f.name)}:</span> <span>${maskBadWords(f.feedback)}</span>`
     feedbackList.appendChild(li)
@@ -104,9 +108,6 @@ sendBtn.addEventListener('click', async ()=>{
   const name = document.getElementById('name').value.trim()
   const feedback = document.getElementById('feedback').value.trim()
   if(!name || !feedback){ alert("Fill both fields!"); return }
-
-  // REMOVED: The block that checked for bad words and showed the alert is gone.
-  // All messages will now pass through without the "avoid using offensive words!" warning.
 
   const { error } = await supabase.from('feedback').insert([{ name, feedback, private: privateRoom }])
   if(error){ alert("Error sending message: "+error.message); return }
