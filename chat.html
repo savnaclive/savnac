@@ -7,19 +7,19 @@
 <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --primary: #1976d2;
-  --primary-dark: #115293;
-  --bg: #181b20;
-  --bg-card: #23272e;
-  --bg-input: #22262c;
-  --border: #32363d;
-  --text: #f8f8ff;
-  --muted: #b0b8c1;
-  --radius: 13px;
-  --shadow: 0 8px 24px 0 rgba(20,24,31,0.20);
-  --badword-color: #ff4d4d;
-  --danger: #e53935;
-  --danger-dark: #b71c1c;
+  --primary: #1976d2;
+  --primary-dark: #115293;
+  --bg: #181b20;
+  --bg-card: #23272e;
+  --bg-input: #22262c;
+  --border: #32363d;
+  --text: #f8f8ff;
+  --muted: #b0b8c1;
+  --radius: 13px;
+  --shadow: 0 8px 24px 0 rgba(20,24,31,0.20);
+  --badword-color: #ff4d4d;
+  --danger: #e53935;
+  --danger-dark: #b71c1c;
 }
 html, body {height:100%;margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'Inter',Arial,sans-serif;}
 body {display:flex;flex-direction:column;align-items:center;min-height:100vh;}
@@ -45,28 +45,28 @@ h1 {margin:35px 0 15px 0;font-weight:600;letter-spacing:2px;font-size:2.3rem;col
 <body>
 <h1>Savnac Chat</h1>
 <div class="container">
-  <div class="form-container">
-    <input type="text" id="name" placeholder="Your Name" maxlength="30" autocomplete="off">
-    <textarea id="feedback" placeholder="Your Message" maxlength="200"></textarea>
-    <div class="button-row">
-      <button id="privateBtn">Private Chat</button>
-      <button id="sendBtn">Send Message</button>
-      <button id="homeBtn">Home</button>
-      <button id="deleteAllBtn">Delete All</button>
-    </div>
-  </div>
-  <div class="list-container">
-    <h2 id="chatTitle">Public Chat</h2>
-    <ul id="feedbackList"></ul>
-  </div>
+  <div class="form-container">
+    <input type="text" id="name" placeholder="Your Name" maxlength="30" autocomplete="off">
+    <textarea id="feedback" placeholder="Your Message" maxlength="200"></textarea>
+    <div class="button-row">
+      <button id="privateBtn">Private Chat</button>
+      <button id="sendBtn">Send Message</button>
+      <button id="homeBtn">Home</button>
+      <button id="deleteAllBtn">Delete All</button>
+    </div>
+  </div>
+  <div class="list-container">
+    <h2 id="chatTitle">Public Chat</h2>
+    <ul id="feedbackList"></ul>
+  </div>
 </div>
 
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
 const supabase = createClient(
-  "https://lbsnsckhikjtzgjmspau.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxic25zY2toaWtqdHpnam1zcGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkxODEwODYsImV4cCI6MjA3NDc1NzA4Nn0.c5upCzkqfGgzMcCg34OABo0CRJotYfB9I5IHdzXDJic"
+  "https://lbsnsckhikjtzgjmspau.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxic25zY2toaWtqdHpnam1zcGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkxODEwODYsImV4cCI6MjA3NDc1NzA4Nn0.c5upCzkqfGgzMcCg34OABo0CRJotYfB9I5IHdzXDJic"
 )
 
 const sendBtn = document.getElementById('sendBtn')
@@ -76,69 +76,70 @@ const chatTitle = document.getElementById('chatTitle')
 const deleteAllBtn = document.getElementById('deleteAllBtn')
 
 let privateRoom = false
-const badWords = ['nigga','nigger','dick','shit','ass','cum','fuck','penis','vagina','bitch','slut','whore','niger','niga','ho','cumming','sh!t','sh1t','f*ck','@ss','@$$','a$$','n!gger','n1gger','d!ck','balls','sex','sexy']
+// The list of bad words is still defined but is no longer actively used
+const badWords = ['nigga','nigger','dick','shit','ass','cum','fuck','penis','vagina','bitch','slut','whore','niger','niga','ho','cumming','sh!t','sh1t','f*ck','@ss','@$$','a$$','n!gger','n1gger','d!ck','balls','sex','sexy',]
 
 function normalize(text){ return text.toLowerCase().replace(/[^a-z0-9]/g,'') }
+
+// MODIFIED: This function now simply returns the original text, disabling the **** masking.
 function maskBadWords(text){
-  return text.split(/\b/).map(word=>{
-    return badWords.some(b=>normalize(word).includes(normalize(b))) ? '<span class="badword">****</span>' : word
-  }).join('')
+  return text
 }
 
 async function loadFeedback(){
-  let query = supabase.from('feedback').select('*').order('created_at',{ascending:false})
-  query = privateRoom ? query.eq('private',true) : query.eq('private',false)
-  const { data, error } = await query
-  if(error){ console.error(error); return }
-  feedbackList.innerHTML = ''
-  data.forEach(f=>{
-    const li = document.createElement('li')
-    li.innerHTML = `<span class="name">${maskBadWords(f.name)}:</span> <span>${maskBadWords(f.feedback)}</span>`
-    feedbackList.appendChild(li)
-  })
+  let query = supabase.from('feedback').select('*').order('created_at',{ascending:false})
+  query = privateRoom ? query.eq('private',true) : query.eq('private',false)
+  const { data, error } = await query
+  if(error){ console.error(error); return }
+  feedbackList.innerHTML = ''
+  data.forEach(f=>{
+    // maskBadWords is still called but now returns the original text
+    const li = document.createElement('li')
+    li.innerHTML = `<span class="name">${maskBadWords(f.name)}:</span> <span>${maskBadWords(f.feedback)}</span>`
+    feedbackList.appendChild(li)
+  })
 }
 
 sendBtn.addEventListener('click', async ()=>{
-  const name = document.getElementById('name').value.trim()
-  const feedback = document.getElementById('feedback').value.trim()
-  if(!name || !feedback){ alert("Fill both fields!"); return }
+  const name = document.getElementById('name').value.trim()
+  const feedback = document.getElementById('feedback').value.trim()
+  if(!name || !feedback){ alert("Fill both fields!"); return }
 
-  if(badWords.some(b=>normalize(name).includes(normalize(b))) || badWords.some(b=>normalize(feedback).includes(normalize(b)))){
-    alert("Please avoid using offensive words!"); return
-  }
+  // REMOVED: The block that checked for bad words and showed the alert is gone.
+  // All messages will now pass through without the "avoid using offensive words!" warning.
 
-  const { error } = await supabase.from('feedback').insert([{ name, feedback, private: privateRoom }])
-  if(error){ alert("Error sending message: "+error.message); return }
+  const { error } = await supabase.from('feedback').insert([{ name, feedback, private: privateRoom }])
+  if(error){ alert("Error sending message: "+error.message); return }
 
-  document.getElementById('feedback').value = ''
-  loadFeedback()
+  document.getElementById('feedback').value = ''
+  loadFeedback()
 })
 
 privateBtn.addEventListener('click', ()=>{
-  if(privateRoom){
-    privateRoom = false
-    chatTitle.textContent = "Public Chat"
-    privateBtn.textContent = "Private Chat"
-    loadFeedback()
-    return
-  }
-  const code = prompt("Enter private chat code:")
-  if(code === "savnaclive"){
-    privateRoom = true
-    chatTitle.textContent = "Private Chat"
-    privateBtn.textContent = "Public Chat"
-    loadFeedback()
-  } else {
-    alert("Incorrect code!")
-  }
+  if(privateRoom){
+    privateRoom = false
+    chatTitle.textContent = "Public Chat"
+    privateBtn.textContent = "Private Chat"
+    loadFeedback()
+    return
+  }
+  const code = prompt("Enter private chat code:")
+  if(code === "savnaclive"){
+    privateRoom = true
+    chatTitle.textContent = "Private Chat"
+    privateBtn.textContent = "Public Chat"
+    loadFeedback()
+  } else {
+    alert("Incorrect code!")
+  }
 })
 
 deleteAllBtn.addEventListener('click', async ()=>{
-  const pin = prompt("Enter PIN to delete all messages:")
-  if(pin !== "savnacsigma"){ alert("Incorrect PIN!"); return }
-  if(!confirm("Are you sure you want to delete all messages?")) return
-  await supabase.from('feedback').delete().neq('id',0)
-  loadFeedback()
+  const pin = prompt("Enter PIN to delete all messages:")
+  if(pin !== "savnacsigma"){ alert("Incorrect PIN!"); return }
+  if(!confirm("Are you sure you want to delete all messages?")) return
+  await supabase.from('feedback').delete().neq('id',0)
+  loadFeedback()
 })
 
 document.getElementById('homeBtn').addEventListener('click',()=>window.location.href="index.html")
