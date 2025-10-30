@@ -3,11 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Canvas</title>
-<link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet">
+<title>Savnac Chat - Modern</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
 <style>
+/* --- Public Chat (Default) Theme --- */
 :root {
-  /* New Colors */
   --primary: #4CAF50; /* Green */
   --primary-dark: #388E3C; /* Darker Green */
   --bg: #f5f7fa; /* Light Background */
@@ -15,40 +19,82 @@
   --bg-input: #e8e8e8; /* Light Input */
   --border: #dddddd; /* Light Border */
   --text: #333333; /* Dark Text */
-  --muted: #757575; /* Gray Muted Text */
+  --muted: #757575;
   --radius: 10px;
   --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   --danger: #FF5252;
   --danger-dark: #D32F2F;
 }
-html, body {height:100%;margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'Poppins', Arial, sans-serif;}
+
+/* --- Private Chat Theme Overrides --- */
+.private-theme {
+  --primary: #9C27B0; /* Purple */
+  --primary-dark: #7B1FA2; /* Darker Purple */
+  --bg-card: #f0f0ff; /* Very Light Lavender */
+  --bg-input: #e0e0f0; /* Soft Blue Input */
+  --border: #c4c4e0; /* Soft Border */
+}
+
+/* --- Global Styles --- */
+html, body {height:100%;margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'Poppins', Arial, sans-serif; transition: background-color 0.3s;}
 body {display:flex;flex-direction:column;align-items:center;min-height:100vh;}
-h1 {margin:30px 0 20px 0;font-weight:600;letter-spacing:1px;font-size:2rem;color:var(--primary-dark);}
+h1 {margin:30px 0 20px 0;font-weight:600;letter-spacing:1px;font-size:2rem;color:var(--primary-dark); transition: color 0.3s;}
 .container {display:flex;gap:24px;flex-wrap:wrap;justify-content:center;width:100%;max-width:1000px;margin-bottom:30px;padding: 0 20px;}
-.form-container, .list-container {background:var(--bg-card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);padding:24px;min-width:300px;flex:1 1 350px;}
-.form-container input, .form-container textarea {background:var(--bg-input);color:var(--text);border:1px solid var(--border);border-radius:5px;font-size:1rem;margin-bottom:12px;padding:12px 15px;width:100%;box-sizing: border-box;}
+.form-container, .list-container {
+  background:var(--bg-card);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  border:1px solid var(--border);
+  padding:24px;
+  min-width:300px;
+  flex:1 1 350px;
+  transition: all 0.3s; /* Smooth transition for color change */
+}
+.form-container input, .form-container textarea {
+  background:var(--bg-input);
+  color:var(--text);
+  border:1px solid var(--border);
+  border-radius:5px;
+  font-size:1rem;
+  margin-bottom:12px;
+  padding:12px 15px;
+  width:100%;
+  box-sizing: border-box;
+  transition: all 0.3s;
+}
 .form-container textarea {resize: vertical; min-height: 100px;}
 .button-row {display:flex;gap:10px;margin-top:10px;}
 .button-row button {flex:1;padding:12px;border-radius:5px;font-weight:600;border:none;cursor:pointer;transition:background-color 0.2s;}
 #privateBtn {background:var(--primary);color:#fff;}
 #privateBtn:hover {background:var(--primary-dark);}
-#sendBtn {background:var(--primary-dark);color:#fff;}
-#sendBtn:hover {background:#2e7d32;}
-#homeBtn {background:var(--bg-input);color:var(--muted);border:1px solid var(--border);}
+#sendBtn {background:var(--primary-dark);color:#fff; transition: background-color 0.3s;}
+#sendBtn:hover {background:var(--primary);}
+#homeBtn {background:var(--bg-input);color:var(--muted);border:1px solid var(--border); transition: all 0.3s;}
 #homeBtn:hover {background:#dcdcdc;}
 #deleteAllBtn {background:var(--danger);color:#fff;}
 #deleteAllBtn:hover {background:var(--danger-dark);}
 .list-container {display:flex;flex-direction:column;height:450px;overflow-y:auto;overflow-x:hidden;padding:0;}
-.list-container h2 {margin:0;font-size:1.1rem;background:var(--primary);color:#fff;padding:15px 0;text-align:center;font-weight:600;letter-spacing:0.5px;border-radius:var(--radius) var(--radius) 0 0;}
+.list-container h2 {
+  margin:0;
+  font-size:1.1rem;
+  background:var(--primary);
+  color:#fff;
+  padding:15px 0;
+  text-align:center;
+  font-weight:600;
+  letter-spacing:0.5px;
+  border-radius:var(--radius) var(--radius) 0 0;
+  transition: background-color 0.3s;
+}
 #feedbackList {flex:1 1 auto;margin:0;padding:0;list-style:none;}
-.list-container li {border-bottom:1px solid var(--border);padding:15px 20px;font-size:1rem;width:100%;word-wrap:break-word;overflow-wrap:anywhere;white-space:normal;}
+.list-container li {border-bottom:1px solid var(--border);padding:15px 20px;font-size:1rem;width:100%;word-wrap:break-word;overflow-wrap:anywhere;white-space:normal; transition: border-color 0.3s;}
 .list-container li:last-child {border-bottom:none;}
-.list-container li .name {color:var(--primary-dark);font-weight:600;margin-right:8px;}
+.list-container li .name {color:var(--primary-dark);font-weight:600;margin-right:8px; transition: color 0.3s;}
 </style>
 </head>
-<body>
+<body id="chatBody">
 <h1>Savnac Chat</h1>
-<div class="container">
+<div class="container" id="chatContainer">
   <div class="form-container">
     <input type="text" id="name" placeholder="Your Name" maxlength="30" autocomplete="off">
     <textarea id="feedback" placeholder="Your Message" maxlength="200"></textarea>
@@ -80,13 +126,14 @@ const feedbackList = document.getElementById('feedbackList')
 const privateBtn = document.getElementById('privateBtn')
 const chatTitle = document.getElementById('chatTitle')
 const deleteAllBtn = document.getElementById('deleteAllBtn')
+const chatBody = document.getElementById('chatBody') // Added element ID
+const chatContainer = document.getElementById('chatContainer') // Added element ID
 
 let privateRoom = false
-const badWords = [] // List is empty, but the function remains for compatibility.
+const badWords = [] 
 
 function normalize(text){ return text.toLowerCase().replace(/[^a-z0-9]/g,'') }
 
-// Filter disabled: returns original text
 function maskBadWords(text){
   return text
 }
@@ -103,6 +150,20 @@ async function loadFeedback(){
     feedbackList.appendChild(li)
   })
 }
+
+// Function to update the theme based on the chat mode
+function updateTheme(){
+  if (privateRoom) {
+    chatContainer.classList.add('private-theme')
+    chatBody.style.setProperty('--bg', '#e8e8f8'); // Change background color for private mode
+    chatBody.style.setProperty('--text', '#222233'); 
+  } else {
+    chatContainer.classList.remove('private-theme')
+    chatBody.style.setProperty('--bg', '#f5f7fa'); // Revert background color for public mode
+    chatBody.style.setProperty('--text', '#333333'); 
+  }
+}
+
 
 sendBtn.addEventListener('click', async ()=>{
   const name = document.getElementById('name').value.trim()
@@ -121,6 +182,7 @@ privateBtn.addEventListener('click', ()=>{
     privateRoom = false
     chatTitle.textContent = "Public Chat"
     privateBtn.textContent = "Private Chat"
+    updateTheme() // Update theme when switching back to public
     loadFeedback()
     return
   }
@@ -129,6 +191,7 @@ privateBtn.addEventListener('click', ()=>{
     privateRoom = true
     chatTitle.textContent = "Private Chat"
     privateBtn.textContent = "Public Chat"
+    updateTheme() // Update theme when switching to private
     loadFeedback()
   } else {
     alert("Incorrect code!")
@@ -145,7 +208,9 @@ deleteAllBtn.addEventListener('click', async ()=>{
 
 document.getElementById('homeBtn').addEventListener('click',()=>window.location.href="index.html")
 
+// Initial load and theme setup
 loadFeedback()
+updateTheme()
 setInterval(loadFeedback,10000)
 </script>
 </body>
