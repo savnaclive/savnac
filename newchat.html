@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Chat Room</title>
+    <!-- Load Tailwind CSS from CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font -->
+    <style>
+        :root {
+            --private-bg: #290d30;
+            --private-primary: #a855f7;
+            --public-bg: #111827;
+            --public-primary: #10b981;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--public-bg);
+            transition: background-color 0.4s ease;
+        }
+        /* Custom variable overrides for dynamic theme changes */
+        .private-mode {
+            background-color: var(--private-bg);
+        }
+    </style>
+</head>
+<body id="chatBody" class="min-h-screen flex flex-col items-center p-4 transition-colors">
+
+    <h1 id="titleText" class="text-4xl font-extrabold mb-8 mt-6 tracking-wide text-public-primary transition-colors">Public Chat</h1>
+
+    <div class="w-full max-w-4xl flex flex-col lg:flex-row gap-6">
+
+        <!-- Message List Container -->
+        <div class="flex-1 bg-gray-800 rounded-xl shadow-2xl overflow-hidden flex flex-col h-[500px] border border-gray-700">
+            <div id="chatTitleContainer" class="p-4 text-white font-semibold text-lg bg-public-primary transition-colors">
+                <h2 class="text-white">Messages</h2>
+            </div>
+            <ul id="feedbackList" class="flex-1 overflow-y-auto space-y-2 p-4 text-gray-200">
+                <!-- Messages will be injected here -->
+            </ul>
+        </div>
+
+        <!-- Input and Controls Container -->
+        <div class="lg:w-96 bg-gray-800 p-6 rounded-xl shadow-2xl border border-gray-700 flex flex-col">
+            <input type="text" id="name" placeholder="Your Name" maxlength="30"
+                class="w-full p-3 mb-4 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-public-primary focus:border-public-primary border border-gray-600 transition-colors">
+
+            <textarea id="feedback" placeholder="Your Message (Max 200 chars)" maxlength="200"
+                class="w-full h-24 p-3 mb-4 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-public-primary focus:border-public-primary border border-gray-600 resize-none transition-colors"></textarea>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col space-y-3">
+                <button id="sendBtn" class="w-full py-3 rounded-lg font-bold text-white bg-public-primary hover:bg-teal-500 transition-colors shadow-md hover:shadow-lg">
+                    Send Message
+                </button>
+                <button id="privateBtn" class="w-full py-3 rounded-lg font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-md">
+                    Switch to Private Chat
+                </button>
+            </div>
+            
+            <!-- Utility Buttons -->
+            <div class="flex space-x-3 mt-4">
+                <button id="homeBtn" class="flex-1 py-2 rounded-lg text-gray-300 bg-gray-700 hover:bg-gray-600 transition-colors text-sm">
+                    Home
+                </button>
+                <button id="deleteAllBtn" class="flex-1 py-2 rounded-lg text-white bg-red-600 hover:bg-red-700 transition-colors text-sm">
+                    Delete All
+                </button>
+            </div>
+        </div>
+
+    </div>
+    
+<script type="module">
+// --- Supabase Setup ---
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+// ** Using your provided credentials **
+const supabase = createClient(
+  "https://lbsnsckhikjtzgjmspau.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxic25zY2toaWtqdHpnam1zcGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkxODEwODYsImV4cCI6MjA3NDc1NzA4Nn0.c5upCzkqfGgzMcCg34OABo0CRJotYfB9I5IHdzXDJic"
+)
+
+// --- DOM Elements ---
+const sendBtn = document.getElementById('sendBtn')
+const feedbackList = document.getElementById('feedbackList')
+const privateBtn = document.getElementById('privateBtn')
+const deleteAllBtn = document.getElementById('deleteAllBtn')
+const chatBody = document.getElementById('chatBody')
+const chatTitleContainer = document.getElementById('chatTitleContainer')
+const titleText = document.getElementById('titleText')
+const nameInput = document.getElementById('name')
+const feedbackInput = document.getElementById('feedback')
+
+// --- State and Constants ---
+let privateRoom = false
+const PUBLIC_CODE = "Private Chat";
+const PRIVATE_CODE = "Public Chat";
+
+// Expanded list including common bypass characters
+const badWordsList = [
+    'nigga','nigger','dick','shit','ass','cum','fuck','penis','vagina','bitch','slut','whore',
+    'niger','niga','ho','cumming','fag',
+    // Bypass characters
+    '@ss','@$$','a$$','sh!t','sh1t','d!ck','f*ck','n!gger','n1gger',
+];
+
+// --- Filtering Functions ---
+
+// Normalizes text by removing non-alphanumeric characters, but keeps spaces for word boundary checking
+function normalize(text) {
+    // Replace non-word characters (except space) with nothing
+    return text.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
+}
+
+/**
+ * Checks if a message contains offensive words based on word boundaries.
+ * @param {string} text - The message to check.
+ * @returns {boolean} True if a bad word is found, false otherwise.
+ */
+function containsBadWords(text) {
+    // 1. Normalize the text (remove punctuation, convert to lower case)
+    const normalizedText = text.toLowerCase();
+    
+    // 2. Check for bypasses and common misspellings that don't rely on spacing
+    for (const word of badWordsList) {
+        // Create a regex to match the bad word, allowing it to be a standalone word
+        // \b ensures word boundary, so 'class' is safe, but 'ass' is flagged.
+        const wordRegex = new RegExp(`\\b${word}\\b`, 'g');
+        if (wordRegex.test(normalizedText)) {
+            return true;
+        }
+
+        // Also check for the specific bypasses that may not have clean word boundaries
+        if (['@ss', '@$$', 'sh!t', 'sh1t', 'd!ck', 'f*ck'].includes(word) && normalizedText.includes(word)) {
+             return true;
+        }
+    }
+    return false;
+}
+
+// Function to mask bad words with **** (disabled per user request, but structurally kept)
+function maskBadWords(text){
+    // Re-enabling the masking functionality to comply with the anti-swearing requirement
+    const maskedText = text;
+    for (const word of badWordsList) {
+        // Use a function that checks for the word but replaces it globally
+        const wordRegex = new RegExp(`\\b${word}\\b`, 'gi');
+        if (wordRegex.test(maskedText)) {
+            // Replace the actual found word with stars of the same length
+            text = text.replace(wordRegex, (match) => '*'.repeat(match.length));
+        }
+    }
+    return text;
+}
+
+
+// --- Theme Update Logic ---
+function updateTheme(){
+    const currentPrimary = privateRoom ? 'var(--private-primary)' : 'var(--public-primary)';
+    const currentBg = privateRoom ? 'var(--private-bg)' : 'var(--public-bg)';
+
+    // Update main background
+    chatBody.classList.toggle('private-mode', privateRoom);
+
+    // Update main title
+    titleText.textContent = privateRoom ? 'Private Chat' : 'Public Chat';
+    titleText.style.color = currentPrimary;
+
+    // Update chat container header
+    chatTitleContainer.style.backgroundColor = currentPrimary;
+
+    // Update Send button color
+    sendBtn.style.backgroundColor = currentPrimary;
+    sendBtn.onmouseover = () => sendBtn.style.backgroundColor = privateRoom ? '#8b5cf6' : '#047857';
+    sendBtn.onmouseout = () => sendBtn.style.backgroundColor = currentPrimary;
+
+    // Update input focus colors to match theme
+    [nameInput, feedbackInput].forEach(input => {
+        input.classList.remove('focus:ring-public-primary', 'focus:border-public-primary', 'focus:ring-private-primary', 'focus:border-private-primary');
+        if (privateRoom) {
+            input.classList.add('focus:ring-purple-400', 'focus:border-purple-400');
+        } else {
+            input.classList.add('focus:ring-teal-400', 'focus:border-teal-400');
+        }
+    });
+
+    // Update private/public button text
+    privateBtn.textContent = privateRoom ? PRIVATE_CODE : PUBLIC_CODE;
+    
+}
+
+// --- Data & Event Handlers ---
+async function loadFeedback(){
+  let query = supabase.from('feedback').select('*').order('created_at',{ascending:false})
+  query = privateRoom ? query.eq('private',true) : query.eq('private',false)
+  const { data, error } = await query
+  if(error){ console.error(error); return }
+
+  feedbackList.innerHTML = '';
+  data.forEach(f=>{
+    const li = document.createElement('li')
+    li.className = 'py-2 px-3 bg-gray-700 rounded-lg shadow-inner';
+    li.innerHTML = `<span class="font-bold text-public-primary transition-colors" style="color: ${privateRoom ? 'var(--private-primary)' : 'var(--public-primary)'}">${maskBadWords(f.name)}:</span> <span>${maskBadWords(f.feedback)}</span>`
+    feedbackList.appendChild(li)
+  })
+}
+
+sendBtn.addEventListener('click', async ()=>{
+  const name = nameInput.value.trim()
+  const feedback = feedbackInput.value.trim()
+
+  if(!name || !feedback){ 
+        // Use a simple alert style message instead of modal for quick dev work
+        alert("Please fill in both your name and message."); 
+        return; 
+    }
+    
+    // --- Swear Filter Check ---
+    if (containsBadWords(feedback)) {
+        alert("Your message contains forbidden language. Please revise it before sending.");
+        return;
+    }
+    // --- End Swear Filter Check ---
+
+  const { error } = await supabase.from('feedback').insert([{ name, feedback, private: privateRoom }])
+  if(error){ alert("Error sending message: "+error.message); return }
+
+  feedbackInput.value = ''
+  loadFeedback()
+})
+
+privateBtn.addEventListener('click', ()=>{
+  if(privateRoom){
+    privateRoom = false
+    updateTheme()
+    loadFeedback()
+    return
+  }
+  const code = prompt("Enter private chat code:")
+  if(code === "savnaclive"){
+    privateRoom = true
+    updateTheme()
+    loadFeedback()
+  } else {
+    alert("Incorrect code!")
+  }
+})
+
+deleteAllBtn.addEventListener('click', async ()=>{
+  const pin = prompt("Enter PIN to delete all messages:")
+  if(pin !== "savnacsigma"){ alert("Incorrect PIN!"); return }
+  if(!confirm("Are you sure you want to delete all messages?")) return
+  await supabase.from('feedback').delete().neq('id',0)
+  loadFeedback()
+})
+
+document.getElementById('homeBtn').addEventListener('click',()=>window.location.href="index.html")
+
+// Initial calls
+loadFeedback()
+updateTheme()
+setInterval(loadFeedback,5000) // Update every 5 seconds
+</script>
+</body>
+</html>
