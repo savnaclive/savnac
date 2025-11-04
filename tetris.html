@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tetris</title>
+    <!-- Load Tailwind CSS for simple, fast utility classes for the wrapper elements -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom CSS for the Game Grid and Cells */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+        :root {
+            --cell-size: 30px; /* Base size for desktop */
+            --board-width: 10;
+            --board-height: 20;
+            --background-color: #0d1117;
+            --board-color: #161b22;
+            --border-color: #30363d;
+            --score-color: #c9d1d9;
+            --accent-color: #58a6ff;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--score-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden; /* Prevent body scroll */
+        }
+
+        .tetris-container {
+            display: flex;
+            flex-direction: row;
+            gap: 2rem;
+            padding: 1rem;
+            align-items: flex-start;
+            border: 4px solid var(--border-color);
+            border-radius: 12px;
+            background-color: #12151a;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 90vw; /* Responsive limit */
+            margin: 1rem;
+        }
+
+        /* --- Game Board Styling --- */
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(var(--board-width), var(--cell-size));
+            grid-template-rows: repeat(var(--board-height), var(--cell-size));
+            border: 2px solid var(--border-color);
+            background-color: var(--board-color);
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+            border-radius: 4px;
+        }
+
+        .cell {
+            width: var(--cell-size);
+            height: var(--cell-size);
+            box-sizing: border-box;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            transition: background-color 0.05s ease-out;
+            opacity: 0.9;
+            /* Inner shadow for "block" look */
+            box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.1),
+                        inset 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Empty cells should have a subtle grid line */
+        .cell:not(.T):not(.J):not(.Z):not(.O):not(.S):not(.L):not(.I) {
+            background-color: var(--board-color);
+            opacity: 1;
+            box-shadow: none;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* --- Sidebar Styling --- */
+        .sidebar {
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .info-box, .next-piece-box {
+            padding: 1rem;
+            background-color: var(--board-color);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .next-piece-box h3 {
+            margin-top: 0;
+            color: var(--accent-color);
+            font-weight: bold;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        #next-piece-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 20px);
+            grid-template-rows: repeat(4, 20px);
+            margin: 0.5rem 0;
+        }
+
+        .next-cell {
+            width: 20px;
+            height: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.1);
+            transition: background-color 0.1s;
+        }
+
+        /* --- Game Over/Message Box Styling --- */
+        #message-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 2.5rem 3rem;
+            background-color: #2e353f;
+            border: 4px solid var(--accent-color);
+            border-radius: 12px;
+            box-shadow: 0 0 50px rgba(88, 166, 255, 0.4);
+            text-align: center;
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        #message-box h2 {
+            color: var(--accent-color);
+            font-size: 2rem;
+            margin: 0;
+        }
+
+        #message-box p {
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        .restart-button {
+            padding: 10px 20px;
+            background-color: var(--accent-color);
+            color: var(--background-color);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 4px 0 #3e7fd2;
+        }
+
+        .restart-button:hover {
+            background-color: #89bdf7;
+        }
+
+        .restart-button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #3e7fd2;
+        }
+
+        /* --- Piece Colors (Use Tailwind classes for simplicity, but define custom shades) --- */
+        /* I-Piece (Cyan) */ .I { background-color: #00bcd4; box-shadow: 0 0 10px rgba(0, 188, 212, 0.5); }
+        /* J-Piece (Blue) */ .J { background-color: #2196f3; box-shadow: 0 0 10px rgba(33, 150, 243, 0.5); }
+        /* L-Piece (Orange) */ .L { background-color: #ff9800; box-shadow: 0 0 10px rgba(255, 152, 0, 0.5); }
+        /* O-Piece (Yellow) */ .O { background-color: #ffeb3b; box-shadow: 0 0 10px rgba(255, 235, 59, 0.5); }
+        /* S-Piece (Green) */ .S { background-color: #4caf50; box-shadow: 0 0 10px rgba(76, 175, 80, 0.5); }
+        /* T-Piece (Purple) */ .T { background-color: #9c27b0; box-shadow: 0 0 10px rgba(156, 39, 176, 0.5); }
+        /* Z-Piece (Red) */ .Z { background-color: #f44336; box-shadow: 0 0 10px rgba(244, 67, 54, 0.5); }
+
+        /* --- Responsive Design for Mobile/Small Screens --- */
+        @media (max-width: 768px) {
+            :root {
+                --cell-size: 20px; /* Smaller cells for mobile */
+            }
+
+            .tetris-container {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: center;
+            }
+
+            .sidebar {
+                width: 100%; /* Full width for sidebar components */
+                max-width: calc(10 * var(--cell-size)); /* Match board width */
+                flex-direction: row; /* Make info and next piece side-by-side */
+                justify-content: space-between;
+            }
+
+            .info-box {
+                flex-grow: 1;
+            }
+            .next-piece-box {
+                width: 120px; /* Fixed size for next piece display */
+            }
+            #next-piece-grid {
+                grid-template-columns: repeat(4, 15px);
+                grid-template-rows: repeat(4, 15px);
+            }
+            .next-cell {
+                width: 15px;
+                height: 15px;
+            }
+
+            body {
+                padding: 1rem 0;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="message-box">
+        <h2 id="message-title">Game Over!</h2>
+        <p>Final Score: <span id="final-score">0</span></p>
+        <button class="restart-button" onclick="restartGame()">Play Again</button>
+    </div>
+
+    <div class="tetris-container">
+        <!-- Game Board -->
+        <div id="game-board">
+            <!-- JavaScript will populate 200 .cell divs here -->
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="info-box">
+                <h3 class="text-xl font-bold mb-2 text-accent-color">Tetris Stats</h3>
+                <p class="mb-2">Score: <span id="score">0</span></p>
+                <p>Level: <span id="level">1</span></p>
+            </div>
+
+            <div class="next-piece-box">
+                <h3>Next Piece</h3>
+                <div id="next-piece-grid">
+                    <!-- JavaScript will populate 16 .next-cell divs here -->
+                </div>
+            </div>
+
+            <div class="info-box hidden md:block">
+                <h3 class="text-lg font-bold mb-2 text-accent-color">Controls</h3>
+                <ul class="text-sm list-disc pl-5">
+                    <li>Left/Right Arrow: Move</li>
+                    <li>Down Arrow: Soft Drop</li>
+                    <li>Up Arrow: Rotate</li>
+                    <li>Space: Hard Drop</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- GAME SETUP AND CONSTANTS ---
+
+        const BOARD_WIDTH = 10;
+        const BOARD_HEIGHT = 20;
+        const CELL_SIZE = 30; // Defined in CSS but good to have here too
+        const DELAY_START = 1000; // Initial drop delay in milliseconds
+        const LEVEL_UP_LINES = 10; // Lines needed to increase level
+
+        const gameBoard = document.getElementById('game-board');
+        const scoreDisplay = document.getElementById('score');
+        const levelDisplay = document.getElementById('level');
+        const nextPieceGrid = document.getElementById('next-piece-grid');
+        const messageBox = document.getElementById('message-box');
+        const finalScoreDisplay = document.getElementById('final-score');
+
+        // The tetromino shapes and their rotations (4x4 grids)
+        const TETROMINOS = [
+            // I-Piece (Cyan)
+            { shape: [[0,0,0,0], [1,1,1,1], [0,0,0,0], [0,0,0,0]], color: 'I', width: 4, height: 4 },
+            // J-Piece (Blue)
+            { shape: [[1,0,0], [1,1,1], [0,0,0]], color: 'J', width: 3, height: 3 },
+            // L-Piece (Orange)
+            { shape: [[0,0,1], [1,1,1], [0,0,0]], color: 'L', width: 3, height: 3 },
+            // O-Piece (Yellow)
+            { shape: [[1,1], [1,1]], color: 'O', width: 2, height: 2 },
+            // S-Piece (Green)
+            { shape: [[0,1,1], [1,1,0], [0,0,0]], color: 'S', width: 3, height: 3 },
+            // T-Piece (Purple)
+            { shape: [[0,1,0], [1,1,1], [0,0,0]], color: 'T', width: 3, height: 3 },
+            // Z-Piece (Red)
+            { shape: [[1,1,0], [0,1,1], [0,0,0]], color: 'Z', width: 3, height: 3 }
+        ];
+
+        // --- GAME STATE VARIABLES ---
+        let board = [];
+        let cells = [];
+        let nextCells = [];
+        let currentPiece = null;
+        let nextPiece = null;
+        let currentX = 3; // Starting column
+        let currentY = 0; // Starting row
+        let score = 0;
+        let level = 1;
+        let linesCleared = 0;
+        let gameLoopInterval = null;
+        let dropDelay = DELAY_START;
+        let isGameOver = false;
+
+        // --- BOARD INITIALIZATION ---
+
+        // Create the HTML grid and the JavaScript board array
+        function initializeBoard() {
+            gameBoard.innerHTML = '';
+            cells = [];
+            board = [];
+
+            for (let r = 0; r < BOARD_HEIGHT; r++) {
+                board[r] = [];
+                for (let c = 0; c < BOARD_WIDTH; c++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    gameBoard.appendChild(cell);
+                    cells.push(cell);
+                    board[r][c] = ''; // '' means empty cell
+                }
+            }
+            // Initialize next piece grid
+            for (let i = 0; i < 16; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('next-cell');
+                nextPieceGrid.appendChild(cell);
+                nextCells.push(cell);
+            }
+        }
+
+        // --- PIECE LOGIC ---
+
+        function getRandomPiece() {
+            const randomIndex = Math.floor(Math.random() * TETROMINOS.length);
+            // Deep copy the shape and properties
+            return JSON.parse(JSON.stringify(TETROMINOS[randomIndex]));
+        }
+
+        // Rotate the current piece's shape matrix (clockwise)
+        function rotateMatrix(matrix) {
+            const N = matrix.length;
+            const newMatrix = Array.from({ length: N }, () => Array(N).fill(0));
+            for (let r = 0; r < N; r++) {
+                for (let c = 0; c < N; c++) {
+                    newMatrix[c][N - 1 - r] = matrix[r][c];
+                }
+            }
+            return newMatrix;
+        }
+
+        // --- RENDERING FUNCTIONS ---
+
+        // Get the index of a cell in the 1D array from 2D coordinates
+        function getCellIndex(r, c) {
+            return r * BOARD_WIDTH + c;
+        }
+
+        // Draw/Undraw the piece at its current position
+        function drawPiece(draw = true) {
+            if (!currentPiece) return;
+
+            const shape = currentPiece.shape;
+            const color = currentPiece.color;
+
+            for (let r = 0; r < shape.length; r++) {
+                for (let c = 0; c < shape[r].length; c++) {
+                    if (shape[r][c]) {
+                        const boardRow = currentY + r;
+                        const boardCol = currentX + c;
+
+                        // Only draw if within bounds (important for collisions too)
+                        if (boardRow >= 0 && boardRow < BOARD_HEIGHT && boardCol >= 0 && boardCol < BOARD_WIDTH) {
+                            const index = getCellIndex(boardRow, boardCol);
+                            if (draw) {
+                                cells[index].classList.add(color);
+                            } else {
+                                cells[index].classList.remove(color);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Redraw the main board based on the 'board' array
+        function redrawBoard() {
+            for (let r = 0; r < BOARD_HEIGHT; r++) {
+                for (let c = 0; c < BOARD_WIDTH; c++) {
+                    const index = getCellIndex(r, c);
+                    const color = board[r][c];
+                    cells[index].className = 'cell ' + color; // Reset class and apply stored color
+                }
+            }
+        }
+
+        // Draw the next piece in the sidebar
+        function drawNextPiece() {
+            nextCells.forEach(cell => cell.className = 'next-cell'); // Clear old
+            if (!nextPiece) return;
+
+            const shape = nextPiece.shape;
+            const color = nextPiece.color;
+            const offset = (4 - shape.length) > 1 ? 1 : 0; // Center 2x2 or 3x3 blocks
+
+            for (let r = 0; r < shape.length; r++) {
+                for (let c = 0; c < shape[r].length; c++) {
+                    if (shape[r][c]) {
+                        const index = (r + offset) * 4 + (c + offset); // 4x4 grid
+                        if (index < 16) {
+                            nextCells[index].classList.add(color);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        // --- GAME MECHANICS ---
+
+        // Check if the current piece position and rotation is valid
+        function isValidMove(newX, newY, newShape) {
+            if (!newShape) newShape = currentPiece.shape;
+
+            for (let r = 0; r < newShape.length; r++) {
+                for (let c = 0; c < newShape[r].length; c++) {
+                    if (newShape[r][c]) {
+                        const boardRow = newY + r;
+                        const boardCol = newX + c;
+
+                        // 1. Check vertical boundary (bottom)
+                        if (boardRow >= BOARD_HEIGHT) return false;
+
+                        // 2. Check horizontal boundaries (left/right)
+                        if (boardCol < 0 || boardCol >= BOARD_WIDTH) return false;
+
+                        // 3. Check for collision with locked pieces (if row is on the board)
+                        if (boardRow >= 0 && board[boardRow][boardCol] !== '') return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        // Attempt to move the piece. Returns true if successful.
+        function move(dx, dy) {
+            if (isGameOver) return false;
+
+            drawPiece(false); // Undraw old position
+            const newX = currentX + dx;
+            const newY = currentY + dy;
+
+            if (isValidMove(newX, newY)) {
+                currentX = newX;
+                currentY = newY;
+                drawPiece(true); // Draw new position
+                return true;
+            }
+
+            drawPiece(true); // Redraw old position if move failed
+            return false;
+        }
+
+        // Attempt to rotate the piece
+        function rotate() {
+            if (isGameOver || currentPiece.color === 'O') return; // O-piece never rotates
+
+            drawPiece(false); // Undraw old shape
+            const newShape = rotateMatrix(currentPiece.shape);
+
+            // Simple wall kick mechanism (try original, then left, then right)
+            if (isValidMove(currentX, currentY, newShape)) {
+                currentPiece.shape = newShape;
+            } else if (isValidMove(currentX - 1, currentY, newShape)) {
+                currentX -= 1;
+                currentPiece.shape = newShape;
+            } else if (isValidMove(currentX + 1, currentY, newShape)) {
+                currentX += 1;
+                currentPiece.shape = newShape;
+            }
+
+            drawPiece(true); // Draw new shape/position
+        }
+
+        // Lock the piece into the board array
+        function lockPiece() {
+            if (!currentPiece) return;
+
+            const shape = currentPiece.shape;
+            const color = currentPiece.color;
+
+            for (let r = 0; r < shape.length; r++) {
+                for (let c = 0; c < shape[r].length; c++) {
+                    if (shape[r][c]) {
+                        const boardRow = currentY + r;
+                        const boardCol = currentX + c;
+
+                        // Check for game over on lock (if the piece locks above the visible area)
+                        if (boardRow < 0) {
+                            endGame();
+                            return;
+                        }
+
+                        if (boardRow < BOARD_HEIGHT) {
+                            board[boardRow][boardCol] = color;
+                        }
+                    }
+                }
+            }
+
+            checkLines();
+            spawnNextPiece();
+        }
+
+        // Hard Drop: move the piece all the way down and lock it
+        function hardDrop() {
+            if (isGameOver) return;
+            drawPiece(false);
+            let dropDistance = 0;
+            while (isValidMove(currentX, currentY + 1)) {
+                currentY++;
+                dropDistance++;
+            }
+            // Score bonus for hard drop
+            score += dropDistance * 2;
+            lockPiece();
+            redrawBoard();
+            updateScore();
+            // Reset interval immediately after hard drop
+            resetGameLoopInterval();
+        }
+
+        // Check and clear completed lines
+        function checkLines() {
+            let linesClearedThisTurn = 0;
+
+            for (let r = BOARD_HEIGHT - 1; r >= 0; r--) {
+                // Check if the row is full (no empty strings)
+                if (board[r].every(cell => cell !== '')) {
+                    linesClearedThisTurn++;
+                    // Remove the row
+                    board.splice(r, 1);
+                    // Add a new empty row at the top
+                    board.unshift(Array(BOARD_WIDTH).fill(''));
+                    r++; // Re-check the same row index since the content has shifted down
+                }
+            }
+
+            if (linesClearedThisTurn > 0) {
+                // Scoring system (simplified): 100 per line, plus bonus for combo
+                const scoreMultiplier = [0, 100, 300, 500, 800]; // 0, Single, Double, Triple, Tetris
+                score += scoreMultiplier[linesClearedThisTurn] * level;
+                linesCleared += linesClearedThisTurn;
+                updateScore();
+                checkLevelUp();
+            }
+        }
+
+        function checkLevelUp() {
+            const newLevel = Math.floor(linesCleared / LEVEL_UP_LINES) + 1;
+            if (newLevel > level) {
+                level = newLevel;
+                // Decrease drop delay (making the game faster)
+                dropDelay = Math.max(50, DELAY_START - (level - 1) * 70); // Max speed at 50ms
+                levelDisplay.textContent = level;
+                resetGameLoopInterval();
+            }
+        }
+
+        // --- GAME LOOP & FLOW CONTROL ---
+
+        function spawnNextPiece() {
+            currentPiece = nextPiece;
+            nextPiece = getRandomPiece();
+
+            currentX = 3;
+            currentY = 0; // Start at row 0
+
+            drawNextPiece();
+
+            // Check for immediate game over on spawn (if the new piece collides immediately)
+            if (!isValidMove(currentX, currentY)) {
+                // If it collides on spawn, but we need to draw it first
+                drawPiece(true);
+                endGame();
+            }
+        }
+
+        function gameLoop() {
+            // Attempt to move down
+            const moved = move(0, 1);
+
+            // If move failed, lock the piece
+            if (!moved) {
+                lockPiece();
+                redrawBoard(); // Must redraw after lock
+            }
+        }
+
+        function startGame() {
+            // Clear previous state
+            isGameOver = false;
+            score = 0;
+            level = 1;
+            linesCleared = 0;
+            dropDelay = DELAY_START;
+            scoreDisplay.textContent = score;
+            levelDisplay.textContent = level;
+            messageBox.style.display = 'none';
+
+            initializeBoard();
+            // Start with two pieces so 'nextPiece' is populated
+            currentPiece = getRandomPiece();
+            nextPiece = getRandomPiece();
+            spawnNextPiece();
+            redrawBoard();
+
+            // Set up the timed drop loop
+            resetGameLoopInterval();
+        }
+
+        function resetGameLoopInterval() {
+            if (gameLoopInterval) {
+                clearInterval(gameLoopInterval);
+            }
+            gameLoopInterval = setInterval(gameLoop, dropDelay);
+        }
+
+        function endGame() {
+            isGameOver = true;
+            clearInterval(gameLoopInterval);
+            finalScoreDisplay.textContent = score;
+            messageBox.style.display = 'flex';
+        }
+
+        function restartGame() {
+            startGame();
+        }
+
+        function updateScore() {
+            scoreDisplay.textContent = score;
+        }
+
+        // --- INPUT HANDLING ---
+
+        document.addEventListener('keydown', (e) => {
+            if (isGameOver) return;
+
+            switch (e.key) {
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    move(-1, 0); // Move left
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    move(1, 0);  // Move right
+                    break;
+                case 'ArrowDown':
+                    e.preventDefault();
+                    // Soft drop: move down, lock if failed, add a small score bonus
+                    if (move(0, 1)) {
+                        score += 1;
+                        updateScore();
+                    } else {
+                        lockPiece();
+                        redrawBoard();
+                        resetGameLoopInterval(); // Reset timer after locking
+                    }
+                    break;
+                case 'ArrowUp':
+                    e.preventDefault();
+                    rotate(); // Rotate
+                    break;
+                case ' ': // Spacebar for hard drop
+                    e.preventDefault();
+                    hardDrop();
+                    break;
+            }
+        });
+
+        // Initialize the game when the script loads
+        window.onload = startGame;
+
+    </script>
+</body>
+</html>
